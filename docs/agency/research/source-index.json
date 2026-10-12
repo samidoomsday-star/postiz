@@ -1,0 +1,626 @@
+[
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1255",
+    "title": "External Review Workflow: Public approve/reject links for scheduled posts (no reviewer account required) \u00b7 Issue #1255 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "glimz",
+    "date": "Feb 27, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1758",
+    "title": "Feature Request: Granular Role-Based Access Control (RBAC) for Approval Workflow \u00b7 Issue #1758 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "Shebin-coddle",
+    "date": "Jul 21, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1481",
+    "title": "Role-based access control \u00b7 Issue #1481 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "songnguxyz",
+    "date": "May 3, 2026",
+    "state": "Open",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1812",
+    "title": "Feature: Private reviewer notes on draft posts \u00b7 Issue #1812 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "krishna-mundada",
+    "date": "Jul 30, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1587",
+    "title": "Granular API Key permissions + support for multiple API keys with different scopes/accounts \u00b7 Issue #1587 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "schnuartz-ai",
+    "date": "Jun 8, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1511",
+    "title": "Per-user API tokens for team members \u00b7 Issue #1511 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "frankdierolf",
+    "date": "May 10, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2120",
+    "title": "Support multiple provider app credentials per instance (bindable to a Customer) \u00b7 Issue #2120 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "shenoudab",
+    "date": "Sep 22, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1262",
+    "title": "[Enhancement] Add MediaCapabilities interface for pre-flight media validation across providers \u00b7 Issue #1262 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "rohansx",
+    "date": "Feb 28, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1268",
+    "title": "Add PostingCapabilities interface for centralized provider configuration \u00b7 Issue #1268 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "rohansx",
+    "date": "Mar 1, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1191",
+    "title": "Send webhooks on post lifecycle events (create, update, delete, publish, fail) \u00b7 Issue #1191 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "satputekuldip",
+    "date": "Jan 29, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1153",
+    "title": "Feature Request: Improve Logging Messages for Webhooks \u00b7 Issue #1153 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "Ipstenu",
+    "date": "Dec 31, 2025",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1861",
+    "title": "Webhooks always fire with an empty body: sendWebhooks() receives the provider's post id instead of the internal post id \u00b7 Issue #1861 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "IagoOli",
+    "date": "Aug 8, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1704",
+    "title": "feat(notifications): make email digest timing configurable and allow immediate failure alerts \u00b7 Issue #1704 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "s-a-s-k-i-a",
+    "date": "Jul 12, 2026",
+    "state": "Open",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1559",
+    "title": "User timezone stored as integer offset \u2014 breaks DST regions and prevents IANA timezone configuration \u00b7 Issue #1559 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "onetogregorio",
+    "date": "May 25, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1145",
+    "title": "Cron Scheduler Miscalculates Recurring Posts during DST Transitions labels: bug, backend, high-priority assignees: '' \u00b7 Issue #1145 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "ashrafaliqhtan",
+    "date": "Dec 29, 2025",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1954",
+    "title": "Scheduled posts shift by 1h: main.ts sets TZ='UTC' which misresolves on minimal images (use 'Etc/UTC') \u00b7 Issue #1954 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "f-liva",
+    "date": "Aug 23, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1778",
+    "title": "Feature request: full CRUD REST API for posts (public endpoint) \u00b7 Issue #1778 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "jameswebch",
+    "date": "Jul 23, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1218",
+    "title": "[Feature Request] Public API: Add PATCH /posts/{id} endpoint for updating/rescheduling queued posts \u00b7 Issue #1218 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "leonho",
+    "date": "Feb 12, 2026",
+    "state": "Closed",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1780",
+    "title": "Feature request: export scheduled posts to CSV/JSON \u00b7 Issue #1780 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "jameswebch",
+    "date": "Jul 23, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1779",
+    "title": "Feature request: duplicate post detection when scheduling \u00b7 Issue #1779 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "jameswebch",
+    "date": "Jul 23, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1517",
+    "title": "Improved orginizational features in media library \u00b7 Issue #1517 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "Dylanyz",
+    "date": "May 13, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/933",
+    "title": "Add option to bulk delete media (UI & REST API) \u00b7 Issue #933 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "m7rlin",
+    "date": "Aug 6, 2025",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/236",
+    "title": "\ud83d\ude80 Feature: Import Posts via file \u00b7 Issue #236 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "MikeKMiller",
+    "date": "Sep 13, 2024",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1944",
+    "title": "Comments/Messages inbox, combined analytics, and a Post for Me provider (running in production on a fork) \u00b7 Issue #1944 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "erykkruk",
+    "date": "Aug 22, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1911",
+    "title": "Analytics: percentageChange is hard-coded to 5 in the Facebook, Instagram, Threads and LinkedIn Page providers \u00b7 Issue #1911 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "joe-tofu",
+    "date": "Aug 17, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2056",
+    "title": "Postiz Cloud: YouTube 7-day analytics miss recent posts (stale platform rollup) \u00b7 Issue #2056 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "JayChrawnna",
+    "date": "Sep 9, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2055",
+    "title": "Postiz Cloud: TikTok analytics stuck on \"Refresh Channel\" after reconnect \u00b7 Issue #2055 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "JayChrawnna",
+    "date": "Sep 9, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1609",
+    "title": "Facebook post analytics broken \u2014 deprecated Graph API metrics cause silent failure (#100 OAuthException) \u00b7 Issue #1609 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "vidschauhan",
+    "date": "Jun 17, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1436",
+    "title": "Instagram analytics \u2014 likes/views/comments/shares/saves/replies shown at 2\u00d7 real value \u00b7 Issue #1436 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "josikrop",
+    "date": "Apr 19, 2026",
+    "state": "Closed",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1680",
+    "title": "feat: Add LinkedIn personal profile post analytics via memberCreatorPostAnalytics API \u00b7 Issue #1680 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "revic-alshoh01",
+    "date": "Jul 6, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1563",
+    "title": "TikTok Direct Post audit rejection: UI does not comply with TikTok Content Sharing UX Guidelines \u00b7 Issue #1563 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "onetogregorio",
+    "date": "May 26, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1362",
+    "title": "TikTok Direct Post API rejected \u2013 Missing required UX compliance \u00b7 Issue #1362 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "nrvk8",
+    "date": "Apr 2, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1314",
+    "title": "[TikTok] Missing UI behaviors required by TikTok Content Sharing Guidelines (Direct Post API audit) \u00b7 Issue #1314 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "teku-ai-internal-projects",
+    "date": "Mar 15, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/397",
+    "title": "TikTok approval impossible with naming requirement in criteria \u00b7 Issue #397 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "troykelly",
+    "date": "Oct 25, 2024",
+    "state": "Closed",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1854",
+    "title": "Postiz Cloud TikTok Direct Post fails with reached_active_user_cap \u00b7 Issue #1854 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "NeuralNodeItAll",
+    "date": "Aug 7, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2233",
+    "title": "YouTube: reconnecting an existing channel via \"Add Channel\" drops its refresh credentials, channel silently breaks after 1h \u00b7 Issue #2233 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "maximeoliv",
+    "date": "Oct 11, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2231",
+    "title": "X returns 402 \"credits depleted\", UI says \"Added successfully\" and then \"Unknown Error\" \u00b7 Issue #2231 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "realchrisolin",
+    "date": "Oct 9, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2230",
+    "title": "Configurable model provider for AI features (e.g. Anthropic) instead of hard-coded OpenAI models \u00b7 Issue #2230 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "Bavariacoin",
+    "date": "Oct 9, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2227",
+    "title": "Backend never listens if the Mastra storage init fails: startMcp() is awaited before app.listen() with no try/catch \u00b7 Issue #2227 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "f-liva",
+    "date": "Oct 9, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2222",
+    "title": "Feature: first-class organization switcher for managing multiple companies from one account \u00b7 Issue #2222 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "jacobomoya",
+    "date": "Oct 8, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2199",
+    "title": "Invite link registration is broken: always creates a new org for the invited user, invite context silently dropped (15-min cookie vs 2-day JWT) \u00b7 Issue #2199 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "wbrione",
+    "date": "Oct 3, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2103",
+    "title": "Public API ignores `posts[].group` \u2014 a multi-channel post created via the API becomes N separate groups \u00b7 Issue #2103 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "emree-sen",
+    "date": "Sep 19, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2187",
+    "title": "Public API / MCP report 0 video credits while the web app shows credits (subscription.createdAt not loaded for API key & OAuth orgs) \u00b7 Issue #2187 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "alkhunizan",
+    "date": "Sep 30, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2069",
+    "title": "Preview: inline annotations, replies, resolve, named anonymous commenting with reCAPTCHA, dashboard styling \u00b7 Issue #2069 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "giladresisi",
+    "date": "Sep 11, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1845",
+    "title": "Missing viewport meta tag breaks mobile rendering \u00b7 Issue #1845 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "jefcdiniz",
+    "date": "Aug 4, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1008",
+    "title": "Responsive layout / Mobile support \u00b7 Issue #1008 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "Armatorix",
+    "date": "Oct 1, 2025",
+    "state": "Open",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1748",
+    "title": "Orchestrator never retries the Temporal worker connection, leaving posts stuck in QUEUE with a healthy-looking process \u00b7 Issue #1748 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "sebastian-l-kaiser",
+    "date": "Jul 19, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2035",
+    "title": "Orchestrator's Temporal worker never retries a failed initial connection \u2014 silently stops polling forever, no crash, no log after the first attempt \u00b7 Issue #2035 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "ptigroup",
+    "date": "Sep 7, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1321",
+    "title": "**Critical**: Infinite social posting loop caused by unhandled streakWorkflow error in postSocial activity \u00b7 Issue #1321 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "DarinLevesque",
+    "date": "Mar 17, 2026",
+    "state": "Open",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/832",
+    "title": "Continuous Reposting Loop for Standalone Instagram Integration - Risk! Account flagged by Instagram for bot-like activity and disabled permenantly \u00b7 Issue #832 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "anvimotions",
+    "date": "Jun 21, 2025",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2011",
+    "title": "Postiz Cloud: scheduled YouTube Shorts and long-form uploads fail with \u201ccouldn\u2019t confirm it was published\u201d and no release ID/URL \u00b7 Issue #2011 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "esorey",
+    "date": "Sep 2, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2017",
+    "title": "Discord provider reports status: 'success' without checking the HTTP response \u00b7 Issue #2017 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "pamelaromeroo",
+    "date": "Sep 4, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2019",
+    "title": "[Bug] Slack integration persists posts to Postiz queue but never delivers to Slack workspace (missing bot `chat:write` scope) \u00b7 Issue #2019 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "doronkatz",
+    "date": "Sep 4, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1807",
+    "title": "Facebook and Instagram publishing hardcode Graph API v20.0, which expires September 24, 2026 \u00b7 Issue #1807 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "AmirAlsad",
+    "date": "Jul 29, 2026",
+    "state": "Closed",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2005",
+    "title": "LinkedIn posts fail with 426 NONEXISTENT_VERSION (20250101) \u2013 please update LinkedIn provider version \u00b7 Issue #2005 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "Vrenli72",
+    "date": "Sep 1, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2224",
+    "title": "WordPress provider: composer attachments are silently dropped \u2014 map them to body images or warn the user \u00b7 Issue #2224 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "ngojclee",
+    "date": "Oct 9, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2196",
+    "title": "Posts with images fail \u00b7 Issue #2196 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "leephillips",
+    "date": "Oct 2, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2220",
+    "title": "[Security] Moltbook provider: API key leaks into error output via AxiosError.config.headers \u00b7 Issue #2220 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "lazynextai",
+    "date": "Oct 7, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1703",
+    "title": "feat(short-links): support a custom short-link domain per organization \u00b7 Issue #1703 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "s-a-s-k-i-a",
+    "date": "Jul 12, 2026",
+    "state": "Open",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1749",
+    "title": "Instagram: support the is_ai_generated parameter so scheduled posts can carry Instagram's AI label \u00b7 Issue #1749 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "sebastian-l-kaiser",
+    "date": "Jul 19, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1888",
+    "title": "WhatsApp Channel support \u00b7 Issue #1888 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "marian-hummel",
+    "date": "Aug 13, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1476",
+    "title": "Workspace invite emails silently dropped \u2014 sendMail() never invoked despite working nodemailer configuration \u00b7 Issue #1476 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "julianwitzel",
+    "date": "Apr 28, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1558",
+    "title": "Make the agent's chat & image models configurable via env vars \u00b7 Issue #1558 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "frankdierolf",
+    "date": "May 25, 2026",
+    "state": "Closed as not planned",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1711",
+    "title": "AI image generation fails in Generate Posts and Auto-post \u00b7 Issue #1711 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "moatazkhalifa",
+    "date": "Jul 13, 2026",
+    "state": "Open",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2197",
+    "title": "Feature: use a ChatGPT subscription for Postiz AI features (Sign in with ChatGPT plan usage) \u00b7 Issue #2197 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "TH33ORACL3",
+    "date": "Oct 2, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1821",
+    "title": "Cross-platform high-intent analytics: saves, bookmarks, reposts, shares, and sends \u00b7 Issue #1821 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "vytisbareika",
+    "date": "Aug 2, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/1698",
+    "title": "Instagram feed-grid preview: see scheduled posts as a 3-column profile grid \u00b7 Issue #1698 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "0-danielviktorovich-0",
+    "date": "Jul 9, 2026",
+    "state": "Open",
+    "stale_bot": true
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/issues/2000",
+    "title": "Instagram: \"Timeout downloading media\" (Meta 2207003) doesn't say which media failed, or that Meta is the one fetching \u00b7 Issue #2000 \u00b7 gitroomhq/postiz-app \u00b7 GitHub",
+    "author": "boydthomson",
+    "date": "Sep 1, 2026",
+    "state": "Open",
+    "stale_bot": false
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/185",
+    "title": "Next features for Postiz \u00b7 gitroomhq/postiz-app \u00b7 Discussion #185 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/937",
+    "title": "Can't Add Any Channels on Elestio \u00b7 gitroomhq/postiz-app \u00b7 Discussion #937 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/1552",
+    "title": "Upload large files directly from local storage \u00b7 gitroomhq/postiz-app \u00b7 Discussion #1552 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/1487",
+    "title": "Postiz Self-Hosted - All working, but API access does not \u00b7 gitroomhq/postiz-app \u00b7 Discussion #1487 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/853",
+    "title": "Error When Adding Facebook Page Channel in Postiz \u00b7 gitroomhq/postiz-app \u00b7 Discussion #853 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/539",
+    "title": "Is Postiz available in other languages? \u00b7 gitroomhq/postiz-app \u00b7 Discussion #539 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/781",
+    "title": "MCP server set up \u00b7 gitroomhq/postiz-app \u00b7 Discussion #781 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/830",
+    "title": "Why is postiz docker image so large? \u00b7 gitroomhq/postiz-app \u00b7 Discussion #830 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/1789",
+    "title": "What happend to the \"Open Source\" version? \u00b7 gitroomhq/postiz-app \u00b7 Discussion #1789 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/1709",
+    "title": "Multi Account Management (i.e. multiple companies) & regulary updating Token for Meta API \u00b7 gitroomhq/postiz-app \u00b7 Discussion #1709 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/2192",
+    "title": "Missing API/MCP support: image alt text, post tags, post deletion, and direct local-file upload \u00b7 gitroomhq/postiz-app \u00b7 Discussion #2192 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/666",
+    "title": "Canva integration \u00b7 gitroomhq/postiz-app \u00b7 Discussion #666 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/426",
+    "title": "Do you plan to add Instagram / Facebook stories and reels scheduler? \u00b7 gitroomhq/postiz-app \u00b7 Discussion #426 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/1368",
+    "title": "Question about Postiz publishing flow \u00b7 gitroomhq/postiz-app \u00b7 Discussion #1368 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/1308",
+    "title": "Mechanism to identify channel connection/ Return URL \u00b7 gitroomhq/postiz-app \u00b7 Discussion #1308 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/discussions/982",
+    "title": "multiple accounts \u00b7 gitroomhq/postiz-app \u00b7 Discussion #982 \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/releases/tag/v2.25.1",
+    "title": "Release v2.25.1 \u00b7 gitroomhq/postiz-app \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/releases/tag/v2.25.0",
+    "title": "Release Preview comments, self-hosted MCP connector, responsive app & 50+ provider fixes \u00b7 gitroomhq/postiz-app \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/releases/tag/v2.24.0",
+    "title": "Release v2.24.0 \u00b7 gitroomhq/postiz-app \u00b7 GitHub"
+  },
+  {
+    "url": "https://github.com/gitroomhq/postiz-app/releases/tag/v2.23.0",
+    "title": "Release Streamed media uploads, duplicate-post protection & MCP fixes \u00b7 gitroomhq/postiz-app \u00b7 GitHub"
+  }
+]

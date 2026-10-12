@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "product": "Postiz agency edition",
+  "target": "V1 local release candidate",
+  "updated_at": "2026-10-12",
+  "setup": {
+    "status": "complete",
+    "report": "docs/agency/evidence/SETUP.md"
+  },
+  "phases": [
+    {
+      "id": 0,
+      "title": "Baseline and test foundation",
+      "status": "planned",
+      "depends_on": [],
+      "spec": "docs/agency/phases/phase-0.md",
+      "requirements": [
+        "V1-BASE-001"
+      ],
+      "acceptance": [
+        "T00-01",
+        "T00-02",
+        "T00-03",
+        "T00-04"
+      ],
+      "report": null,
+      "checks": [],
+      "blockers": []
+    },
+    {
+      "id": 1,
+      "title": "Client boundaries and scoped access",
+      "status": "planned",
+      "depends_on": [
+        0
+      ],
+      "spec": "docs/agency/phases/phase-1.md",
+      "requirements": [
+        "V1-AUTH-001",
+        "V1-AUTH-002",
+        "V1-AUTH-003",
+        "V1-AUD-001"
+      ],
+      "acceptance": [
+        "T01-01",
+        "T01-02",
+        "T01-03",
+        "T01-04",
+        "T01-05"
+      ],
+      "report": null,
+      "checks": [],
+      "blockers": []
+    },
+    {
+      "id": 2,
+      "title": "Revision approvals and dispatch enforcement",
+      "status": "planned",
+      "depends_on": [
+        1
+      ],
+      "spec": "docs/agency/phases/phase-2.md",
+      "requirements": [
+        "V1-APR-001",
+        "V1-APR-002",
+        "V1-APR-003"
+      ],
+      "acceptance": [
+        "T02-01",
+        "T02-02",
+        "T02-03",
+        "T02-04",
+        "T02-05",
+        "T02-06"
+      ],
+      "report": null,
+      "checks": [],
+      "blockers": []
+    },
+    {
+      "id": 3,
+      "title": "Client review experience",
+      "status": "planned",
+      "depends_on": [
+        2
+      ],
+      "spec": "docs/agency/phases/phase-3.md",
+      "requirements": [
+        "V1-REV-001",
+        "V1-REV-002"
+      ],
+      "acceptance": [
+        "T03-01",
+        "T03-02",
+        "T03-03",
+        "T03-04"
+      ],
+      "report": null,
+      "checks": [],
+      "blockers": []
+    },
+    {
+      "id": 4,
+      "title": "Agency action dashboard and safe recovery",
+      "status": "planned",
+      "depends_on": [
+        3
+      ],
+      "spec": "docs/agency/phases/phase-4.md",
+      "requirements": [
+        "V1-DASH-001",
+        "V1-DASH-002",
+        "V1-DASH-003"
+      ],
+      "acceptance": [
+        "T04-01",
+        "T04-02",
+        "T04-03",
+        "T04-04",
+        "T04-05"
+      ],
+      "report": null,
+      "checks": [],
+      "blockers": []
+    },
+    {
+      "id": 5,
+      "title": "Integrated hardening and release readiness",
+      "status": "planned",
+      "depends_on": [
+        4
+      ],
+      "spec": "docs/agency/phases/phase-5.md",
+      "requirements": [
+        "V1-NFR-001",
+        "V1-NFR-002",
+        "V1-NFR-003",
+        "V1-NFR-004",
+        "V1-NFR-005"
+      ],
+      "acceptance": [
+        "T05-01",
+        "T05-02",
+        "T05-03",
+        "T05-04",
+        "T05-05",
+        "T05-06"
+      ],
+      "report": null,
+      "checks": [],
+      "blockers": []
+    },
+    {
+      "id": 6,
+      "title": "Local release candidate and handoff",
+      "status": "planned",
+      "depends_on": [
+        5
+      ],
+      "spec": "docs/agency/phases/phase-6.md",
+      "requirements": [
+        "V1-REL-001"
+      ],
+      "acceptance": [
+        "T06-01",
+        "T06-02",
+        "T06-03"
+      ],
+      "report": null,
+      "checks": [],
+      "blockers": []
+    }
+  ]
+}

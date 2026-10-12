@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/gitroomhq/postiz-app",
+  "release": "v2.25.1",
+  "commit": "91c91f633a0175fb3914dba64c932928c514b72a",
+  "imported_on": "2026-10-12",
+  "update_policy": "manual-review-only",
+  "applied_upstream_patches": [],
+  "research_commit": "3a7d28b7ad9654063f4f1f3938b8fe5d1590bf8f"
+}

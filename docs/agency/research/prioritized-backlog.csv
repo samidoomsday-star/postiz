@@ -1,0 +1,16 @@
+Priority,Work item,Evidence,Acceptance criterion,Relative complexity,Milestone
+P0,Validate maintained baseline,Release notes and static audit,"Verified account connections, confirmed publishes, worker readiness, backup restore",Medium,Baseline
+P0,Correct analytics trends,Source-confirmed,No hard-coded growth; real prior period or unavailable label,Small to medium,Baseline
+P0,Client-scoped permissions and credentials,Source plus user reports,Client A credential cannot access or mutate Client B resources,Large,Agency control
+P0,Revision-specific publishing approvals,Documented gap plus user reports,All ingestion paths and workers reject unapproved changed revisions,Large,Agency control
+P1,Weekly client review portal,Extension of existing previews,"Expiring/revocable links, verified decisions, mobile review",Medium,Agency control
+P1,Publishing exception queue and receipts,Existing reliability engine plus user reports,Partial success and uncertain outcomes shown; safe reconciliation,Large,Reliable automation
+P1,Durable lifecycle webhooks,Source-confirmed best-effort sender,"Signed versioned events, attempts, bounded retries and replay",Medium to large,Reliable automation
+P1,Intake request idempotency,Proposed plus duplicate requests,Retried source request produces one campaign,Medium,Reliable automation
+P1,Stable edit and reschedule API/MCP,Source plus reported parity gaps,"Preserved identity, revision conflict checks, approval invalidation",Medium to large,Editing and intake
+P1,Clarify and repair RSS workflow,Source/documentation discrepancy,Fixture validates all unseen eligible items and declared draft/publish mode,Medium,Editing and intake
+P2,Client brand profiles and private source notes,Model audit plus user request,Client-bound context never leaks into published text or unauthorized previews,Medium,Editing and intake
+P2,"Autosave, versions and asset safety",Documented limitations plus requests,Recovered drafts and protected media references,Medium to large,Editing and intake
+P2,Trustworthy client reports,Existing metrics plus requests,"Native semantics, availability and freshness retained",Medium,Client delivery
+P3,Meta comments and messages inbox,User production-fork report; unverified,"Supported scopes, sync, team ownership and valid reply windows",Large,Optional expansion
+P3,Advanced design/import/grid/clipping features,Requests and documented limits,Only validated demanded workflows enabled,Varies,Optional expansion

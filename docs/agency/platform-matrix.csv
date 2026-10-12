@@ -1,0 +1,11 @@
+platform,mock_contract,live_verification,account_app_prerequisite,limits,evidence
+Facebook Pages,not run,not run,Approved Meta app and Page permissions,Page access and supported media,none
+Instagram professional,not run,not run,Approved Meta app and professional account,Verify Facebook/standalone paths separately,none
+LinkedIn profile,not run,not run,LinkedIn app and member permissions,Separate from Pages,none
+LinkedIn Pages,not run,not run,LinkedIn app with organization permissions,Page role and scopes,none
+TikTok,not run,not run,Approved/audited TikTok app for selected flow,Direct publish differs from inbox upload,none
+YouTube,not run,not run,Google project OAuth and quota,Processing/visibility must be confirmed,none
+X,not run,not run,X app and applicable API access,Plan/credits/rate limits,none
+Threads,not run,not run,Meta Threads app scopes,Media/text constraints,none
+Pinterest,not run,not run,Approved app and board access,Board ownership and media constraints,none
+Google Business Profile,not run,not run,API access and verified location,Supported local-post types,none

@@ -1,3 +1,28 @@
+# Postiz agency edition — development plan
+
+This repository is based on Postiz **v2.25.1**, pinned to `91c91f633a0175fb3914dba64c932928c514b72a`.
+It is an independently maintained derivative, with the upstream license and history retained.
+
+**Current state: planning foundation complete; Phase 0 has not started.**
+The imported app has not been installed, built, or runtime-tested in this checkout.
+
+V1 adds client-scoped permissions, enforced revision approvals, and an agency action dashboard.
+Other proposed enhancements are reserved for V2. Upstream merges and dependency updates are manual.
+
+- [Start here: project index and phase prompts](docs/agency/README.md)
+- [BRD and SRS](docs/agency/PRODUCT-SPEC.md)
+- [Phase roadmap](docs/agency/ROADMAP.md)
+- [Current machine-readable state](docs/agency/project-state.json)
+- [Agent execution rules](AGENTS.md)
+- [Upstream and licensing policy](docs/agency/UPSTREAM.md)
+
+Run `python3 scripts/agency/plan.py check` and `python3 scripts/agency/plan.py next` from the repository root.
+To begin implementation, tell the agent: **Start phase 0.**
+
+The upstream README below describes inherited capabilities; it is not proof that this derivative is ready for use.
+
+---
+
 <p align="center">
   <a href="https://postiz.com/" target="_blank">
   <picture>
