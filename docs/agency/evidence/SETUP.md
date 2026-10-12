@@ -36,7 +36,11 @@ The checker safety scenarios were executed through Python subprocess/in-memory c
 
 Saved the cloud environment's `start_skill` draft with tested planning commands, repository entry points, the stop-before-Phase-0 rule and instructions to replace it with verified runtime instructions in Phase 0. No install script, secret, environment variable or network change was needed for this planning workflow. Draft persistence is confirmed; cloud environment publication is a separate platform action and is not claimed here.
 
-Remote publication and independent-clone verification are recorded after their execution below.
+## GitHub and fresh-clone verification
+
+Committed the planning foundation as `bc29b3c551eb999c818c5ded246da9257d8f25a6` and successfully pushed the new `main` branch to `https://github.com/samidoomsday-star/postiz.git`. Verified `git ls-remote origin refs/heads/main` matched that commit.
+
+Cloned that remote branch independently into `/tmp/postiz-planning-clone-check` using `git clone --depth 1 --branch main`. From the new clone, `plan.py check` passed and `plan.py next` selected unstarted Phase 0; git status was clean. The plan depends only on committed files and Python, not the scratch research checkout. A following documentation commit records this evidence and explicitly warns against running the inherited moving upstream Docker image. No application runtime or GitHub Actions result is claimed from this clone check.
 
 ## Readiness boundary
 
