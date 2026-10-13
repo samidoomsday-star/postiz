@@ -42,7 +42,7 @@ function policy(kind, file, method) {
 function add(source, line, kind, path, method, actor, current) {
   const [scope, effects, planned, cases] = policy(kind, source, method);
   rows.push({ source, line, kind, path, method, actor, data_scope: scope, external_side_effects: effects,
-    current_enforcement: current, planned_enforcement: planned, acceptance_cases: cases, evidence: 'static source; runtime coverage only where Phase 0 report states it' });
+    current_enforcement: current, planned_enforcement: planned, acceptance_cases: cases, evidence: 'static source; enforcement and runtime coverage recorded in phase-1.md' });
 }
 
 for (const file of walk(resolve(root, 'apps/backend/src')).filter((p) => p.endsWith('.controller.ts'))) {
@@ -53,7 +53,7 @@ for (const file of walk(resolve(root, 'apps/backend/src')).filter((p) => p.endsW
     if (!decorator) continue;
     const prefix = firstString(decorator);
     const controller = cls.name?.text || '';
-    const actor = controller === 'PublicIntegrationsController' ? 'org API key / OAuth principal' :
+    const actor = controller === 'AgencyController' ? 'current scoped agency principal' : controller === 'PublicIntegrationsController' ? 'org API key / OAuth principal' :
       /WidgetController/.test(controller) ? 'widget capability' :
       authenticated.has(controller) ? 'authenticated organization member' : 'public or route-specific capability/session';
     for (const member of cls.members.filter(ts.isMethodDeclaration)) {
@@ -62,7 +62,7 @@ for (const file of walk(resolve(root, 'apps/backend/src')).filter((p) => p.endsW
           .map((x) => x.expression.getText(ast)).join('; ');
         add(relative(root, file), ast.getLineAndCharacterOfPosition(member.getStart(ast)).line + 1, 'HTTP',
           '/' + [prefix, firstString(d)].join('/').split('/').filter(Boolean).join('/'), callName(d).toUpperCase(), actor,
-          [controller === 'PublicIntegrationsController' ? 'PublicAuthMiddleware' : authenticated.has(controller) ? 'AuthMiddleware' : /WidgetController/.test(controller) ? 'widget auth middleware' : 'route-specific service; inspect method', guards].filter(Boolean).join('; '));
+          [controller === 'AgencyController' ? 'AgencyBoundaryGuard + AgencyService ownership/actions' : controller === 'AuthController' && ['login', 'canRegister'].includes(member.name.getText(ast)) ? 'Allowed local identity entry; no resource projection' : controller === 'RootController' ? 'Public liveness only' : controller === 'UsersController' && member.name.getText(ast) === 'getSelf' ? 'AuthMiddleware + current agency membership; legacy key removed' : 'AgencyBoundaryGuard server deny; middleware may reject first', controller === 'PublicIntegrationsController' ? 'PublicAuthMiddleware' : authenticated.has(controller) ? 'AuthMiddleware' : /WidgetController/.test(controller) ? 'widget auth middleware' : 'route-specific service; inspect method', guards].filter(Boolean).join('; '));
       }
     }
   }
@@ -73,14 +73,14 @@ const mcp = readFileSync(resolve(root, mcpSource), 'utf8');
 for (const path of ['/.well-known/oauth-protected-resource', '/.well-known/oauth-authorization-server', '/.well-known/openid-configuration', '/mcp', '/mcp/:id', '/sse/:id', '/message/:id', '/mcp-oauth-chatgpt', '/mcp-oauth', '/mcp-oauth-claude', '/mcp-oauth-dynamic']) {
   add(mcpSource, mcp.slice(0, Math.max(0, mcp.indexOf(`'${path}'`))).split('\n').length, 'MCP transport', path, 'ALL',
     path.startsWith('/.well-known') ? 'public discovery' : 'API-key/OAuth/relay principal',
-    path.startsWith('/.well-known') ? 'public metadata projection' : 'resolveAuth / OAuth middleware / org key lookup; shared tool service context');
+    'Legacy transport disabled/unregistered; startMcp Express denial');
 }
 const tools = 'libraries/nestjs-libraries/src/chat/tools/tool.list.ts';
 const toolNames = readFileSync(resolve(root, tools), 'utf8').match(/export const toolList = \[([\s\S]*?)\];/)[1].match(/\w+Tool/g) || [];
-for (const name of toolNames) add(tools, 1, 'MCP tool', name, 'TOOL', 'resolved organization principal', 'MCP context; inspect corresponding tool implementation and service');
+for (const name of toolNames) add(tools, 1, 'MCP tool', name, 'TOOL', 'resolved organization principal', 'No registered transport; Nest copilot route denied; createPost requires explicit scoped actor');
 
 const upload = 'apps/frontend/src/app/(app)/api/uploads/[[...path]]/route.ts';
-add(upload, 25, 'media bytes', '/api/uploads/*; /uploads/* rewrite', 'GET', 'public URL visitor/provider', 'path traversal confinement and range reads; no client authorization in handler');
+add(upload, 25, 'media bytes', '/api/uploads/*; /uploads/* rewrite', 'GET', 'public URL visitor/provider', 'AgencyService media client authorization before bytes; private no-store; realpath confinement');
 for (const file of walk(resolve(root, 'libraries/nestjs-libraries/src/integrations/social')).filter((p) => p.endsWith('.ts'))) {
   const source = readFileSync(file, 'utf8');
   const ast = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
@@ -89,7 +89,7 @@ for (const file of walk(resolve(root, 'libraries/nestjs-libraries/src/integratio
       const bindings = decorators(member).map(callName).filter((name) => ['Plug', 'InternalPlug', 'Tool'].includes(name));
       for (const binding of bindings) add(relative(root, file), ast.getLineAndCharacterOfPosition(member.getStart(ast)).line + 1,
         `provider ${binding}`, member.name.getText(ast), 'PROVIDER', 'staff/tool/automation channel principal',
-        'provider metadata and IntegrationTrigger/plug service; classify each external mutation before enabling scoped principals');
+        'Legacy HTTP/tool routes denied; plug activities AND service methods disabled; no unscoped provider invocation');
     }
   }
 }
@@ -101,15 +101,16 @@ const servicePaths = [
 for (const [source, names] of servicePaths) {
   const text = readFileSync(resolve(root, source), 'utf8');
   for (const name of names) {
-    const match = new RegExp(`(?:async )?${name}\\(`).exec(text);
-    if (!match) throw new Error(`Inventory method missing: ${source}:${name}`);
-    add(source, text.slice(0, match.index).split('\n').length, 'worker', name, 'INTERNAL', 'service/job identity; originating actor not retained as scoped principal',
-      'organization/post lookup and existing retry semantics; no general revision approval gate');
+    const ast = ts.createSourceFile(source, text, ts.ScriptTarget.Latest, true);
+    const method = ast.statements.filter(ts.isClassDeclaration).flatMap(c => c.members.filter(ts.isMethodDeclaration)).find(m => m.name.getText(ast) === name);
+    if (!method) throw new Error(`Inventory method missing: ${source}:${name}`);
+    add(source, ast.getLineAndCharacterOfPosition(method.getStart(ast)).line + 1, 'worker', name, 'INTERNAL', 'retained originating scoped actor for new posts; legacy records actorless',
+      'createPost requires actor; legacy status/date/settings/generation denied; shared provider activities recheck current owner/grants; pending/plugs disabled; approval gate belongs to Phase 2');
   }
 }
 for (const file of walk(resolve(root, 'apps/orchestrator/src/workflows')).filter((p) => p.endsWith('.ts'))) {
   add(relative(root, file), 1, 'workflow', relative(resolve(root, 'apps/orchestrator/src/workflows'), file), 'WORKFLOW',
-    'Temporal job identity', 'workflow version and shared activity contracts; review direct and delayed side effects');
+    'Temporal job identity', 'Shared post activity scope checks across versions; actorless/quarantined work denied; automatic media/RSS/plugs/mail audiences disabled; no workflow replay edits');
 }
 const headers = Object.keys(rows[0]);
 const quote = (v) => '"' + String(v).replaceAll('"', '""') + '"';

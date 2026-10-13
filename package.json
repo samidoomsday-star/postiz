@@ -43,7 +43,7 @@
     "test:browser": "playwright test --config playwright.agency.config.ts --project chromium",
     "agency:configure": "python3 scripts/agency/configure.py",
     "agency:services": "bash scripts/agency/with-env.sh docker compose -f compose.agency.yaml up -d --wait",
-    "lint:agency": "eslint --config eslint.agency.config.mjs tests/agency libraries/helpers/src/testing libraries/nestjs-libraries/src/integrations/social/synthetic.provider.ts apps/frontend/src/fonts/jakarta.ts scripts/agency/*.mjs playwright.agency.config.ts vitest.agency.config.mts",
+    "lint:agency": "eslint --config eslint.agency.config.mjs tests/agency libraries/helpers/src/testing libraries/nestjs-libraries/src/integrations/social/synthetic.provider.ts apps/frontend/src/fonts/jakarta.ts scripts/agency/*.mjs playwright.agency.config.ts vitest.agency.config.mts libraries/nestjs-libraries/src/agency apps/backend/src/agency \"apps/frontend/src/app/(app)/agency\" \"apps/frontend/src/app/(app)/api/uploads\" apps/backend/src/services/auth/public.auth.middleware.ts libraries/nestjs-libraries/src/chat/start.mcp.ts apps/backend/src/app.module.ts apps/backend/src/api/api.module.ts apps/backend/src/api/routes/users.controller.ts apps/backend/src/services/auth/auth.middleware.ts apps/frontend/src/proxy.ts apps/orchestrator/src/activities libraries/nestjs-libraries/src/database/prisma/database.module.ts libraries/nestjs-libraries/src/database/prisma/posts/posts.service.ts libraries/nestjs-libraries/src/database/prisma/integrations/integration.service.ts",
     "typecheck:agency": "tsc --noEmit --project tsconfig.agency.tests.json"
   },
   "dependencies": {

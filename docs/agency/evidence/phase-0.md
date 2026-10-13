@@ -3,6 +3,7 @@
 Status: complete
 Started: 12 October 2026; completed: 13 October 2026 (Asia/Dhaka).
 Base commit: 7b0e720df24fd7ca55d0aa092fa7e073be02b3e1
+Delivered: phase/0-baseline at d2408aa2c62038f8192a63592ea17da22c3d96df; draft PR https://github.com/samidoomsday-star/postiz/pull/1 (unmerged).
 Branch: phase/0-baseline
 Tested precommit source tree: dbe164ec0f6c6beb422d6b1fb1796952171e48a8 (evidence/state documentation subsequently updated).
 Requirement: V1-BASE-001. Acceptance: T00-01, T00-02, T00-03, T00-04.

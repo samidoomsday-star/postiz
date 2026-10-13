@@ -213,25 +213,27 @@ model Star {
 }
 
 model Media {
-  id                 String              @id @default(uuid())
-  name               String
-  originalName       String?
-  path               String
-  organizationId     String
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  deletedAt          DateTime?
-  fileSize           Int                 @default(0)
-  type               String              @default("image")
-  thumbnail          String?
-  alt                String?
-  thumbnailTimestamp Int?
-  status             String              @default("ready")
-  processingError    String?
-  organization       Organization        @relation(fields: [organizationId], references: [id])
-  agencies           SocialMediaAgency[]
-  userPicture        User[]
-  oauthApps          OAuthApp[]
+  clientId             String?
+  ownershipQuarantined Boolean             @default(true)
+  id                   String              @id @default(uuid())
+  name                 String
+  originalName         String?
+  path                 String
+  organizationId       String
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  deletedAt            DateTime?
+  fileSize             Int                 @default(0)
+  type                 String              @default("image")
+  thumbnail            String?
+  alt                  String?
+  thumbnailTimestamp   Int?
+  status               String              @default("ready")
+  processingError      String?
+  organization         Organization        @relation(fields: [organizationId], references: [id])
+  agencies             SocialMediaAgency[]
+  userPicture          User[]
+  oauthApps            OAuthApp[]
 
   @@index([name])
   @@index([organizationId])
@@ -365,6 +367,7 @@ model Customer {
 }
 
 model Integration {
+  ownershipQuarantined  Boolean                @default(true)
   id                    String                 @id @default(cuid())
   internalId            String
   organizationId        String
@@ -455,6 +458,10 @@ model Comments {
 }
 
 model Post {
+  clientId                   String?
+  agencyActorType            String?
+  agencyActorId              String?
+  ownershipQuarantined       Boolean                   @default(true)
   id                         String                    @id @default(cuid())
   state                      State                     @default(QUEUE)
   publishDate                DateTime
@@ -1837,4 +1844,52 @@ model Announcement {
   description String
   color       AnnouncementColor @default(INFO)
   createdAt   DateTime          @default(now())
+}
+
+// Agency controls deliberately reuse Customer as the client boundary.
+model AgencyGrant {
+  id             String    @id @default(uuid())
+  organizationId String
+  userId         String
+  clientId       String
+  role           String
+  channelIds     String[]  @default([])
+  expiresAt      DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@unique([organizationId, userId, clientId, role])
+  @@index([organizationId, userId])
+}
+
+model AgencyCredential {
+  id             String    @id @default(uuid())
+  organizationId String
+  creatorId      String
+  name           String
+  secretHash     String    @unique
+  prefix         String
+  clientIds      String[]
+  channelIds     String[]  @default([])
+  actions        String[]  @default(["content:read", "draft:write"])
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  lastUsedAt     DateTime?
+
+  @@index([organizationId])
+}
+
+model AgencyAudit {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String?
+  actorType      String
+  actorId        String
+  action         String
+  resourceId     String
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId, createdAt])
 }

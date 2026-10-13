@@ -67,3 +67,7 @@ apps/frontend/public/g.js
 /.agency/
 /test-results/
 /playwright-report/
+
+# Python planning/migration helper bytecode
+__pycache__/
+*.py[cod]

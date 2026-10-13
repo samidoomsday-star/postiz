@@ -24,6 +24,10 @@ Read this file, `docs/agency/README.md`, `docs/agency/project-state.json`, and t
 
 When a completed phase branch is not merged, continue from that tested commit on the next phase branch and record the base. Do not pretend origin/main contains unmerged changes. Do not claim a final GitHub handoff until a cloneable branch contains all phases. User authorization to merge is a separate action; do not ask for it before the concrete PR is ready.
 
+## Current staged boundary
+
+Phase 1 uses `/agency` and the minimal client/access workspace. Read ADR-011 and its evidence report before adapting retained editor/calendar/media routes. Legacy HTTP/MCP/widget/preview/automation paths are denied; reopening a controller or removing the guard does not implement scoped access. Call shared services with a server-resolved current actor, never a request-body actor or inherited organization key. Phase 2 must integrate retained Postiz editing/media with immutable approvals, bounded provider asset access and the dispatch claim before the full workflow is available. Review portal/dashboard and all V2 work remain in their assigned phases.
+
 ## Engineering constraints
 
 - Authorization is server-enforced for every entry path, including workers. Never couple client access to billing configuration or an absent Stripe key. UI filters are not authorization.

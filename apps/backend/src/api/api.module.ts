@@ -1,3 +1,4 @@
+import { AgencyController } from '../agency/agency.controller';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthController } from '@gitroom/backend/api/routes/auth.controller';
 import { AuthService } from '@gitroom/backend/services/auth/auth.service';
@@ -89,6 +90,7 @@ const authenticatedController = [
         ClippingWidgetController,
       ]
     : [
+        AgencyController,
         RootController,
         PaymentController,
         StripeController,

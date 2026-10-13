@@ -1,3 +1,5 @@
+import { AgencyService } from '../../../agency/agency.service';
+import { AgencyActor } from '../../../agency/policy';
 import {
   BadRequestException,
   Injectable,
@@ -67,6 +69,7 @@ type PostWithConditionals = Post & {
 export class PostsService {
   private storage = UploadFactory.createStorage();
   constructor(
+    private _agencyService: AgencyService,
     private _postRepository: PostsRepository,
     private _integrationManager: IntegrationManager,
     private _integrationService: IntegrationService,
@@ -1100,8 +1103,11 @@ export class PostsService {
     orgId: string,
     body: CreatePostDto,
     creationMethod: CreationMethod,
-    keepGroup = false
+    keepGroup = false,
+    agencyActor?: AgencyActor
   ): Promise<any[]> {
+    if (!agencyActor) throw new BadRequestException('Scoped agency actor required');
+    const agencyClient = await this._agencyService.validateDraft(agencyActor, orgId, body);
     const postList = [];
     const batchId = uuidv4();
     for (const post of body.posts) {
@@ -1158,6 +1164,8 @@ export class PostsService {
         posts.filter((p) => existingIds.includes(p.id))
       );
 
+      await this._agencyService.bindPosts(agencyActor, agencyClient, posts.map(p => p.id), body.type !== 'draft');
+
       if (body.type !== 'update') {
         this.startWorkflow(
           post.settings.__type.split('-')[0].toLowerCase(),
@@ -1187,141 +1195,8 @@ export class PostsService {
     postId: string,
     settings: Record<string, any>,
     creationMethod: CreationMethod
-  ): Promise<{ postId: string; publishDate: string }> {
-    // Ordered as post -> comments, root includes integration and tags.
-    const ordered = await this.getPostsRecursively(postId, true, orgId, true);
-
-    const [root] = ordered;
-    if (!root) {
-      throw new NotFoundException('Post not found');
-    }
-
-    if (root.parentPostId) {
-      throw new BadRequestException(
-        'This id belongs to a comment, pass the id of the main post'
-      );
-    }
-
-    if (root.state !== 'QUEUE' && root.state !== 'DRAFT') {
-      throw new BadRequestException(
-        'Only scheduled posts that were not published yet (or drafts) can be updated'
-      );
-    }
-
-    if (
-      root.state === 'QUEUE' &&
-      dayjs.utc(root.publishDate).isBefore(dayjs.utc())
-    ) {
-      throw new BadRequestException(
-        'The publish time of this post already passed, it cannot be updated'
-      );
-    }
-
-    const integration = (root as any).integration;
-
-    let existingSettings: Record<string, any>;
-    try {
-      existingSettings = JSON.parse(root.settings || '{}');
-    } catch (err) {
-      existingSettings = {};
-    }
-
-    // Merge: only the passed keys change, everything else stays.
-    const mergedSettings = {
-      ...existingSettings,
-      ...(settings || {}),
-      __type: integration.providerIdentifier,
-    };
-
-    // Keep the existing content/ids so the posts are updated in place (the
-    // workflow identity is preserved) - only the settings differ.
-    const value = ordered.map((p) => {
-      let image = [];
-      try {
-        image = JSON.parse(p.image || '[]');
-      } catch (err) {}
-      return {
-        id: p.id,
-        content: p.content,
-        delay: p.delay || 0,
-        image,
-      };
-    });
-
-    // Same server-side validation as the dashboard / public create route.
-    const [validation] = await this.validatePosts(orgId, [
-      {
-        integration: { id: integration.id },
-        settings: mergedSettings,
-        value: value.map((p) => ({ content: p.content, image: p.image })),
-      },
-    ]);
-
-    if (validation.emptyContent) {
-      throw new BadRequestException(
-        `${validation.name}: Your post should have at least one character or one image.`
-      );
-    }
-
-    if (root.state !== 'DRAFT') {
-      if (!validation.valid) {
-        throw new BadRequestException(
-          `${validation.name}: ${
-            validation.settingsError || 'Please fix your settings'
-          }`
-        );
-      }
-
-      if (validation.errors !== true) {
-        throw new BadRequestException(
-          `${validation.name}: ${validation.errors}`
-        );
-      }
-
-      if (validation.tooLong) {
-        throw new BadRequestException(
-          `${validation.name}: The maximum characters is ${validation.maximumCharacters}`
-        );
-      }
-    }
-
-    const date = dayjs.utc(root.publishDate).format('YYYY-MM-DDTHH:mm:ss');
-
-    const [output] = await this.createPost(
-      orgId,
-      {
-        date,
-        // Settings-only update: keep the current state and leave the running
-        // publish workflow alone.
-        type: 'update',
-        shortLink: false,
-        tags: ((root as any).tags || []).map((t: any) => ({
-          value: t.tag.name,
-          label: t.tag.name,
-        })),
-        posts: [
-          {
-            integration,
-            group: root.group,
-            settings: mergedSettings,
-            value,
-          },
-        ],
-      } as any,
-      creationMethod,
-      // Keep the group stable: a client may have the calendar open while the
-      // settings are updated out of band, and the calendar links posts by group.
-      true
-    );
-
-    if (!output) {
-      throw new BadRequestException('Failed to update the post');
-    }
-
-    return {
-      postId: output.postId,
-      publishDate: date,
-    };
+  ): Promise<never> {
+    throw new BadRequestException('Legacy mutation is disabled; use scoped agency operations');
   }
 
   async separatePosts(content: string, len: number) {
@@ -1336,25 +1211,8 @@ export class PostsService {
     orgId: string,
     id: string,
     status: 'draft' | 'schedule'
-  ) {
-    const getPostById = await this._postRepository.getPostById(id, orgId);
-    if (!getPostById) {
-      throw new BadRequestException('Post not found');
-    }
-
-    const state: State = status === 'draft' ? 'DRAFT' : 'QUEUE';
-    await this._postRepository.changeState(id, state);
-
-    try {
-      await this.startWorkflow(
-        getPostById.integration.providerIdentifier.split('-')[0].toLowerCase(),
-        getPostById.id,
-        orgId,
-        state
-      );
-    } catch (err) {}
-
-    return { id, state };
+  ): Promise<never> {
+    throw new BadRequestException('Legacy mutation is disabled; use scoped agency operations');
   }
 
   async changeDate(
@@ -1363,122 +1221,12 @@ export class PostsService {
     date: string,
     action: 'schedule' | 'update' = 'schedule',
     republish = false
-  ) {
-    const getPostById = await this._postRepository.getPostById(id, orgId);
-
-    if (action === 'schedule' && !republish) {
-      this.guardAgainstRepublish(getPostById, 'changeDate');
-    }
-
-    // schedule: Set status to QUEUE and change date (reschedule the post)
-    // update: Just change the date without changing the status
-    const newDate = await this._postRepository.changeDate(
-      orgId,
-      id,
-      date,
-      getPostById.state === 'DRAFT',
-      action
-    );
-
-    if (action === 'schedule') {
-      try {
-        await this.startWorkflow(
-          getPostById.integration.providerIdentifier
-            .split('-')[0]
-            .toLowerCase(),
-          getPostById.id,
-          orgId,
-          getPostById.state === 'DRAFT' ? 'DRAFT' : 'QUEUE'
-        );
-      } catch (err) {}
-    }
-
-    return newDate;
+  ): Promise<never> {
+    throw new BadRequestException('Legacy mutation is disabled; use scoped agency operations');
   }
 
-  async generatePostsDraft(orgId: string, body: CreateGeneratedPostsDto) {
-    const getAllIntegrations = (
-      await this._integrationService.getIntegrationsList(orgId)
-    ).filter((f) => !f.disabled && f.providerIdentifier !== 'reddit');
-
-    // const posts = chunk(body.posts, getAllIntegrations.length);
-    const allDates = dayjs()
-      .isoWeek(body.week)
-      .year(body.year)
-      .startOf('isoWeek');
-
-    const dates = [...new Array(7)].map((_, i) => {
-      return allDates.add(i, 'day').format('YYYY-MM-DD');
-    });
-
-    const findTime = (): string => {
-      const totalMinutes = Math.floor(Math.random() * 144) * 10;
-
-      // Convert total minutes to hours and minutes
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-
-      // Format hours and minutes to always be two digits
-      const formattedHours = hours.toString().padStart(2, '0');
-      const formattedMinutes = minutes.toString().padStart(2, '0');
-      const randomDate =
-        shuffle(dates)[0] + 'T' + `${formattedHours}:${formattedMinutes}:00`;
-
-      if (dayjs(randomDate).isBefore(dayjs())) {
-        return findTime();
-      }
-
-      return randomDate;
-    };
-
-    for (const integration of getAllIntegrations) {
-      for (const toPost of body.posts) {
-        const group = makeId(10);
-        const randomDate = findTime();
-
-        await this.createPost(
-          orgId,
-          {
-            type: 'draft',
-            date: randomDate,
-            order: '',
-            shortLink: false,
-            tags: [],
-            posts: [
-              {
-                group,
-                integration: {
-                  id: integration.id,
-                },
-                settings: {
-                  __type: integration.providerIdentifier as any,
-                  title: '',
-                  tags: [],
-                  subreddit: [],
-                },
-                value: [
-                  ...toPost.list.map((l) => ({
-                    id: '',
-                    content: l.post,
-                    delay: 0,
-                    image: [],
-                  })),
-                  {
-                    id: '',
-                    delay: 0,
-                    content: `Check out the full story here:\n${
-                      body.postId || body.url
-                    }`,
-                    image: [],
-                  },
-                ],
-              },
-            ],
-          },
-          'WEB'
-        );
-      }
-    }
+  async generatePostsDraft(orgId: string, body: CreateGeneratedPostsDto): Promise<never> {
+    throw new BadRequestException('Legacy mutation is disabled; use scoped agency operations');
   }
 
   findAllExistingCategories() {

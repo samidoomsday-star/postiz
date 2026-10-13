@@ -3,7 +3,22 @@ import plugin from '@typescript-eslint/eslint-plugin';
 
 export default [{
   files: [
+    'apps/backend/src/app.module.ts',
+    'apps/backend/src/api/api.module.ts',
+    'apps/backend/src/api/routes/users.controller.ts',
+    'apps/backend/src/services/auth/auth.middleware.ts',
+    'apps/frontend/src/proxy.ts',
+    'apps/orchestrator/src/activities/*.ts',
+    'libraries/nestjs-libraries/src/database/prisma/database.module.ts',
+    'libraries/nestjs-libraries/src/database/prisma/posts/posts.service.ts',
+    'libraries/nestjs-libraries/src/database/prisma/integrations/integration.service.ts',
     'tests/agency/**/*.ts',
+    'libraries/nestjs-libraries/src/agency/**/*.ts',
+    'apps/backend/src/agency/**/*.ts',
+    'apps/frontend/src/app/(app)/agency/**/*.tsx',
+    'apps/frontend/src/app/(app)/api/uploads/**/*.ts',
+    'apps/backend/src/services/auth/public.auth.middleware.ts',
+    'libraries/nestjs-libraries/src/chat/start.mcp.ts',
     'libraries/helpers/src/testing/**/*.ts',
     'libraries/nestjs-libraries/src/integrations/social/synthetic.provider.ts',
     'apps/frontend/src/fonts/jakarta.ts',
@@ -20,6 +35,6 @@ export default [{
     'no-unreachable': 'error',
     'valid-typeof': 'error',
     eqeqeq: ['error', 'always'],
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
   },
-}];
+}, { files: ['apps/backend/src/app.module.ts', 'apps/backend/src/api/api.module.ts', 'apps/backend/src/api/routes/users.controller.ts', 'apps/backend/src/services/auth/auth.middleware.ts', 'apps/frontend/src/proxy.ts', 'apps/orchestrator/src/activities/*.ts', 'libraries/nestjs-libraries/src/database/prisma/database.module.ts', 'libraries/nestjs-libraries/src/database/prisma/posts/posts.service.ts', 'libraries/nestjs-libraries/src/database/prisma/integrations/integration.service.ts'], rules: { '@typescript-eslint/no-unused-vars': 'off' } }];

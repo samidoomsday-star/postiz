@@ -24,6 +24,8 @@ jobs:
           python3 scripts/agency/plan.py check
           bash scripts/agency/with-env.sh pnpm run lint:agency
           bash scripts/agency/with-env.sh pnpm run typecheck:agency
+      - name: Rehearse versioned migration and snapshot restore
+        run: bash scripts/agency/with-env.sh python3 scripts/agency/rehearse-migration.py
       - name: Unit tests
         run: bash scripts/agency/with-env.sh pnpm test
       - name: Start and exercise real-service API/browser paths

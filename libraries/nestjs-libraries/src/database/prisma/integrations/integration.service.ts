@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import {
   forwardRef,
   HttpException,
@@ -574,43 +575,8 @@ export class IntegrationService {
       information: any;
     },
     forceRefresh = false
-  ): Promise<any> {
-    const originalIntegration =
-      await this._integrationRepository.getIntegrationById(
-        data.orgId,
-        data.originalIntegration
-      );
-
-    const getIntegration = await this._integrationRepository.getIntegrationById(
-      data.orgId,
-      data.integration
-    );
-
-    if (!getIntegration || !originalIntegration) {
-      return;
-    }
-
-    const getAllInternalPlugs = this._integrationManager
-      .getInternalPlugs(getIntegration.providerIdentifier)
-      .internalPlugs.find((p: any) => p.identifier === data.plugName);
-
-    if (!getAllInternalPlugs) {
-      return;
-    }
-
-    const getSocialIntegration = this._integrationManager.getSocialIntegration(
-      getIntegration.providerIdentifier
-    );
-
-    // @ts-ignore
-    await getSocialIntegration?.[getAllInternalPlugs.methodName]?.(
-      getIntegration,
-      originalIntegration,
-      data.post,
-      data.information
-    );
-
-    return;
+  ): Promise<never> {
+    throw new BadRequestException('Automatic provider plugs are disabled');
   }
 
   async processPlugs(data: {
@@ -619,35 +585,8 @@ export class IntegrationService {
     delay: number;
     totalRuns: number;
     currentRun: number;
-  }) {
-    const getPlugById = await this._integrationRepository.getPlug(data.plugId);
-    if (!getPlugById) {
-      return true;
-    }
-
-    const integration = this._integrationManager.getSocialIntegration(
-      getPlugById.integration.providerIdentifier
-    );
-
-    // @ts-ignore
-    const process = await integration[getPlugById.plugFunction](
-      getPlugById.integration,
-      data.postId,
-      JSON.parse(getPlugById.data).reduce((all: any, current: any) => {
-        all[current.name] = current.value;
-        return all;
-      }, {})
-    );
-
-    if (process) {
-      return true;
-    }
-
-    if (data.totalRuns === data.currentRun) {
-      return true;
-    }
-
-    return false;
+  }): Promise<never> {
+    throw new BadRequestException('Automatic provider plugs are disabled');
   }
 
   async createOrUpdatePlug(

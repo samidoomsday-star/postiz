@@ -55,7 +55,7 @@
     {
       "id": 1,
       "title": "Client boundaries and scoped access",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [
         0
       ],
@@ -73,8 +73,39 @@
         "T01-04",
         "T01-05"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-1.md",
+      "checks": [
+        {
+          "id": "T01-01",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-02",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-03",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-04",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts; bash scripts/agency/with-env.sh python3 scripts/agency/rehearse-migration.py",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-05",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        }
+      ],
       "blockers": []
     },
     {
