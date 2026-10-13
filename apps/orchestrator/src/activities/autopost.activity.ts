@@ -22,6 +22,6 @@ export class AutopostActivity {
 
   @ActivityMethod()
   async autoPost(id: string) {
-    return this._autoPostService.startAutopost(id)
+    throw new Error('RSS publication is disabled until scoped revisions exist')
   }
 }

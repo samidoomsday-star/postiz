@@ -2,7 +2,7 @@
 
 The owner confirmed on 12 October 2026: build a focused V1 for small agencies; reserve other enhancements for V2; pin Postiz and review updates manually. This folder is the development source of truth, replacing chat memory as the execution plan.
 
-**Setup is complete. Phase 0 is next and has not started.** No application build, database migration, feature implementation, or real social-account test has run during planning setup.
+The planning foundation is complete. **Read project-state.json and phase reports for current progress.** Planning-stage notes are historical; they do not override recorded implementation evidence. Real social-account tests require separate authorization.
 
 ## Documents
 
@@ -18,6 +18,8 @@ The owner confirmed on 12 October 2026: build a focused V1 for small agencies; r
 | [Decisions](DECISIONS.md) | Agreed defaults, rationale, outstanding technical decisions |
 | [Upstream policy](UPSTREAM.md) | Baseline provenance, manual update policy and licenses |
 | [Development runbook](DEVELOPMENT.md) | Current facts and Phase 0's required executable setup deliverables |
+| [Client review workflow](REVIEW-PORTAL.md) | Verified invitation, weekly review, feedback and staff handoff contract |
+| [Operator dashboard](ACTION-DASHBOARD.md) | Scoped action queue, truthful outcomes and safe recovery runbook |
 | [Release checklist](RELEASE-CHECKLIST.md) | What “ready to clone and test locally” requires |
 | [V2 backlog](V2-BACKLOG.md) | Explicitly deferred work, promotion rules |
 | [Research](research/postiz-agency-product-research.md) | Evidence and limitations; older recommendations do not override agreed V1 |

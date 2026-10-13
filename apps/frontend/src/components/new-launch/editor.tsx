@@ -1156,8 +1156,9 @@ export const OnlyEditor = forwardRef<
     onChange: (value: string) => void;
     paste?: (event: ClipboardEvent | File[], slice?: Slice) => boolean;
     autoFocus?: boolean;
+    agencyLabel?: string;
   }
->(({ editorType, inlineImages, value, onChange, paste, autoFocus }, ref) => {
+>(({ editorType, inlineImages, value, onChange, paste, autoFocus, agencyLabel }, ref) => {
   const t = useT();
   const fetch = useFetch();
 
@@ -1173,7 +1174,7 @@ export const OnlyEditor = forwardRef<
         return [];
       }
 
-      if (!internal?.integration.id) {
+      if (agencyLabel || !internal?.integration.id) {
         return [];
       }
 
@@ -1194,7 +1195,7 @@ export const OnlyEditor = forwardRef<
         return [];
       }
     },
-    [internal, fetch]
+    [internal, fetch, agencyLabel]
   );
 
   const editor = useEditor({
@@ -1294,7 +1295,7 @@ export const OnlyEditor = forwardRef<
             }),
           ]
         : []),
-      ...(internal?.integration?.id
+      ...(!agencyLabel && internal?.integration?.id
         ? [
             Mention.configure({
               HTMLAttributes: {
@@ -1349,12 +1350,17 @@ export const OnlyEditor = forwardRef<
     shouldRerenderOnTransaction: true,
     immediatelyRender: false,
     editorProps: {
+      ...(agencyLabel ? { attributes: { role: 'textbox', 'aria-label': agencyLabel, 'aria-multiline': 'true' } } : {}),
       handlePaste: (view, event, slice) => !!paste?.(event as any, slice),
     },
     onUpdate: (innerProps) => {
       onChange?.(innerProps.editor.getHTML());
     },
   });
+
+  useEffect(() => {
+    if (agencyLabel && editor && editor.getHTML() !== value) editor.commands.setContent(value || '', { emitUpdate: false });
+  }, [editor, value, agencyLabel]);
 
   useImperativeHandle(ref, () => ({
     editor,

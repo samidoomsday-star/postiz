@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Activity, ActivityMethod } from 'nestjs-temporal-core';
 import { MediaService } from '@gitroom/nestjs-libraries/database/prisma/media/media.service';
@@ -9,18 +10,18 @@ export class MediaActivity {
 
   // Returns the processor job id, or null when there is nothing to process
   @ActivityMethod()
-  async submitMediaProcessing(mediaId: string) {
-    return this._mediaService.submitProcessing(mediaId);
+  async submitMediaProcessing(mediaId: string): ReturnType<MediaService['submitProcessing']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   // Returns true once the media record is final (ready or failed)
   @ActivityMethod()
-  async checkMediaProcessing(mediaId: string, jobId: string) {
-    return this._mediaService.checkProcessing(mediaId, jobId);
+  async checkMediaProcessing(mediaId: string, jobId: string): ReturnType<MediaService['checkProcessing']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async failMediaProcessing(mediaId: string, error: string) {
-    return this._mediaService.failProcessing(mediaId, error);
+  async failMediaProcessing(mediaId: string, error: string): ReturnType<MediaService['failProcessing']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 }

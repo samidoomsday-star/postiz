@@ -38,8 +38,12 @@ import { SkoolProvider } from '@gitroom/nestjs-libraries/integrations/social/sko
 import { WhopProvider } from '@gitroom/nestjs-libraries/integrations/social/whop.provider';
 import { MeweProvider } from '@gitroom/nestjs-libraries/integrations/social/mewe.provider';
 import { TumblrProvider } from '@gitroom/nestjs-libraries/integrations/social/tumblr.provider';
+import { SyntheticProvider } from './social/synthetic.provider';
+import { syntheticModeEnabled } from '@gitroom/helpers/testing/synthetic-mode';
 
-export const socialIntegrationList: Array<SocialAbstract & SocialProvider> = [
+export const socialIntegrationList: Array<SocialAbstract & SocialProvider> = syntheticModeEnabled()
+  ? [new SyntheticProvider()]
+  : [
   new XProvider(),
   new LinkedinProvider(),
   new LinkedinPageProvider(),

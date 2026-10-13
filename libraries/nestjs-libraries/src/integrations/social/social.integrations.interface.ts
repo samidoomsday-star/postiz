@@ -1,5 +1,15 @@
 import { Integration } from '@prisma/client';
 
+export type AgencyRecoveryReceipt = {
+  localId: string;
+  stage: string;
+  attempt: number;
+  claimedAt: string;
+};
+export type AgencyReconciliation =
+  | { status: 'confirmed'; postId: string; releaseURL: string }
+  | { status: 'unknown' };
+
 export interface ClientInformation {
   client_id: string;
   client_secret: string;
@@ -180,6 +190,18 @@ export interface SocialProvider
   extends IAuthenticator,
     ISocialMediaIntegration {
   identifier: string;
+  // Opt-in, read-only agency recovery contracts. Generic HTTP errors or an
+  // absent receipt are never proof that an irreversible mutation did not run.
+  verifyFailedPublication?(
+    token: string,
+    receipt: AgencyRecoveryReceipt,
+    integration: Integration
+  ): Promise<boolean>;
+  reconcilePublication?(
+    token: string,
+    receipt: AgencyRecoveryReceipt,
+    integration: Integration
+  ): Promise<AgencyReconciliation>;
   refreshWait?: boolean;
   convertToJPEG?: boolean;
   stripLinks?: () => boolean;
