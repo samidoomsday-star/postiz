@@ -4,7 +4,7 @@ Read this file, `docs/agency/README.md`, `docs/agency/project-state.json`, and t
 
 ## Authorized scope
 
-- The planning foundation is complete. No implementation phase has started yet.
+- The planning foundation is complete. Read project-state.json for current implementation status; historical setup notes do not establish the next phase.
 - V1: client permissions and scoped credentials; enforced revision-specific approvals and a client review portal; an agency action dashboard and safe resolution of publishing exceptions.
 - V2: everything listed in `docs/agency/V2-BACKLOG.md`. Do not build V2 screens, schemas, services, or speculative infrastructure during V1. A minimal dependency required for a V1 acceptance criterion is permitted and must be explained in the phase report.
 - Keep the upstream baseline pinned. Never pull or merge upstream automatically; use `docs/agency/UPSTREAM.md` for manual fixes. Do not rewrite the publishing engine or alter Temporal replay behavior casually.
