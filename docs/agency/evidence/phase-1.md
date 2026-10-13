@@ -4,7 +4,7 @@ Status: complete
 Started/updated (UTC): 2026-10-13
 Base: phase/0-baseline, d2408aa2c62038f8192a63592ea17da22c3d96df; unmerged [Phase 0 PR](https://github.com/samidoomsday-star/postiz/pull/1).
 Tested application precommit tree: 3f04c6bd0aca66db3bbdfabad33acaa6e0c2e9e2; subsequent state/evidence edits are documentation only.
-Delivery: phase/1-client-access; commit/PR recorded in the delivery follow-up.
+Delivery: phase/1-client-access; application commit ccdff92bd0669fea77c9e56a195e8cba7f367e77; [draft PR #2](https://github.com/samidoomsday-star/postiz/pull/2) against main. This PR includes the unmerged Phase 0 foundation. A documentation-only follow-up records these immutable delivery references; main remains unchanged.
 
 ## Scope and implementation
 
