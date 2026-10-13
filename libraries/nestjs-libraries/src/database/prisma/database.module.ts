@@ -1,3 +1,4 @@
+import { ApprovalService } from '../../agency/approval.service';
 import { AgencyService } from '../../agency/agency.service';
 import { Global, Module } from '@nestjs/common';
 import { PrismaRepository, PrismaService, PrismaTransaction } from './prisma.service';
@@ -59,6 +60,7 @@ import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/adm
   providers: [
     PrismaService,
     AgencyService,
+    ApprovalService,
     PrismaRepository,
     PrismaTransaction,
     UsersService,

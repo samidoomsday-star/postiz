@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState, FormEvent } from 'react';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import './agency.css';
+import { RevisionWorkspace } from './revision.workspace';
 
 type Client = { id: string; name: string };
 type Channel = {
@@ -61,6 +62,7 @@ export default function AgencyAccessPage() {
   const [message, setMessage] = useState('');
   const [secret, setSecret] = useState('');
   const [busy, setBusy] = useState(false);
+  const [revisionRefresh, setRevisionRefresh] = useState(0);
   const request = useCallback(
     async (path: string, body?: unknown) => {
       const response = await fetchApi('/agency/' + path, {
@@ -122,6 +124,7 @@ export default function AgencyAccessPage() {
       await reload();
       await refreshWork();
       setMessage('Saved. Current access is applied immediately.');
+      setRevisionRefresh(n => n + 1);
     } catch (e) {
       setMessage(e instanceof Error ? e.message : 'Request failed');
     } finally {
@@ -154,7 +157,7 @@ export default function AgencyAccessPage() {
         </div>
         <a href="/auth/logout">Sign out</a>
       </header>
-      <p role="status" aria-live="polite">
+      <p role="status" aria-label="Workspace status" aria-live="polite">
         {message}
       </p>
       <section aria-labelledby="content-heading">
@@ -185,47 +188,7 @@ export default function AgencyAccessPage() {
             <li key={c.id}>{c.name}</li>
           ))}
         </ul>
-        {channels.length > 0 && (
-          <form
-            onSubmit={(e) => {
-              const f = data(e);
-              const channel = channels.find((c) => c.id === f.get('channel'));
-              if (!channel) return;
-              void mutate(() =>
-                request('posts', {
-                  type: 'draft',
-                  date: new Date().toISOString(),
-                  shortLink: false,
-                  tags: [],
-                  posts: [
-                    {
-                      integration: { id: channel.id },
-                      settings: { __type: channel.providerIdentifier },
-                      value: [{ content: String(f.get('content')), image: [] }],
-                    },
-                  ],
-                })
-              );
-            }}
-          >
-            <h3>Prepare a draft</h3>
-            <label>
-              Target channel
-              <select name="channel" required>
-                {channels.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Draft content
-              <textarea name="content" required rows={4} maxLength={20000} />
-            </label>
-            <button disabled={busy}>Save draft</button>
-          </form>
-        )}
+        <RevisionWorkspace key={client} client={client} channels={channels} request={request} refresh={revisionRefresh} onError={setMessage} onSaved={async () => { await refreshWork(); setMessage('Saved. Current access is applied immediately.'); }} />
         <ul aria-label="Client posts">
           {work.map((p) => (
             <li key={p.id}>
@@ -291,7 +254,7 @@ export default function AgencyAccessPage() {
                   <option value="EDITOR">Editor</option>
                   <option value="PUBLISHER">Publisher</option>
                   <option value="REVIEWER">
-                    Reviewer (portal available in Phase 3)
+                    Reviewer
                   </option>
                 </select>
               </label>
@@ -426,7 +389,7 @@ export default function AgencyAccessPage() {
               </label>
               <label className="check">
                 <input type="checkbox" name="schedule" />
-                Allow scheduling (approval enforcement arrives in Phase 2)
+                Allow scheduling approved revisions
               </label>
               <button disabled={busy}>Create credential</button>
             </form>

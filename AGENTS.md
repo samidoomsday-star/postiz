@@ -26,7 +26,7 @@ When a completed phase branch is not merged, continue from that tested commit on
 
 ## Current staged boundary
 
-Phase 1 uses `/agency` and the minimal client/access workspace. Read ADR-011 and its evidence report before adapting retained editor/calendar/media routes. Legacy HTTP/MCP/widget/preview/automation paths are denied; reopening a controller or removing the guard does not implement scoped access. Call shared services with a server-resolved current actor, never a request-body actor or inherited organization key. Phase 2 must integrate retained Postiz editing/media with immutable approvals, bounded provider asset access and the dispatch claim before the full workflow is available. Review portal/dashboard and all V2 work remain in their assigned phases.
+Phase 2 uses `/agency` with the retained Postiz rich editor/calendar, scoped private media, immutable revisions and internal authenticated approvals. Read ADR-012, `docs/agency/APPROVALS.md` and the phase report before changing that flow. Legacy HTTP/MCP/widget/preview/automation paths remain denied. Never reopen a controller by removing the guard, dispatch from mutable Post fields, terminate an existing workflow to reschedule, or bypass the immutable claim. Use server-resolved current actors. External reviewer invitations/portal, action dashboard and V2 remain in their assigned phases. Phase 3 starts from the Phase 2 tested branch when earlier PRs are unmerged.
 
 ## Engineering constraints
 

@@ -3,3 +3,10 @@ P1-001,2,V1-AUTH-001,Exact client form label unavailable to browser locator,reso
 P1-002,2,V1-AUTH-003,Disabled activities lost inherited return contracts,resolved,phase-1,docs/agency/evidence/bugs/phase-1-fixes.md,docs/agency/evidence/phase-1.md
 P1-003,1,V1-AUTH-001,Legacy invitation-cookie join and org-wide content audiences,resolved,phase-1,docs/agency/evidence/bugs/phase-1-fixes.md,docs/agency/evidence/phase-1.md
 P1-004,3,V1-BASE-001,Remapping test retained a disposable channel,resolved,phase-1,docs/agency/evidence/bugs/phase-1-fixes.md,docs/agency/evidence/phase-1.md
+P2-001,1,V1-APR-001,Changed media denied without persisted approval invalidation,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
+P2-002,2,V1-APR-001,Editor target selection failed after asynchronous channel load,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
+P2-003,2,V1-APR-003,Redelivered workflow could erase confirmed published projection,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
+P2-004,2,V1-APR-002,Finalization policy denial entered transient retry polling,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
+P2-005,2,V1-APR-001,First-part editing omitted retained later thread parts,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
+P2-006,3,V1-APR-001,Uncommitted media copies could accumulate on failed edits,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
+P2-007,2,V1-APR-001,Requested-changes reviews could survive material edits in reviewer lists,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md

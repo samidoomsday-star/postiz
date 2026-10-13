@@ -27,6 +27,7 @@ describe('explicit client policy primitives', () => {
   it('role composition must be explicit and reviewer cannot read raw drafts', () => {
     expect(roleActions.EDITOR).not.toContain('publish:schedule');
     expect(roleActions.PUBLISHER).not.toContain('draft:write');
-    expect(roleActions.REVIEWER).toEqual([]);
+    expect(roleActions.REVIEWER).toEqual(['review:decide']);
+    expect(roleActions.REVIEWER).not.toContain('content:read');
   });
 });

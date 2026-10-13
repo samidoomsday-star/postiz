@@ -1,4 +1,4 @@
-import { AgencyService } from '@gitroom/nestjs-libraries/agency/agency.service';
+import { ApprovalService } from '@gitroom/nestjs-libraries/agency/approval.service';
 import { ForbiddenException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import {
@@ -98,7 +98,7 @@ function reanchorInterval(post: any) {
 @Activity()
 export class PostActivity {
   constructor(
-    private _agencyService: AgencyService,
+    private _approvalService: ApprovalService,
     private _postService: PostsService,
     private _notificationService: NotificationService,
     private _integrationManager: IntegrationManager,
@@ -151,7 +151,7 @@ export class PostActivity {
 
   @ActivityMethod()
   async updatePost(id: string, postId: string, releaseURL: string) {
-    await this._postService.updatePost(id, postId, releaseURL);
+    if (!await this._approvalService.projectReceipt(id, postId, releaseURL)) await this._postService.updatePost(id, postId, releaseURL);
   }
 
   @ActivityMethod()
@@ -214,47 +214,15 @@ export class PostActivity {
     integration: Integration,
     posts: Post[]
   ) {
-    integration = await this._integrationService.getIntegrationById(integration.organizationId, integration.id);
-    await this._agencyService.assertDispatch(integration, posts);
-    return withHeartbeat(() =>
-      this.handleDisconnect(integration, async () => {
-        const getIntegration = this._integrationManager.getSocialIntegration(
-          integration.providerIdentifier
-        );
-
-        const newPosts = await this._postService.updateTags(
-          integration.organizationId,
-          posts
-        );
-
-        return getIntegration.comment(
-          integration.internalId,
-          postId,
-          lastPostId,
-          integration.token,
-          await Promise.all(
-            (newPosts || []).map(async (p) => ({
-              id: p.id,
-              message: stripHtmlValidation(
-                getIntegration.editor,
-                p.content,
-                true,
-                false,
-                !/<\/?[a-z][\s\S]*>/i.test(p.content),
-                getIntegration.mentionFormat
-              ),
-              settings: JSON.parse(p.settings || '{}'),
-              media: await this._postService.updateMedia(
-                p.id,
-                JSON.parse(p.image || '[]'),
-                getIntegration?.convertToJPEG || false
-              ),
-            }))
-          ),
-          integration
-        );
-      })
-    );
+    const claim = await this._approvalService.claim(integration, posts);
+    if (claim.cached) return claim.result;
+    try {
+      await this._approvalService.commentParent(claim, postId, lastPostId);
+      const parts = await this._approvalService.providerParts(claim);
+      const result = await withHeartbeat(() => this.handleDisconnect(claim.integration, () => this._integrationManager.getSocialIntegration(claim.integration.providerIdentifier).comment(claim.integration.internalId, postId, lastPostId, claim.integration.token, parts as any, claim.integration)));
+      await this._approvalService.finish(claim, result);
+      return this._approvalService.wrapPending(claim, result);
+    } catch (error) { await this._approvalService.failed(claim, (error instanceof BadBody && claim.rows.length === 1)); throw error; }
   }
 
   @ActivityMethod()
@@ -327,106 +295,27 @@ export class PostActivity {
     posts: Post[],
     allowPending: boolean
   ) {
-    integration = await this._integrationService.getIntegrationById(integration.organizationId, integration.id);
-    posts = await this._agencyService.assertDispatch(integration, posts);
-    // Stage markers: whatever ran last is what a timed-out activity reports.
-    // Providers that go through this.fetch overwrite these with the exact URL;
-    // the ones on their own HTTP client (x, youtube, bluesky) are still
-    // narrowed down to the step they hung on.
-    setHeartbeatDetails('subscription lookup');
-    if (process.env.STRIPE_SECRET_KEY) {
-      const subscription = await this._subscriptionService.getSubscription(
-        integration.organizationId
-      );
-
-      if (!subscription) {
-        throw new Error('No active subscription found for this organization.');
-      }
-    }
-
-    const getIntegration = this._integrationManager.getSocialIntegration(
-      integration.providerIdentifier
-    );
-
-    setHeartbeatDetails('update tags');
-    const newPosts = await this._postService.updateTags(
-      integration.organizationId,
-      posts
-    );
-
-    setHeartbeatDetails('resolve media');
-    const mappedPosts = await Promise.all(
-      (newPosts || []).map(async (p) => ({
-        id: p.id,
-        message: stripHtmlValidation(
-          getIntegration.editor,
-          p.content,
-          true,
-          false,
-          !/<\/?[a-z][\s\S]*>/i.test(p.content),
-          getIntegration.mentionFormat,
-          !!getIntegration.inlineImages?.(JSON.parse(p.settings || '{}'))
-        ),
-        settings: JSON.parse(p.settings || '{}'),
-        media: await this._postService.updateMedia(
-          p.id,
-          JSON.parse(p.image || '[]'),
-          getIntegration?.convertToJPEG || false
-        ),
-      }))
-    );
-
-    await this._agencyService.assertDispatch(integration, posts);
-    setHeartbeatDetails(`${integration.providerIdentifier}: publish`);
-    const postNow =
-      allowPending && getIntegration.postPending
-        ? await getIntegration.postPending(
-            integration.internalId,
-            integration.token,
-            mappedPosts,
-            integration
-          )
-        : await getIntegration.post(
-            integration.internalId,
-            integration.token,
-            mappedPosts,
-            integration
-          );
-
-    // The post is already published at this point: the streak is best-effort,
-    // failing the activity here would retry it and publish again.
-    setHeartbeatDetails(`${integration.providerIdentifier}: published, streak`);
+    const claim = await this._approvalService.claim(integration, posts);
+    if (claim.cached) return claim.result;
     try {
-      await this._temporalService.client
-        .getRawClient()
-        .workflow.start('streakWorkflowV2', {
-          args: [{ organizationId: integration.organizationId }],
-          workflowId: `streak_${integration.organizationId}`,
-          taskQueue: 'main',
-          // Keep a running streak, it checks for newer posts before it ends
-          workflowIdConflictPolicy: 'USE_EXISTING',
-          typedSearchAttributes: new TypedSearchAttributes([
-            {
-              key: organizationId,
-              value: integration.organizationId,
-            },
-          ]),
-        });
-    } catch (err) {
-      /**empty**/
-    }
-
-    return postNow;
+      const provider = this._integrationManager.getSocialIntegration(claim.integration.providerIdentifier);
+      const parts = await this._approvalService.providerParts(claim);
+      const result = allowPending && provider.postPending
+        ? await provider.postPending(claim.integration.internalId, claim.integration.token, parts as any, claim.integration)
+        : await provider.post(claim.integration.internalId, claim.integration.token, parts as any, claim.integration);
+      await this._approvalService.finish(claim, result);
+      return this._approvalService.wrapPending(claim, result);
+    } catch (error) { await this._approvalService.failed(claim, (error instanceof BadBody && claim.rows.length === 1)); throw error; }
   }
 
   @ActivityMethod()
   async checkPostStatus(integration: Integration, pendingData: any): Promise<PendingCheckResponse> {
-    throw new ForbiddenException('Pending publication awaits revision-scoped capabilities');
+    return this._approvalService.readPending(integration, pendingData);
   }
 
   @ActivityMethod()
   async finalizePost(integration: Integration, pendingData: any): Promise<PendingCheckResponse> {
-    throw new ForbiddenException('Finalization awaits revision-scoped pending capabilities');
+    return withHeartbeat(() => this._approvalService.finalize(integration, pendingData));
   }
 
   @ActivityMethod()
@@ -450,7 +339,7 @@ export class PostActivity {
 
   @ActivityMethod()
   async changeState(id: string, state: State, err?: any, body?: any) {
-    await this._postService.changeState(id, state, err, body);
+    if (!await this._approvalService.projectState(id, state, err)) await this._postService.changeState(id, state, err, body);
   }
 
   @ActivityMethod()

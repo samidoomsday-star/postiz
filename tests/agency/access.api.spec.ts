@@ -1,3 +1,4 @@
+import { approved, enqueue } from './approval.helpers';
 import { test, expect, APIRequestContext } from '@playwright/test';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID, createHash } from 'node:crypto';
@@ -68,20 +69,7 @@ const keyRecord = (secret: string) =>
     where: { secretHash: createHash('sha256').update(secret).digest('hex') },
   });
 test.afterAll(async () => {
-  if (disposableChannels.length) {
-    await db.post.deleteMany({
-      where: {
-        organizationId: 'fixture-agency-a',
-        integrationId: { in: disposableChannels },
-      },
-    });
-    await db.integration.deleteMany({
-      where: {
-        organizationId: 'fixture-agency-a',
-        id: { in: disposableChannels },
-      },
-    });
-  }
+  if (disposableChannels.length) await db.integration.updateMany({ where: { organizationId: 'fixture-agency-a', id: { in: disposableChannels } }, data: { deletedAt: new Date() } });
   await db.$disconnect();
 });
 
@@ -178,7 +166,7 @@ test('T01-02: staff requires explicit grants, owner role alone does not confer e
         data: input(undefined, 'schedule'),
       })
     ).status()
-  ).toBe(404);
+  ).toBe(400);
   expect(
     (
       await request.post(api + '/agency/posts', {
@@ -261,7 +249,7 @@ test('T01-02: default key is draft-only, display-once, hashed, revocable and bou
         data: input(undefined, 'schedule'),
       })
     ).status()
-  ).toBe(404);
+  ).toBe(400);
   for (const path of ['management', 'credentials', 'grants']) {
     expect(
       (
@@ -385,8 +373,7 @@ test('T01-02: channel allowlist scopes counts and draft IDs inside the same clie
       data: {},
     });
   } finally {
-    await db.post.deleteMany({ where: { integrationId: id } });
-    await db.integration.delete({ where: { id } });
+    await db.integration.update({ where: { id }, data: { deletedAt: new Date() } });
   }
 });
 
@@ -642,14 +629,11 @@ test('T01-04: revoked originating credentials block actual delayed Temporal publ
       },
     })
   ).json();
-  const body = input(undefined, 'schedule');
+  const body = input(undefined, 'draft');
   body.date = new Date(Date.now() + 5000).toISOString();
-  const r = await request.post(api + '/agency/posts', {
-    headers: { authorization: key.secret },
-    data: body,
-  });
-  expect(r.status()).toBe(201);
-  const [{ postId }] = await r.json();
+  const record = await approved(request, body, owner);
+  const { postId } = record;
+  await enqueue(request, record, { authorization: key.secret });
   expect(
     (
       await request.post(api + `/agency/credentials/${key.id}/revoke`, {

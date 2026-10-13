@@ -25,7 +25,7 @@ try {
       update: {},
       create: { id: orgId, name: `Synthetic Agency ${agency.toUpperCase()}` },
     });
-    for (const role of ['owner', 'editor']) {
+    for (const role of ['owner', 'editor', 'reviewer']) {
       const userId = `fixture-user-${agency}-${role}`;
       await prisma.user.upsert({
         where: { id: userId },
@@ -84,7 +84,7 @@ try {
   }
   for (const agency of ['a', 'b']) {
     for (const client of ['1', '2'])
-      for (const role of ['EDITOR', 'PUBLISHER']) {
+      for (const role of ['EDITOR', 'PUBLISHER', 'REVIEWER']) {
         const data = {
           organizationId: `fixture-agency-${agency}`,
           userId: `fixture-user-${agency}-owner`,
@@ -108,6 +108,10 @@ try {
       update: {},
       create: data,
     });
+  }
+  for (const agency of ['a', 'b']) {
+    const data = { organizationId: `fixture-agency-${agency}`, userId: `fixture-user-${agency}-reviewer`, clientId: `fixture-client-${agency}-1`, role: 'REVIEWER' };
+    await prisma.agencyGrant.upsert({ where: { organizationId_userId_clientId_role: data }, update: {}, create: data });
   }
   const file = '.agency/fixture-access.json';
   const access = existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {};

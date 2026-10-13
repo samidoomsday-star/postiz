@@ -24,7 +24,7 @@ test('T01-01 browser: editor sees only assigned client and saves a real draft', 
   const content = `Scoped browser content ${randomUUID()}`;
   await page.getByLabel('Draft content', { exact: true }).fill(content);
   await page.getByRole('button', { name: 'Save draft' }).click();
-  await expect(page.getByRole('status')).toContainText('Saved');
+  await expect(page.getByRole('status', { name: 'Workspace status' })).toContainText('Saved');
   await expect(
     page.getByLabel('Client posts').getByText(content, { exact: true })
   ).toBeVisible();

@@ -1,3 +1,6 @@
+import { ApprovalService } from '@gitroom/nestjs-libraries/agency/approval.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 import {
   BadRequestException,
   Body,
@@ -7,16 +10,21 @@ import {
   Post,
   Query,
   Req,
+  Res,
+  UseInterceptors,
+  UploadedFile,
+  StreamableFile,
 } from '@nestjs/common';
-import { CreationMethod } from '@prisma/client';
 import { AgencyService } from '@gitroom/nestjs-libraries/agency/agency.service';
-import { PostsService } from '@gitroom/nestjs-libraries/database/prisma/posts/posts.service';
 import { CreatePostDto } from '@gitroom/nestjs-libraries/dtos/posts/create.post.dto';
 import { AgencyRequest } from './agency.guard';
 
 @Controller('agency')
 export class AgencyController {
-  constructor(private agency: AgencyService, private posts: PostsService) {}
+  constructor(
+    private agency: AgencyService,
+    private approval: ApprovalService
+  ) {}
   @Get('self')
   async self(@Req() req: AgencyRequest) {
     const actor = req.agencyActor;
@@ -56,33 +64,147 @@ export class AgencyController {
   }
   @Post('posts')
   async create(@Req() r: AgencyRequest, @Body() body: CreatePostDto) {
-    // All targets/IDs/media must pass before provider validation or any write.
-    await this.agency.validateDraft(
-      r.agencyActor,
-      r.agencyActor.organizationId,
-      body
-    );
-    const validation = await this.posts.validatePosts(
-      r.agencyActor.organizationId,
-      body.posts
-    );
-    for (const item of validation) {
-      if (
-        item.emptyContent ||
-        (body.type !== 'draft' &&
-          (!item.valid || item.errors !== true || item.tooLong))
-      )
-        throw new BadRequestException(
-          'Content or provider settings are invalid'
-        );
+    return this.approval.save(r.agencyActor, body);
+  }
+  @Get('clients/:id/works') works(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string
+  ) {
+    return this.approval.list(r.agencyActor, id);
+  }
+  @Get('works/:id') work(@Req() r: AgencyRequest, @Param('id') id: string) {
+    return this.approval.view(r.agencyActor, id);
+  }
+  @Get('clients/:id/reviewers') reviewers(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string
+  ) {
+    return this.approval.reviewers(r.agencyActor, id);
+  }
+  @Get('reviews') reviews(@Req() r: AgencyRequest) {
+    return this.approval.reviews(r.agencyActor);
+  }
+  @Post('works/:id/revisions') editRevision(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body()
+    body: CreatePostDto & { expectedRevision: number; operationId: string }
+  ) {
+    return this.approval.save(r.agencyActor, body, id, {
+      expectedRevision: body.expectedRevision,
+      operationId: body.operationId,
+    });
+  }
+  @Post('works/:id/submit') submit(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body() body: Parameters<ApprovalService['submit']>[2]
+  ) {
+    return this.approval.submit(r.agencyActor, id, body);
+  }
+  @Post('works/:id/approve') approve(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body() body: Parameters<ApprovalService['submit']>[2]
+  ) {
+    return this.approval.decide(r.agencyActor, id, body, 'APPROVED');
+  }
+  @Post('works/:id/changes') changes(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body() body: Parameters<ApprovalService['submit']>[2]
+  ) {
+    return this.approval.decide(r.agencyActor, id, body, 'CHANGES_REQUESTED');
+  }
+  @Post('works/:id/revoke') revoke(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body() body: Parameters<ApprovalService['submit']>[2]
+  ) {
+    return this.approval.revoke(r.agencyActor, id, body);
+  }
+  @Post('works/:id/cancel') cancel(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body() body: Parameters<ApprovalService['submit']>[2]
+  ) {
+    return this.approval.revoke(r.agencyActor, id, body, true);
+  }
+  @Post('works/:id/schedule') schedule(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body() body: Parameters<ApprovalService['submit']>[2]
+  ) {
+    return this.approval.schedule(r.agencyActor, id, body);
+  }
+  private bytes(
+    response: Response,
+    value: { bytes: Buffer; mime: string },
+    range?: string
+  ) {
+    response.set({
+      'Cache-Control': 'private, no-store',
+      'Content-Type': value.mime,
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy': 'no-referrer',
+      'Accept-Ranges': 'bytes',
+    });
+    const match = /^bytes=(\d+)-(\d*)$/.exec(range || '');
+    if (!match) return new StreamableFile(value.bytes);
+    const start = +match[1];
+    const end = match[2]
+      ? Math.min(+match[2], value.bytes.length - 1)
+      : value.bytes.length - 1;
+    if (start > end || start >= value.bytes.length) {
+      response.status(416);
+      response.set('Content-Range', `bytes */${value.bytes.length}`);
+      return new StreamableFile(Buffer.alloc(0));
     }
-    return this.posts.createPost(
-      r.agencyActor.organizationId,
-      body,
-      r.agencyActor.type === 'user' ? CreationMethod.WEB : CreationMethod.API,
-      false,
-      r.agencyActor
+    response.status(206);
+    response.set(
+      'Content-Range',
+      `bytes ${start}-${end}/${value.bytes.length}`
     );
+    return new StreamableFile(value.bytes.subarray(start, end + 1));
+  }
+  @Get('revisions/:revisionId/media/:id') async preview(
+    @Req() r: AgencyRequest,
+    @Param('revisionId') revisionId: string,
+    @Param('id') id: string,
+    @Res({ passthrough: true }) response: Response
+  ) {
+    return this.bytes(
+      response,
+      await this.approval.snapshot(r.agencyActor, revisionId, id),
+      r.headers.range
+    );
+  }
+  @Get('assets/:id') async asset(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Query('cap') cap: string,
+    @Res({ passthrough: true }) response: Response
+  ) {
+    return this.bytes(
+      response,
+      await this.approval.asset(id, cap),
+      r.headers.range
+    );
+  }
+  @Post('clients/:id/media')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 20 * 1024 * 1024, files: 1 },
+    })
+  )
+  upload(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @UploadedFile()
+    file: { buffer: Buffer; originalname: string; mimetype: string },
+    @Body('alt') alt?: string
+  ) {
+    return this.approval.upload(r.agencyActor, id, file, alt);
   }
   @Get('management') management(@Req() r: AgencyRequest) {
     return this.agency.management(r.agencyActor);

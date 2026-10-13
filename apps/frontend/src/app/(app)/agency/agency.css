@@ -18,3 +18,9 @@
 .agency-access aside { border: 2px solid #d1baff; padding: 16px; }
 .agency-access output { display: block; overflow-wrap: anywhere; user-select: all; }
 @media (max-width: 480px) { .agency-access { padding: 20px 12px; } .agency-access section { padding: 16px; } .agency-access h1 { font-size: 26px; } }
+
+.agency-editor .tiptap { min-height: 140px; padding: 14px; border: 1px solid #75758b; border-radius: 6px; background: #12121d; }
+.agency-calendar { height: 650px; position: relative; min-width: 0; }
+.agency-revision-card { border: 1px solid #75758b; border-radius: 8px; margin: 16px 0; padding: 16px; overflow-wrap: anywhere; }
+.agency-revision-card pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0; padding: 12px; background: #12121d; }
+.agency-preview { max-width: 240px; max-height: 200px; object-fit: contain; }

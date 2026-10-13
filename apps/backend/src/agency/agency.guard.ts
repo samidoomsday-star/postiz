@@ -34,6 +34,7 @@ export class AgencyBoundaryGuard implements CanActivate {
       return true;
     }
     if (controller === 'RootController') return true;
+    if (controller === 'AgencyController' && handler === 'asset' && request.method === 'GET') return true;
     // Deny by controller identity, not user-controlled string prefixes. All new
     // methods in legacy controllers remain closed until deliberately adapted.
     if (

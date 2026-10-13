@@ -43,3 +43,11 @@ For database/media rollback, keep dispatch stopped, restore the pre-migration sn
 ## Development replay evidence
 
 During Phase 1 development, the initial unreleased migration was made transactional before final verification. The earlier synthetic development database was preserved under a unique `agency_development_snapshot_*` name; the Phase 0 dump was restored into a fresh `postiz_agency_test` database, and the final reviewed migration was adopted/deployed there. No data was discarded. The private preserved name is in `.agency/phase1-preserved-database.txt`; it is not a production runbook step.
+
+## Phase 2 additions
+
+Three ordered migrations add immutable approval/history/receipt/snapshot tables, Post revision bindings, shared policy locks and stronger material Post guards. The complete deployment now contains five migrations including the baseline and Phase 1 access controls. Phase 1 queues are paused again and receive no inferred revision/approval. Existing published history remains intact. Never edit an applied migration; corrective schema changes use a later migration.
+
+The extended rehearsal terminates a Phase 2 migration connection before COMMIT and verifies rollback/redeployment. A real dump/restore preserves revision/decision history and an UNKNOWN receipt; UPDATE/DELETE attempts against immutable history fail. Private `.agency-revisions` files live under UPLOAD_DIRECTORY and must be backed up/restored with their original media, database and application version. Database-only restoration cannot reconstruct snapshot bytes. Existing development history is retained; integration cleanup archives disposable channels instead of deleting revision Posts.
+
+An upstream binary remains an unsafe application rollback: it does not enforce these claims. Keep dispatch paused while restoring and reviewing current policy and unknown/in-flight receipts. The synthetic rehearsal does not authorize customer migration or undo external publication.

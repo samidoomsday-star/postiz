@@ -28,7 +28,9 @@ extend(weekOfYear);
 
 export type ListStateFilter = 'all' | 'scheduled' | 'draft' | 'published';
 
-export const CalendarContext = createContext({
+export const calendarDefaults = {
+  agencyItems: undefined as undefined | Array<{ id: string; content: string; publishAt: string; status: string }>,
+  onAgencyWork: undefined as undefined | ((id: string) => void),
   startDate: newDayjs().startOf('isoWeek').format('YYYY-MM-DD'),
   endDate: newDayjs().endOf('isoWeek').format('YYYY-MM-DD'),
   customer: null as string | null,
@@ -89,7 +91,8 @@ export const CalendarContext = createContext({
     /** empty **/
   },
   currentHour: newDayjs().startOf('hour'),
-});
+};
+export const CalendarContext = createContext(calendarDefaults);
 
 export interface Integrations {
   name: string;
@@ -391,6 +394,8 @@ export const CalendarWeekProvider: FC<{
   return (
     <CalendarContext.Provider
       value={{
+        agencyItems: undefined,
+        onAgencyWork: undefined,
         trendings,
         reloadCalendarView,
         ...filters,

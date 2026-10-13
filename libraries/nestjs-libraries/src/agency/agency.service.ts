@@ -111,11 +111,11 @@ export class AgencyService {
     return actor;
   }
 
-  private async credential(actor: AgencyActor) {
+  private async credential(actor: AgencyActor, asOf = Date.now()) {
     const key = await this.db.agencyCredential.findFirst({
       where: { id: actor.id, organizationId: actor.organizationId },
     });
-    if (!key || !live(key))
+    if (!key || !live(key, asOf))
       throw new UnauthorizedException('Invalid credential');
     // Losing the creating administrator's membership/role invalidates its keys.
     try {
@@ -143,11 +143,13 @@ export class AgencyService {
     actor: AgencyActor,
     clientId: string,
     action: AgencyAction,
-    channelId?: string
+    channelId?: string,
+    asOf = Date.now()
   ) {
     await this.client(actor, clientId);
     if (actor.type === 'credential') {
-      const key = await this.credential(actor);
+      if (action === 'review:decide') return false;
+      const key = await this.credential(actor, asOf);
       return (
         key.clientIds.includes(clientId) &&
         key.actions.includes(action) &&
@@ -169,7 +171,7 @@ export class AgencyService {
     });
     return grants.some(
       (g) =>
-        live(g) &&
+        live(g, asOf) &&
         (roleActions[g.role as AgencyRole] || []).includes(action) &&
         allowsChannel(g.channelIds, channelId)
     );
@@ -179,9 +181,10 @@ export class AgencyService {
     actor: AgencyActor,
     clientId: string,
     action: AgencyAction,
-    channelId?: string
+    channelId?: string,
+    asOf = Date.now()
   ) {
-    if (!(await this.can(actor, clientId, action, channelId))) throw denied();
+    if (!(await this.can(actor, clientId, action, channelId, asOf))) throw denied();
   }
 
   async channel(actor: AgencyActor, id: string, action: AgencyAction) {
@@ -311,7 +314,7 @@ export class AgencyService {
       body.inter ||
       body.shortLink ||
       body.republish ||
-      !['draft', 'schedule', 'now'].includes(body.type)
+      body.type !== 'draft'
     ) {
       throw new BadRequestException(
         'This operation is unavailable until its agency policy is supported'
@@ -387,6 +390,7 @@ export class AgencyService {
     scheduled = false
   ) {
     await this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
       await tx.post.updateMany({
         where: { id: { in: ids }, organizationId: actor.organizationId },
         data: {
@@ -406,53 +410,12 @@ export class AgencyService {
     });
   }
 
-  async assertDispatch(integration: Integration, posts: Post[]) {
-    if (!posts.length) throw new ForbiddenException('No scoped content');
-    const fresh = [];
-    for (const claimed of posts) {
-      const p = await this.db.post.findUnique({ where: { id: claimed.id } });
-      if (
-        !p?.agencyActorId ||
-        !['user', 'credential'].includes(p.agencyActorType || '') ||
-        p.ownershipQuarantined ||
-        p.deletedAt ||
-        p.state !== 'QUEUE' ||
-        p.publishDate.getTime() > Date.now() ||
-        p.intervalInDays ||
-        !p.clientId
-      )
-        throw new ForbiddenException('Publication is not authorized');
-      const actor: AgencyActor = {
-        type: p.agencyActorType as AgencyActor['type'],
-        id: p.agencyActorId,
-        organizationId: p.organizationId,
-      };
-      const channel = await this.channel(
-        actor,
-        p.integrationId,
-        'publish:schedule'
-      );
-      if (
-        p.integrationId !== integration.id ||
-        p.organizationId !== integration.organizationId ||
-        channel.customerId !== p.clientId ||
-        channel.disabled ||
-        channel.refreshNeeded
-      )
-        throw new ForbiddenException('Publication is not authorized');
-      // Reject stale workflow payloads after edits; Phase 2 replaces this with immutable revisions.
-      if (
-        claimed.content !== p.content ||
-        claimed.image !== p.image ||
-        claimed.settings !== p.settings ||
-        +new Date(claimed.publishDate) !== +p.publishDate
-      )
-        throw new ForbiddenException('Stale publication payload');
-      for (const image of JSON.parse(p.image || '[]'))
-        await this.media(actor, image.id);
-      fresh.push(p);
-    }
-    return fresh;
+  async assertDispatch(_integration: Integration, _posts: Post[]): Promise<never> {
+    throw new ForbiddenException('An approved immutable dispatch claim is required');
+  }
+
+  async lockPolicy(tx: Prisma.TransactionClient, orgId: string) {
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${'agency-policy:' + orgId}, 0))::text`;
   }
 
   async media(actor: AgencyActor, id: string) {
@@ -514,6 +477,8 @@ export class AgencyService {
         'Client name required (maximum 100 characters)'
       );
     return this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       const client = await tx.customer.create({
         data: { orgId: actor.organizationId, name: name.trim() },
         select: { id: true, name: true },
@@ -659,6 +624,8 @@ export class AgencyService {
     );
     const expiresAt = this.expiry(input.expiresAt, 365);
     return this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       const grant = await tx.agencyGrant.upsert({
         where: {
           organizationId_userId_clientId_role: {
@@ -698,6 +665,8 @@ export class AgencyService {
     });
     if (!grant) throw denied();
     await this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       await tx.agencyGrant.update({
         where: { id },
         data: { revokedAt: new Date() },
@@ -723,7 +692,7 @@ export class AgencyService {
     if (
       !Array.isArray(scopes) ||
       !scopes.length ||
-      scopes.some((a) => !(actions as readonly string[]).includes(a))
+      scopes.some((a) => !(actions as readonly string[]).includes(a) || a === 'review:decide')
     )
       throw new BadRequestException('Unsupported credential action');
     if (
@@ -735,6 +704,8 @@ export class AgencyService {
     const expiresAt = this.expiry(input.expiresAt, 90, true)!;
     const secret = 'agk_' + randomBytes(32).toString('base64url');
     const credential = await this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       const key = await tx.agencyCredential.create({
         data: {
           organizationId: actor.organizationId,
@@ -765,6 +736,8 @@ export class AgencyService {
     });
     if (!key) throw denied();
     await this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       await tx.agencyCredential.update({
         where: { id },
         data: { revokedAt: new Date() },
@@ -782,6 +755,8 @@ export class AgencyService {
     });
     if (!channel) throw denied();
     return this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       // Reassignment must quarantine old content, not silently reinterpret its scope.
       await tx.post.updateMany({
         where: { integrationId: id, organizationId: actor.organizationId },
@@ -828,6 +803,8 @@ export class AgencyService {
     )
       throw denied();
     return this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       const result = await tx.media.update({
         where: { id },
         data: { clientId, ownershipQuarantined: false },
@@ -873,6 +850,8 @@ export class AgencyService {
       }
     }
     return this.db.$transaction(async (tx) => {
+      await this.lockPolicy(tx, actor.organizationId);
+      await this.admin(actor);
       await tx.post.updateMany({
         where: { id: { in: group.map((p) => p.id) } },
         data: {

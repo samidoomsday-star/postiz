@@ -458,6 +458,8 @@ model Comments {
 }
 
 model Post {
+  agencyWorkId               String?
+  agencyRevisionId           String?
   clientId                   String?
   agencyActorType            String?
   agencyActorId              String?
@@ -502,6 +504,8 @@ model Post {
 
   @@index([group])
   @@index([batchId])
+  @@index([agencyWorkId])
+  @@index([agencyRevisionId])
   @@index([deletedAt])
   @@index([publishDate])
   @@index([state])
@@ -1892,4 +1896,115 @@ model AgencyAudit {
   createdAt      DateTime @default(now())
 
   @@index([organizationId, createdAt])
+}
+
+model AgencyWork {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String
+  currentVersion Int      @default(0)
+  status         String   @default("DRAFT")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, clientId, createdAt])
+}
+
+model AgencyRevision {
+  id             String   @id @default(uuid())
+  workId         String
+  organizationId String
+  clientId       String
+  version        Int
+  payload        Json
+  payloadHash    String
+  actorType      String
+  actorId        String
+  createdAt      DateTime @default(now())
+
+  @@unique([workId, version])
+  @@index([organizationId, clientId])
+}
+
+model AgencyReviewRequest {
+  id         String   @id @default(uuid())
+  workId     String
+  revisionId String   @unique
+  reviewerId String
+  status     String   @default("IN_REVIEW")
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([reviewerId, status])
+}
+
+model AgencyReviewDecision {
+  id          String   @id @default(uuid())
+  requestId   String   @unique
+  revisionId  String
+  payloadHash String
+  actorId     String
+  decision    String
+  comment     String   @default("")
+  createdAt   DateTime @default(now())
+}
+
+model AgencyCommand {
+  id             String   @id @default(uuid())
+  organizationId String
+  actorType      String
+  actorId        String
+  operationId    String
+  action         String
+  workId         String
+  payloadHash    String
+  result         Json
+  createdAt      DateTime @default(now())
+
+  @@unique([organizationId, actorType, actorId, operationId])
+}
+
+model AgencyDispatch {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String
+  postId         String
+  channelId      String
+  part           Int
+  stage          String    @default("publish")
+  state          String    @default("READY")
+  actorType      String
+  actorId        String
+  claimedAt      DateTime?
+  result         Json?
+  pendingData    Json?
+  providerId     String?
+  providerUrl    String?
+  reason         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([revisionId, channelId, part, stage])
+  @@index([postId, stage])
+  @@index([organizationId, clientId, state])
+}
+
+model AgencyMediaSnapshot {
+  id                String   @id @default(uuid())
+  organizationId    String
+  clientId          String
+  revisionId        String
+  sourceMediaId     String
+  sourceHash        String
+  sourceFingerprint String
+  contentHash       String
+  fileName          String
+  mime              String
+  size              Int
+  createdAt         DateTime @default(now())
+
+  @@index([revisionId])
+  @@index([sourceMediaId])
 }

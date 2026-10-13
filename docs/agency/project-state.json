@@ -111,7 +111,7 @@
     {
       "id": 2,
       "title": "Revision approvals and dispatch enforcement",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [
         1
       ],
@@ -129,8 +129,45 @@
         "T02-05",
         "T02-06"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-2.md",
+      "checks": [
+        {
+          "id": "T02-01",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-02",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-03",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-04",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-05",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts; bash scripts/agency/with-env.sh node scripts/agency/replay.mjs; bash scripts/agency/with-env.sh node scripts/agency/restart-approval.mjs",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-06",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        }
+      ],
       "blockers": []
     },
     {

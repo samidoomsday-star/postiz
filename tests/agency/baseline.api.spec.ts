@@ -1,3 +1,4 @@
+import { approved, enqueue } from './approval.helpers';
 import { test, expect } from '@playwright/test';
 import { PrismaClient } from '@prisma/client';
 import { Client, Connection } from '@temporalio/client';
@@ -86,9 +87,9 @@ test('T00-02 negative: invalid empty content cannot be scheduled', async ({ requ
 });
 
 test('T00-02: actual Temporal worker publishes once and persists a confirmed receipt', async ({ request }) => {
-  const create = await request.post(`${api}/agency/posts`, { headers: authA, data: body('schedule') });
-  expect(create.status(), await create.text()).toBe(201);
-  const [{ postId }] = await create.json();
+  const input = body('draft'); input.date = new Date(Date.now() + 3000).toISOString();
+  const record = await approved(request, input);
+  const { postId } = record; await enqueue(request, record, record.headers);
   await expect.poll(async () => (await prisma.post.findUniqueOrThrow({ where: { id: postId } })).state).toBe('PUBLISHED');
   const stored = await prisma.post.findUniqueOrThrow({ where: { id: postId } });
   expect(stored.releaseId).toMatch(/^synthetic-/);
@@ -101,16 +102,14 @@ test('T00-02: actual Temporal worker publishes once and persists a confirmed rec
   (republish.posts[0].value[0] as any).id = postId;
   const denied = await request.post(`${api}/agency/posts`, { headers: authA, data: republish });
   expect(denied.status()).toBe(400);
-  expect(await denied.text()).toContain('already published');
+  expect(await denied.text()).toContain('review its exact revision');
   expect(callsFor(postId).filter((r) => r.operation === 'accepted')).toHaveLength(1);
 });
 
 test('T00-02: known provider rejection produces ERROR without acceptance', async ({ request }) => {
-  const input = body('schedule');
+  const input = body('draft'); input.date = new Date(Date.now() + 3000).toISOString();
   (input.posts[0].settings as any).outcome = 'known-failure';
-  const create = await request.post(`${api}/agency/posts`, { headers: authA, data: input });
-  expect(create.status(), await create.text()).toBe(201);
-  const [{ postId }] = await create.json();
+  const record = await approved(request, input); const { postId } = record; await enqueue(request, record, record.headers);
   await expect.poll(async () => (await prisma.post.findUniqueOrThrow({ where: { id: postId } })).state).toBe('ERROR');
   expect(callsFor(postId).filter((r) => r.operation === 'accepted')).toEqual([]);
 });

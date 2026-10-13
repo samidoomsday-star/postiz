@@ -37,7 +37,7 @@ The supervisor records only its own Linux process groups and refuses an occupied
 
 Compose service ports bind loopback. Temporal development mode is local-only and is not a production topology. Its volume initializer sets the server's expected ownership; local gRPC addresses are appended to NO_PROXY without disabling the outbound proxy. Full worker functionality is verified by publication/mail tests, not solely health HTTP responses.
 
-The seed provides Agency A/B, two clients/channels per agency, and owner/editor users. Demo emails are `owner-a@example.test`, `editor-a@example.test` and equivalent B identities; password `LocalFixture123!` is an intentionally public synthetic fixture. Legacy `synthetic-api-a/b` organization keys are disabled. The seed gives owners explicit editor/publisher grants and editors only Client 1 access. Random scoped test credentials are stored only in ignored `.agency/fixture-access.json` (0600); the test suites read that file. Never copy these keys into documentation. All providers are replaced with the local synthetic provider when explicit test mode is enabled. The provider refuses live credentials and writes synthetic side-effect evidence to `.agency/results/provider-calls.jsonl`.
+The seed provides Agency A/B, two clients/channels per agency, and owner/editor/reviewer users. Demo emails are `owner-a@example.test`, `editor-a@example.test` and equivalent B identities; password `LocalFixture123!` is an intentionally public synthetic fixture. Legacy `synthetic-api-a/b` organization keys are disabled. The seed gives owners explicit editor/publisher/reviewer grants and editors only Client 1 access. Random scoped test credentials are stored only in ignored `.agency/fixture-access.json` (0600); the test suites read that file. Never copy these keys into documentation. All providers are replaced with the local synthetic provider when explicit test mode is enabled. The provider refuses live credentials and writes synthetic side-effect evidence to `.agency/results/provider-calls.jsonl`.
 
 ## Build and targeted verification
 
@@ -72,4 +72,13 @@ For diagnostics inspect `.agency/logs/{backend,orchestrator,frontend}.log`; use 
 
 Versioned migration deployment and recovery are documented in [MIGRATIONS.md](MIGRATIONS.md). The migration rehearsal includes interrupted-connection recovery, ownership quarantine, queue pausing, replay and snapshot restore. Production/customer schema migration and live providers remain outside the verified local workflow.
 
-The current authenticated entry is `/agency`. It supports assigned client content and a minimal draft form; owners manage clients, staff grants, channel mapping, credentials and audit. Legacy APIs/MCP/widgets/previews/analytics are server-denied. Local private-media reads are scoped; cloud/public media and media publication await bounded provider capabilities. Pending finalization and unsupervised background automation are disabled. Phase 2 must integrate the retained Postiz editor/calendar with immutable approvals and private media. Phase 1 does not enforce revision approval or deliver the final product. Phase 6 owns independent-clone release verification.
+The current authenticated entry is `/agency`. It supports scoped retained editing/calendar, immutable revision review, approved scheduling and private local media uploads/snapshots. Owners manage client access; reviewer-only staff see assigned internal reviews. See [APPROVALS.md](APPROVALS.md) for commands, state/race semantics and staged UI limitations. Legacy HTTP/MCP/widgets/previews/analytics and unsupervised automations remain denied. External verified invitations are Phase 3, dashboard recovery Phase 4, live provider contracts/hardening Phase 5, and independent-clone release verification Phase 6.
+
+Additional Phase 2 verification (with apps running except where the restart script owns shutdown/startup):
+
+```sh
+bash scripts/agency/with-env.sh node scripts/agency/replay.mjs
+bash scripts/agency/with-env.sh node scripts/agency/restart-approval.mjs
+```
+
+Replay consumes persisted synthetic Temporal histories without executing activities. Restart verifies a persisted approved queue reaches exactly one confirmed provider receipt. Wait for a build command to finish successfully before starting apps; a partial emitted worker directory is not runnable build evidence.

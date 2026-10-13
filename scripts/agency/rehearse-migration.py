@@ -15,6 +15,7 @@ base = ['docker', 'compose', '-f', 'compose.agency.yaml', 'exec', '-T', 'postgre
 name = 'agency_migration_fixture_' + uuid.uuid4().hex[:12]
 restore = name + '_restore'
 fresh = name + '_fresh'
+interrupted = name + '_phase2_interrupt'
 created = []
 
 def command(args, payload=None, expected=0, env=None):
@@ -65,10 +66,10 @@ IF NOT EXISTS (SELECT 1 FROM mastra_owned_fixture WHERE id='retained') THEN RAIS
 END $$;
 '''
 try:
-    for db in [name, restore, fresh]:
+    for db in [name, restore, fresh, interrupted]:
         command(base + ['createdb', '-U', 'postiz_agency', db]); created.append(db)
     prisma(fresh, 'deploy')
-    assert sql(fresh, 'SELECT count(*) FROM "_prisma_migrations" WHERE finished_at IS NOT NULL; SELECT count(*) FROM "AgencyGrant";').strip().splitlines() == ['2', '0']
+    assert sql(fresh, 'SELECT count(*) FROM "_prisma_migrations" WHERE finished_at IS NOT NULL; SELECT count(*) FROM "AgencyGrant";').strip().splitlines() == [str(len(list((root / 'libraries/nestjs-libraries/src/database/prisma/migrations').glob('*/migration.sql')))), '0']
     migrations = root / 'libraries/nestjs-libraries/src/database/prisma/migrations'
     sql(name, (migrations / '20261013000000_upstream_baseline/migration.sql').read_text())
     sql(name, fixture)
@@ -82,9 +83,27 @@ try:
     sql(name, assertions)
     prisma(name, 'deploy')  # Applied migration replay is a no-op, preserving rows.
     sql(name, assertions)
+    # Persist representative Phase 2 history and prove it survives a real dump/restore.
+    sql(name, '''INSERT INTO "AgencyWork" (id,"organizationId","clientId","currentVersion",status,"updatedAt") VALUES ('w','a','a1',1,'APPROVED',now());
+INSERT INTO "AgencyRevision" (id,"workId","organizationId","clientId",version,payload,"payloadHash","actorType","actorId") VALUES ('r','w','a','a1',1,'{"timezone":"UTC","targets":[]}','fixture-integrity-hash','user','fixture');
+INSERT INTO "AgencyReviewRequest" (id,"workId","revisionId","reviewerId",status,"expiresAt") VALUES ('q','w','r','fixture','APPROVED',now()+interval '1 day');
+INSERT INTO "AgencyReviewDecision" (id,"requestId","revisionId","payloadHash","actorId",decision,comment) VALUES ('d','q','r','fixture-integrity-hash','fixture','APPROVED','Synthetic restore evidence');
+INSERT INTO "AgencyDispatch" (id,"organizationId","clientId","workId","revisionId","postId","channelId",part,"actorType","actorId",state,"updatedAt") VALUES ('claim','a','a1','w','r','valid','i1',0,'user','fixture','UNKNOWN',now());
+''')
+    sql(name, 'UPDATE "AgencyRevision" SET "payloadHash"=\'tamper\' WHERE id=\'r\';', expected=3)
+    sql(name, 'DELETE FROM "AgencyReviewDecision" WHERE id=\'d\';', expected=3)
+    sql(interrupted, (migrations / '20261013000000_upstream_baseline/migration.sql').read_text())
+    sql(interrupted, fixture)
+    sql(interrupted, (migrations / '20261013010000_client_access/migration.sql').read_text())
+    phase2 = (migrations / '20261013020000_immutable_approvals/migration.sql').read_text()
+    sql(interrupted, phase2.rsplit('COMMIT;',1)[0]+'SELECT pg_terminate_backend(pg_backend_pid());', expected=2)
+    assert sql(interrupted, 'SELECT to_regclass(\'"AgencyRevision"\') IS NULL;').strip() == 't'
+    for version in ['20261013000000_upstream_baseline','20261013010000_client_access']: prisma(interrupted,'resolve','--applied',version)
+    prisma(interrupted,'deploy'); sql(interrupted,assertions)
     after = command(base + ['pg_dump', '-U', 'postiz_agency', '-d', name, '-Fc'])
     command(base + ['pg_restore', '-U', 'postiz_agency', '-d', restore, '--exit-on-error'], after)
     sql(restore, assertions)
+    assert sql(restore, 'SELECT count(*) FROM "AgencyReviewDecision" WHERE id=\'d\'; SELECT state FROM "AgencyDispatch" WHERE id=\'claim\';').strip().splitlines() == ['1','UNKNOWN']
     # Restore the PRE-migration snapshot into an empty disposable database after
     # clearing only this rehearsal's database, then upgrade it again.
     command(base + ['dropdb', '-U', 'postiz_agency', restore]); created.remove(restore)
@@ -93,7 +112,7 @@ try:
     assert sql(restore, 'SELECT count(*) FROM "Post" WHERE state=\'QUEUE\';').strip() == '5'
     prisma(restore, 'resolve', '--applied', '20261013000000_upstream_baseline')
     prisma(restore, 'deploy'); sql(restore, assertions)
-    print('PASS: 9 migration/restore gates: fresh Prisma deployment, additive install, valid mapping, ambiguity quarantine, paused queues/keys/media, subsystem preservation, interrupted connection rollback, deploy replay, pre/post snapshot restore + re-upgrade.')
+    print('PASS: 12 migration/restore gates: immutable revision/decision history, Phase 2 interrupted rollback, revision/decision/UNKNOWN receipt snapshot restore, fresh Prisma deployment, additive install, valid mapping, ambiguity quarantine, paused queues/keys/media, subsystem preservation, interrupted connection rollback, deploy replay, pre/post snapshot restore + re-upgrade.')
 finally:
     for db in reversed(created):
         command(base + ['dropdb', '-U', 'postiz_agency', db])

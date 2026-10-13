@@ -2,6 +2,7 @@ export const actions = [
   'content:read',
   'draft:write',
   'publish:schedule',
+  'review:decide',
 ] as const;
 export type AgencyAction = (typeof actions)[number];
 export type AgencyActor = {
@@ -15,7 +16,7 @@ export const roleActions: Record<AgencyRole, readonly AgencyAction[]> = {
   EDITOR: ['content:read', 'draft:write'],
   PUBLISHER: ['content:read', 'publish:schedule'],
   // Reviewer-only projections arrive with the review portal. No raw draft read.
-  REVIEWER: [],
+  REVIEWER: ['review:decide'],
 };
 export function live(
   record: { revokedAt: Date | null; expiresAt: Date | null },
