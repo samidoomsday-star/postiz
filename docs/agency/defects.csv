@@ -10,3 +10,9 @@ P2-004,2,V1-APR-002,Finalization policy denial entered transient retry polling,r
 P2-005,2,V1-APR-001,First-part editing omitted retained later thread parts,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
 P2-006,3,V1-APR-001,Uncommitted media copies could accumulate on failed edits,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
 P2-007,2,V1-APR-001,Requested-changes reviews could survive material edits in reviewer lists,resolved,phase-2,docs/agency/evidence/bugs/phase-2-fixes.md,docs/agency/evidence/phase-2.md
+P3-001,2,V1-REV-002,Portal string formatting exceeded inherited TypeScript target,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
+P3-002,2,V1-REV-001,Passwordless invited identity reached normal password comparison,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
+P3-003,1,V1-REV-002,Unknown provider settings could enter client preview,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
+P3-004,2,V1-REV-001,Renewal could show an old invitation-bound approval as available,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
+P3-005,2,V1-REV-002,Unrelated refresh could discard unsaved composer content,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
+P3-006,2,V1-REV-001,Immediate restart probe confused closed connections with active listener,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md

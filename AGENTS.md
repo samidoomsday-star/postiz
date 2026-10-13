@@ -26,7 +26,9 @@ When a completed phase branch is not merged, continue from that tested commit on
 
 ## Current staged boundary
 
-Phase 2 uses `/agency` with the retained Postiz rich editor/calendar, scoped private media, immutable revisions and internal authenticated approvals. Read ADR-012, `docs/agency/APPROVALS.md` and the phase report before changing that flow. Legacy HTTP/MCP/widget/preview/automation paths remain denied. Never reopen a controller by removing the guard, dispatch from mutable Post fields, terminate an existing workflow to reschedule, or bypass the immutable claim. Use server-resolved current actors. External reviewer invitations/portal, action dashboard and V2 remain in their assigned phases. Phase 3 starts from the Phase 2 tested branch when earlier PRs are unmerged.
+Phase 3 uses `/agency` for retained editor/calendar/staff operations and `/review` for verified clients. Read ADR-012/013, `docs/agency/APPROVALS.md`, `docs/agency/REVIEW-PORTAL.md` and phase evidence before changing that flow. Review session/invitation actor context is created only by the server and cannot administer, edit or schedule. External decisions remain bound to their original invitation; renewal cannot resurrect an old approval. Keep invitation/code/session secrets out of URLs sent to servers, analytics, logs and Temporal histories. All new feedback is explicitly client-visible; never project legacy internal notes or unrecognized settings.
+
+Legacy HTTP/MCP/widget/preview/automation paths remain denied. Never remove the guard to reopen them, dispatch from mutable Post fields, terminate an existing workflow to reschedule, or bypass the immutable claim. Dashboard/recovery and V2 remain in their assigned phases. Phase 4 starts from the tested Phase 3 branch when earlier PRs are unmerged.
 
 ## Engineering constraints
 

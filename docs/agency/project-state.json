@@ -173,7 +173,7 @@
     {
       "id": 3,
       "title": "Client review experience",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [
         2
       ],
@@ -188,8 +188,33 @@
         "T03-03",
         "T03-04"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-3.md",
+      "checks": [
+        {
+          "id": "T03-01",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-3.md"
+        },
+        {
+          "id": "T03-02",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts; bash scripts/agency/with-env.sh pnpm test",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-3.md"
+        },
+        {
+          "id": "T03-03",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-3.md"
+        },
+        {
+          "id": "T03-04",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-3.md"
+        }
+      ],
       "blockers": []
     },
     {

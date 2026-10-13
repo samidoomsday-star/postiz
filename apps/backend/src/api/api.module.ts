@@ -1,3 +1,4 @@
+import { ReviewController } from '../agency/review.controller';
 import { AgencyController } from '../agency/agency.controller';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthController } from '@gitroom/backend/api/routes/auth.controller';
@@ -91,6 +92,7 @@ const authenticatedController = [
       ]
     : [
         AgencyController,
+        ReviewController,
         RootController,
         PaymentController,
         StripeController,

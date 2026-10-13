@@ -18,6 +18,7 @@ The planning foundation is complete. **Read project-state.json and phase reports
 | [Decisions](DECISIONS.md) | Agreed defaults, rationale, outstanding technical decisions |
 | [Upstream policy](UPSTREAM.md) | Baseline provenance, manual update policy and licenses |
 | [Development runbook](DEVELOPMENT.md) | Current facts and Phase 0's required executable setup deliverables |
+| [Client review workflow](REVIEW-PORTAL.md) | Verified invitation, weekly review, feedback and staff handoff contract |
 | [Release checklist](RELEASE-CHECKLIST.md) | What “ready to clone and test locally” requires |
 | [V2 backlog](V2-BACKLOG.md) | Explicitly deferred work, promotion rules |
 | [Research](research/postiz-agency-product-research.md) | Evidence and limitations; older recommendations do not override agreed V1 |

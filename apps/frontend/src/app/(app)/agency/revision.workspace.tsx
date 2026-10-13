@@ -3,6 +3,7 @@ import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
+import { ReviewFeedback } from './review.feedback';
 import { OnlyEditor } from '@gitroom/frontend/components/new-launch/editor';
 import { MonthView } from '@gitroom/frontend/components/launches/calendar';
 import { CalendarContext, calendarDefaults } from '@gitroom/frontend/components/launches/calendar.context';
@@ -35,7 +36,8 @@ export function RevisionWorkspace({ client, channels, request, refresh, onError,
     } else setWorks([]);
   }, [client, request]);
   useEffect(() => { load().catch(e => onError(e.message)); }, [load, refresh, onError]);
-  useEffect(() => { setTargets(channels.slice(0, 1).map(c => c.id)); setEditing(null); setContent(''); setMedia([]); }, [client, channels]);
+  useEffect(() => { setTargets([]); setEditing(null); setContent(''); setMedia([]); }, [client]);
+  useEffect(() => { setTargets(current => current.length ? current.filter(id => channels.some(c => c.id === id)) : channels.slice(0,1).map(c => c.id)); }, [channels]);
   const operation = (work: Work, action: string) => {
     const key = `${work.id}:${work.currentVersion}:${action}`;
     if (!operationIds.current.has(key)) operationIds.current.set(key, crypto.randomUUID());
@@ -59,6 +61,7 @@ export function RevisionWorkspace({ client, channels, request, refresh, onError,
     <p>Proposed time: {new Date(work.revision.payload.targets[0].publishAt).toLocaleString('en', { timeZone: work.revision.payload.timezone })} ({work.revision.payload.timezone})</p>
     {work.revision.payload.targets.map(t => <div key={t.channelId}><strong>{t.name}</strong>{t.parts.map((p, i) => <div key={p.id}><p>Part {i + 1}{p.delay ? ` · ${p.delay} minute delay` : ''}</p><pre>{p.message}</pre>{p.media.map(m => <p key={m.snapshotId}>{m.mime.startsWith('image/') && <img className="agency-preview" src={`${backendUrl}/agency/revisions/${work.revision.id}/media/${m.snapshotId}`} alt={m.alt || 'Proposed private asset'} />}Media: {m.alt || 'Approved asset'} · <code>{m.hash.slice(0, 12)}…</code></p>)}</div>)}</div>)}
     {work.decision?.comment && <p>Review feedback: {work.decision.comment}</p>}
+    {!reviewOnly && <ReviewFeedback workId={work.id} version={work.currentVersion} editable={work.permitted.includes('draft:write')} request={request} onMessage={onError} />}
     {work.inFlight && <p role="status">A mutation has been claimed. It may already be in flight; edits or cancellation cannot undo it.</p>}
     {work.receipts.map(r => <p key={r.id}>Part {r.part + 1}: {r.state}{r.providerUrl && <> · <a href={r.providerUrl} rel="noreferrer" target="_blank">Publication receipt</a></>}</p>)}
     {!reviewOnly && work.permitted.includes('draft:write') && <button type="button" disabled={busy} onClick={() => edit(work)}>Edit as new revision</button>}

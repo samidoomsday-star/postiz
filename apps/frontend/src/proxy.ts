@@ -13,6 +13,15 @@ acceptLanguage.languages(languages);
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
   const nextUrl = request.nextUrl;
+  if (nextUrl.pathname === '/review' || nextUrl.pathname.startsWith('/review/')) {
+    const response = NextResponse.next();
+    response.headers.set('Referrer-Policy','no-referrer');
+    response.headers.set('Cache-Control','private, no-store');
+    response.headers.set('X-Content-Type-Options','nosniff');
+    response.headers.set('X-Frame-Options','DENY');
+    response.headers.set('Content-Security-Policy', "frame-ancestors 'none'");
+    return response;
+  }
   // During the staged agency rollout the authenticated legacy app is closed.
   // Its Nest APIs are also denied; this redirect only supplies a usable entry.
   if (['/p/', '/provider/', '/oauth/', '/integrations/social/'].some(p => nextUrl.pathname.startsWith(p))) {

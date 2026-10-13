@@ -16,6 +16,7 @@ name = 'agency_migration_fixture_' + uuid.uuid4().hex[:12]
 restore = name + '_restore'
 fresh = name + '_fresh'
 interrupted = name + '_phase2_interrupt'
+review_interrupted = name + '_phase3_interrupt'
 created = []
 
 def command(args, payload=None, expected=0, env=None):
@@ -66,7 +67,7 @@ IF NOT EXISTS (SELECT 1 FROM mastra_owned_fixture WHERE id='retained') THEN RAIS
 END $$;
 '''
 try:
-    for db in [name, restore, fresh, interrupted]:
+    for db in [name, restore, fresh, interrupted, review_interrupted]:
         command(base + ['createdb', '-U', 'postiz_agency', db]); created.append(db)
     prisma(fresh, 'deploy')
     assert sql(fresh, 'SELECT count(*) FROM "_prisma_migrations" WHERE finished_at IS NOT NULL; SELECT count(*) FROM "AgencyGrant";').strip().splitlines() == [str(len(list((root / 'libraries/nestjs-libraries/src/database/prisma/migrations').glob('*/migration.sql')))), '0']
@@ -100,10 +101,28 @@ INSERT INTO "AgencyDispatch" (id,"organizationId","clientId","workId","revisionI
     assert sql(interrupted, 'SELECT to_regclass(\'"AgencyRevision"\') IS NULL;').strip() == 't'
     for version in ['20261013000000_upstream_baseline','20261013010000_client_access']: prisma(interrupted,'resolve','--applied',version)
     prisma(interrupted,'deploy'); sql(interrupted,assertions)
+    sql(name, """INSERT INTO "User" (id,email,"providerName",timezone,name,"updatedAt") VALUES ('review-user','review@client.example.test','LOCAL',0,'Client reviewer',now()),('review-owner','owner@agency.example.test','LOCAL',0,'Owner',now());
+INSERT INTO "UserOrganization" (id,"userId","organizationId",role,"updatedAt") VALUES ('member-r','review-user','a','USER',now()),('member-o','review-owner','a','ADMIN',now());
+INSERT INTO "AgencyReviewInvitation" (id,"organizationId","clientId","reviewerId","reviewerName",email,"creatorId","channelIds","tokenHash","expiresAt","verifiedAt","exchangedAt") VALUES ('iv','a','a1','review-user','Client reviewer','review@client.example.test','review-owner','{}',repeat('a',64),now()+interval '1 day',now(),now());
+INSERT INTO "AgencyReviewerSession" (id,"organizationId","clientId","reviewerId","invitationId","secretHash","expiresAt") VALUES ('session','a','a1','review-user','iv',repeat('b',64),now()+interval '1 hour');
+INSERT INTO "AgencyReviewComment" (id,"organizationId","clientId","workId","revisionId","actorId",body) VALUES ('feedback','a','a1','w','r','review-user','Public synthetic feedback');
+""")
+    sql(name, 'UPDATE "AgencyReviewComment" SET body=\'tamper\' WHERE id=\'feedback\';', expected=3)
+    sql(name, 'UPDATE "AgencyReviewerSession" SET "clientId"=\'a2\' WHERE id=\'session\';', expected=3)
+    sql(name, 'UPDATE "AgencyReviewerSession" SET "expiresAt"=now()+interval \'2 days\' WHERE id=\'session\';', expected=3)
+    previous = sorted(p.parent.name for p in migrations.glob('*/migration.sql') if p.parent.name < '20261013030000_verified_review_portal')
+    for version in previous: sql(review_interrupted,(migrations/version/'migration.sql').read_text())
+    phase3=(migrations/'20261013030000_verified_review_portal/migration.sql').read_text()
+    sql(review_interrupted,phase3.rsplit('COMMIT;',1)[0]+'SELECT pg_terminate_backend(pg_backend_pid());',expected=2)
+    assert sql(review_interrupted,'SELECT to_regclass(\'"AgencyReviewInvitation"\') IS NULL;').strip()=='t'
+    for version in previous: prisma(review_interrupted,'resolve','--applied',version)
+    prisma(review_interrupted,'deploy')
+    assert sql(review_interrupted,'SELECT count(*) FROM "AgencyReviewerSession";').strip()=='0'
     after = command(base + ['pg_dump', '-U', 'postiz_agency', '-d', name, '-Fc'])
     command(base + ['pg_restore', '-U', 'postiz_agency', '-d', restore, '--exit-on-error'], after)
     sql(restore, assertions)
     assert sql(restore, 'SELECT count(*) FROM "AgencyReviewDecision" WHERE id=\'d\'; SELECT state FROM "AgencyDispatch" WHERE id=\'claim\';').strip().splitlines() == ['1','UNKNOWN']
+    assert sql(restore, 'SELECT count(*) FROM "AgencyReviewInvitation" WHERE id=\'iv\' AND "verifiedAt" IS NOT NULL; SELECT count(*) FROM "AgencyReviewerSession" WHERE id=\'session\' AND "secretHash"=repeat(\'b\',64); SELECT body FROM "AgencyReviewComment" WHERE id=\'feedback\';').strip().splitlines()==['1','1','Public synthetic feedback']
     # Restore the PRE-migration snapshot into an empty disposable database after
     # clearing only this rehearsal's database, then upgrade it again.
     command(base + ['dropdb', '-U', 'postiz_agency', restore]); created.remove(restore)
@@ -112,7 +131,7 @@ INSERT INTO "AgencyDispatch" (id,"organizationId","clientId","workId","revisionI
     assert sql(restore, 'SELECT count(*) FROM "Post" WHERE state=\'QUEUE\';').strip() == '5'
     prisma(restore, 'resolve', '--applied', '20261013000000_upstream_baseline')
     prisma(restore, 'deploy'); sql(restore, assertions)
-    print('PASS: 12 migration/restore gates: immutable revision/decision history, Phase 2 interrupted rollback, revision/decision/UNKNOWN receipt snapshot restore, fresh Prisma deployment, additive install, valid mapping, ambiguity quarantine, paused queues/keys/media, subsystem preservation, interrupted connection rollback, deploy replay, pre/post snapshot restore + re-upgrade.')
+    print('PASS: 16 migration/restore gates: verified invitation/session/public feedback restore, session identity/lifetime constraints, append-only feedback, Phase 3 interruption rollback, immutable revision/decision history, Phase 2 interrupted rollback, revision/decision/UNKNOWN receipt snapshot restore, fresh Prisma deployment, additive install, valid mapping, ambiguity quarantine, paused queues/keys/media, subsystem preservation, interrupted connection rollback, deploy replay, pre/post snapshot restore + re-upgrade.')
 finally:
     for db in reversed(created):
         command(base + ['dropdb', '-U', 'postiz_agency', db])

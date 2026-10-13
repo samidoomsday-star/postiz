@@ -65,6 +65,9 @@ def main():
                 print(f'{name}: existing owned process retained')
                 continue
             with socket.socket() as check:
+                # Recently stopped HTTP sockets may remain in TIME_WAIT. Match
+                # the server's reuse behavior while still rejecting listeners.
+                check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:
                     check.bind(('127.0.0.1', port))
                 except OSError:

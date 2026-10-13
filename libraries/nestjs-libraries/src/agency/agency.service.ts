@@ -84,6 +84,7 @@ export class AgencyService {
   }
 
   async admin(actor: AgencyActor) {
+    if (actor.reviewSessionId || actor.reviewInvitationId || actor.reviewAssignment) throw new ForbiddenException('Review access cannot administer');
     const member = await this.membership(actor);
     if (!['ADMIN', 'SUPERADMIN'].includes(member.role))
       throw new ForbiddenException('Agency administration required');
@@ -157,6 +158,14 @@ export class AgencyService {
       );
     }
     const member = await this.membership(actor);
+    if (actor.reviewSessionId || actor.reviewInvitationId) {
+      if (action !== 'review:decide' || !actor.reviewInvitationId) return false;
+      if (actor.reviewSessionId) {
+        const session = await this.db.agencyReviewerSession.findFirst({ where: { id: actor.reviewSessionId, invitationId: actor.reviewInvitationId, organizationId: actor.organizationId, clientId, reviewerId: actor.id, revokedAt: null, expiresAt: { gt: new Date(asOf) } } });
+        if (!session) return false;
+      }
+      return this.invitationPermission(actor, clientId, actor.reviewInvitationId, channelId, asOf, true);
+    }
     if (
       action === 'content:read' &&
       ['ADMIN', 'SUPERADMIN'].includes(member.role)
@@ -169,12 +178,26 @@ export class AgencyService {
         clientId,
       },
     });
-    return grants.some(
+    const granted = grants.some(
       (g) =>
         live(g, asOf) &&
         (roleActions[g.role as AgencyRole] || []).includes(action) &&
         allowsChannel(g.channelIds, channelId)
     );
+    if (granted) return true;
+    if (action === 'review:decide' && actor.reviewAssignment) return this.invitationPermission(actor, clientId, undefined, channelId, asOf, false);
+    return false;
+  }
+
+  async invitationPermission(actor: AgencyActor, clientId: string, invitationId?: string, channelId?: string, asOf = Date.now(), verified = true) {
+    if (actor.type !== 'user') return false;
+    const member = await this.membership(actor);
+    const invitations = await this.db.agencyReviewInvitation.findMany({ where: { ...(invitationId ? { id: invitationId } : {}), organizationId: actor.organizationId, clientId, reviewerId: actor.id, email: member.user.email.trim().toLowerCase(), revokedAt: null, expiresAt: { gt: new Date(asOf) }, ...(verified ? { verifiedAt: { not: null }, exchangedAt: { not: null } } : {}) } });
+    for (const invitation of invitations) {
+      if (!allowsChannel(invitation.channelIds, channelId)) continue;
+      try { await this.admin({ type: 'user', id: invitation.creatorId, organizationId: invitation.organizationId }); return true; } catch { /* Lost issuer rights invalidate this permission. */ }
+    }
+    return false;
   }
 
   async assert(

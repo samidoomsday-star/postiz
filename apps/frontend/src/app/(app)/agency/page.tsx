@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState, FormEvent } from 'react';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import './agency.css';
+import { ReviewInvitations } from './review.invites';
 import { RevisionWorkspace } from './revision.workspace';
 
 type Client = { id: string; name: string };
@@ -167,7 +168,7 @@ export default function AgencyAccessPage() {
           <select
             aria-label="Active client"
             value={client}
-            onChange={(e) => setClient(e.target.value)}
+            onChange={(e) => { setChannels([]); setWork([]); setClient(e.target.value); }}
           >
             <option value="">Choose client</option>
             {clients.map((c) => (
@@ -198,6 +199,7 @@ export default function AgencyAccessPage() {
           ))}
         </ul>
       </section>
+      {admin && client && <ReviewInvitations client={client} channels={channels} request={request} onMessage={setMessage} onChanged={async () => { await reload(); setRevisionRefresh(n => n + 1); }} />}
       {admin && management && (
         <>
           <section aria-labelledby="access-heading">

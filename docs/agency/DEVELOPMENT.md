@@ -72,7 +72,7 @@ For diagnostics inspect `.agency/logs/{backend,orchestrator,frontend}.log`; use 
 
 Versioned migration deployment and recovery are documented in [MIGRATIONS.md](MIGRATIONS.md). The migration rehearsal includes interrupted-connection recovery, ownership quarantine, queue pausing, replay and snapshot restore. Production/customer schema migration and live providers remain outside the verified local workflow.
 
-The current authenticated entry is `/agency`. It supports scoped retained editing/calendar, immutable revision review, approved scheduling and private local media uploads/snapshots. Owners manage client access; reviewer-only staff see assigned internal reviews. See [APPROVALS.md](APPROVALS.md) for commands, state/race semantics and staged UI limitations. Legacy HTTP/MCP/widgets/previews/analytics and unsupervised automations remain denied. External verified invitations are Phase 3, dashboard recovery Phase 4, live provider contracts/hardening Phase 5, and independent-clone release verification Phase 6.
+The current authenticated entry is `/agency`. It supports scoped retained editing/calendar, immutable revision review, approved scheduling and private local media uploads/snapshots. Owners manage client access; reviewer-only staff see assigned internal reviews. See [APPROVALS.md](APPROVALS.md) for commands, state/race semantics and staged UI limitations. Legacy HTTP/MCP/widgets/previews/analytics and unsupervised automations remain denied. Verified client invitations and the weekly `/review` portal are implemented in Phase 3; see [REVIEW-PORTAL.md](REVIEW-PORTAL.md). Dashboard recovery remains Phase 4, provider contracts/hardening Phase 5, and independent-clone release verification Phase 6.
 
 Additional Phase 2 verification (with apps running except where the restart script owns shutdown/startup):
 
@@ -82,3 +82,14 @@ bash scripts/agency/with-env.sh node scripts/agency/restart-approval.mjs
 ```
 
 Replay consumes persisted synthetic Temporal histories without executing activities. Restart verifies a persisted approved queue reaches exactly one confirmed provider receipt. Wait for a build command to finish successfully before starting apps; a partial emitted worker directory is not runnable build evidence.
+
+
+## Testing the client portal locally
+
+Sign in as the synthetic owner in `/agency`, choose Client 1, and send an invitation to a `.test` address. The local Mailpit UI/API (port 18025) contains the invitation link and separately requested verification code. Prepare and submit a draft to that reviewer, verify in a separate browser context, decide the exact revision, then schedule as an authorized staff publisher. The portal session cannot sign in to the ordinary staff API or automatically publish.
+
+```sh
+bash scripts/agency/with-env.sh pnpm exec playwright test tests/agency/review.api.spec.ts tests/agency/review.browser.spec.ts --config playwright.agency.config.ts
+```
+
+All test messages/identities/media are synthetic. No real social or email account is needed for this workflow, and missing real email delivery never enables unverified access. The existing setup/start commands generate/deploy the additional migration and build the new root layout; no new dependency or external service is required.

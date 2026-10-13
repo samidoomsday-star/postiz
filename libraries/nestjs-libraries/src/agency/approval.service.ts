@@ -747,6 +747,7 @@ export class ApprovalService {
           type: 'user',
           id: input.reviewerId,
           organizationId: actor.organizationId,
+          reviewAssignment: true,
         };
         await this.authorize(reviewer, work, payload, 'review:decide');
         const expiresAt = input.expiresAt
@@ -830,6 +831,7 @@ export class ApprovalService {
             revisionId: revision.id,
             payloadHash: revision.payloadHash,
             actorId: actor.id,
+            reviewInvitationId: actor.reviewInvitationId || null,
             decision,
             comment: input.comment?.slice(0, 4000) || '',
           },
@@ -888,6 +890,7 @@ export class ApprovalService {
         type: 'user',
         id: request.reviewerId,
         organizationId: work.organizationId,
+        ...(decision.reviewInvitationId ? { reviewInvitationId: decision.reviewInvitationId } : {}),
       },
       work,
       this.payload(revision),
@@ -1882,11 +1885,14 @@ export class ApprovalService {
         OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
       },
     });
+    const invitations = await this.db.agencyReviewInvitation.findMany({ where: { organizationId: actor.organizationId, clientId, revokedAt: null, expiresAt: { gt: new Date() } } });
+    const invitationIds: string[] = [];
+    for (const i of invitations) if (await this.agency.invitationPermission({ type: 'user', id: i.reviewerId, organizationId: actor.organizationId }, clientId, i.id, undefined, Date.now(), false)) invitationIds.push(i.reviewerId);
     const memberships = await this.db.userOrganization.findMany({
       where: {
         organizationId: actor.organizationId,
         disabled: false,
-        userId: { in: grants.map((g) => g.userId) },
+        userId: { in: [...grants.map((g) => g.userId), ...invitationIds] },
         user: { deletedAt: null, activated: true },
       },
       select: { user: { select: { id: true, name: true } } },

@@ -1939,14 +1939,15 @@ model AgencyReviewRequest {
 }
 
 model AgencyReviewDecision {
-  id          String   @id @default(uuid())
-  requestId   String   @unique
-  revisionId  String
-  payloadHash String
-  actorId     String
-  decision    String
-  comment     String   @default("")
-  createdAt   DateTime @default(now())
+  reviewInvitationId String?
+  id                 String   @id @default(uuid())
+  requestId          String   @unique
+  revisionId         String
+  payloadHash        String
+  actorId            String
+  decision           String
+  comment            String   @default("")
+  createdAt          DateTime @default(now())
 }
 
 model AgencyCommand {
@@ -2007,4 +2008,69 @@ model AgencyMediaSnapshot {
 
   @@index([revisionId])
   @@index([sourceMediaId])
+}
+
+model AgencyReviewInvitation {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  reviewerId     String
+  reviewerName   String
+  email          String
+  creatorId      String
+  channelIds     String[]  @default([])
+  tokenHash      String    @unique
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  exchangedAt    DateTime?
+  verifiedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([organizationId, clientId, reviewerId])
+}
+
+model AgencyReviewChallenge {
+  id           String    @id @default(uuid())
+  invitationId String
+  codeHash     String
+  browserHash  String
+  expiresAt    DateTime
+  attempts     Int       @default(0)
+  consumedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([invitationId])
+}
+
+model AgencyReviewerSession {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  reviewerId     String
+  invitationId   String    @unique
+  secretHash     String    @unique
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([organizationId, clientId])
+}
+
+model AgencyReviewThrottle {
+  id        String   @id
+  count     Int      @default(0)
+  expiresAt DateTime
+}
+
+model AgencyReviewComment {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String
+  actorId        String
+  body           String
+  createdAt      DateTime @default(now())
+
+  @@index([workId, createdAt])
 }

@@ -51,3 +51,10 @@ Three ordered migrations add immutable approval/history/receipt/snapshot tables,
 The extended rehearsal terminates a Phase 2 migration connection before COMMIT and verifies rollback/redeployment. A real dump/restore preserves revision/decision history and an UNKNOWN receipt; UPDATE/DELETE attempts against immutable history fail. Private `.agency-revisions` files live under UPLOAD_DIRECTORY and must be backed up/restored with their original media, database and application version. Database-only restoration cannot reconstruct snapshot bytes. Existing development history is retained; integration cleanup archives disposable channels instead of deleting revision Posts.
 
 An upstream binary remains an unsafe application rollback: it does not enforce these claims. Keep dispatch paused while restoring and reviewing current policy and unknown/in-flight receipts. The synthetic rehearsal does not authorize customer migration or undo external publication.
+
+
+## Phase 3 additions
+
+The sixth migration adds client review invitations, browser challenges, narrow sessions, persistent rate counters, append-only public feedback and an optional invitation reference on review decisions. It preserves existing staff grants and decision history. SQL constraints bind session/comment/decision parents and prevent changing invitation/session identity or exceeding session lifetime. Customer/organization policy writes now participate in the shared lock as well.
+
+The extended rehearsal verifies Phase 3 interruption rollback/redeployment and real dump/restore of verified invitation state, hashed sessions and public feedback. Restoring old snapshots does not extend expired sessions or revive used/revoked invitations. Keep dispatch paused while validating invitations, memberships and bound approvals. Session hashes and original private media/snapshots are sensitive backup data; restore them only with the compatible guarded binary. No customer deployment or live email delivery has been authorized by the local rehearsal.

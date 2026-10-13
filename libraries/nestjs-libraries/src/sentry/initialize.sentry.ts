@@ -1,3 +1,4 @@
+import { reviewTelemetryPath } from '../agency/review.security';
 import * as Sentry from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { capitalize } from 'lodash';
@@ -32,6 +33,8 @@ export const initializeSentry = (appName: string, allowLogs = false) => {
 
   try {
     Sentry.init({
+      beforeSend: event => reviewTelemetryPath(event.request?.url) ? null : event,
+      beforeSendTransaction: event => reviewTelemetryPath(event.request?.url || event.transaction) ? null : event,
       initialScope: {
         tags: {
           service: appName,
@@ -62,6 +65,7 @@ export const initializeSentry = (appName: string, allowLogs = false) => {
         const method = String(
           normalizedRequest?.method || attributes?.['http.request.method'] || attributes?.['http.method'] || ''
         );
+        if (reviewTelemetryPath(path)) return 0;
         // MCP stream GETs are declined with 405; never trace them
         if (method === 'GET' && /^(https?:\/\/[^/]+)?\/mcp(\/|-oauth|\?|$)/.test(path)) {
           return 0;

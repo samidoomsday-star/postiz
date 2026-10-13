@@ -9,6 +9,9 @@ export type AgencyActor = {
   type: 'user' | 'credential';
   id: string;
   organizationId: string;
+  reviewSessionId?: string;
+  reviewInvitationId?: string;
+  reviewAssignment?: boolean;
 };
 export const roles = ['EDITOR', 'PUBLISHER', 'REVIEWER'] as const;
 export type AgencyRole = (typeof roles)[number];

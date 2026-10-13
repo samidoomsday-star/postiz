@@ -1,3 +1,4 @@
+import { ReviewService } from '@gitroom/nestjs-libraries/agency/review.service';
 import { ApprovalService } from '@gitroom/nestjs-libraries/agency/approval.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
@@ -23,7 +24,8 @@ import { AgencyRequest } from './agency.guard';
 export class AgencyController {
   constructor(
     private agency: AgencyService,
-    private approval: ApprovalService
+    private approval: ApprovalService,
+    private review: ReviewService
   ) {}
   @Get('self')
   async self(@Req() req: AgencyRequest) {
@@ -279,5 +281,36 @@ export class AgencyController {
     @Body('clientId') clientId: string
   ) {
     return this.agency.mapPost(r.agencyActor, id, clientId);
+  }
+  @Get('clients/:id/review-invitations') invitations(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string
+  ) {
+    return this.review.invitations(r.agencyActor, id);
+  }
+  @Post('review-invitations') invite(
+    @Req() r: AgencyRequest,
+    @Body() body: Parameters<ReviewService['invite']>[1]
+  ) {
+    return this.review.invite(r.agencyActor, body);
+  }
+  @Post('review-invitations/:id/revoke') revokeInvitation(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string
+  ) {
+    return this.review.revokeInvitation(r.agencyActor, id);
+  }
+  @Get('works/:id/review-comments') reviewComments(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string
+  ) {
+    return this.review.staffHistory(r.agencyActor, id);
+  }
+  @Post('works/:id/review-comments') addReviewComment(
+    @Req() r: AgencyRequest,
+    @Param('id') id: string,
+    @Body() body: Parameters<ReviewService['comment']>[2]
+  ) {
+    return this.review.comment(r.agencyActor, id, body);
   }
 }

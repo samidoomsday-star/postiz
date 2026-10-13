@@ -7,6 +7,7 @@ export default [{
     'apps/backend/src/api/api.module.ts',
     'apps/backend/src/api/routes/users.controller.ts',
     'apps/backend/src/services/auth/auth.middleware.ts',
+    'apps/backend/src/services/auth/auth.service.ts',
     'apps/frontend/src/proxy.ts',
     'apps/orchestrator/src/activities/*.ts',
     'libraries/nestjs-libraries/src/database/prisma/database.module.ts',
@@ -16,6 +17,9 @@ export default [{
     'libraries/nestjs-libraries/src/agency/**/*.ts',
     'apps/backend/src/agency/**/*.ts',
     'apps/frontend/src/app/(app)/agency/**/*.tsx',
+    'apps/frontend/src/app/(review)/**/*.tsx',
+    'apps/backend/src/main.ts',
+    'libraries/nestjs-libraries/src/sentry/initialize.sentry.ts',
     'apps/frontend/src/app/(app)/api/uploads/**/*.ts',
     'apps/backend/src/services/auth/public.auth.middleware.ts',
     'libraries/nestjs-libraries/src/chat/start.mcp.ts',
@@ -37,4 +41,4 @@ export default [{
     eqeqeq: ['error', 'always'],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
   },
-}, { files: ['apps/backend/src/app.module.ts', 'apps/backend/src/api/api.module.ts', 'apps/backend/src/api/routes/users.controller.ts', 'apps/backend/src/services/auth/auth.middleware.ts', 'apps/frontend/src/proxy.ts', 'apps/orchestrator/src/activities/*.ts', 'libraries/nestjs-libraries/src/database/prisma/database.module.ts', 'libraries/nestjs-libraries/src/database/prisma/posts/posts.service.ts', 'libraries/nestjs-libraries/src/database/prisma/integrations/integration.service.ts'], rules: { '@typescript-eslint/no-unused-vars': 'off' } }];
+}, { files: ['apps/backend/src/services/auth/auth.service.ts', 'apps/backend/src/main.ts', 'libraries/nestjs-libraries/src/sentry/initialize.sentry.ts', 'apps/backend/src/app.module.ts', 'apps/backend/src/api/api.module.ts', 'apps/backend/src/api/routes/users.controller.ts', 'apps/backend/src/services/auth/auth.middleware.ts', 'apps/frontend/src/proxy.ts', 'apps/orchestrator/src/activities/*.ts', 'libraries/nestjs-libraries/src/database/prisma/database.module.ts', 'libraries/nestjs-libraries/src/database/prisma/posts/posts.service.ts', 'libraries/nestjs-libraries/src/database/prisma/integrations/integration.service.ts'], rules: { '@typescript-eslint/no-unused-vars': 'off' } }];

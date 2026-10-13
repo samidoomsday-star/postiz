@@ -6,6 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { ReviewService, REVIEW_COOKIE } from '@gitroom/nestjs-libraries/agency/review.service';
+import { csrfToken, safeEqual } from '@gitroom/nestjs-libraries/agency/review.security';
+import { ReviewRequest } from './review.controller';
 import { AuthService } from '@gitroom/helpers/auth/auth.service';
 import { AgencyService } from '@gitroom/nestjs-libraries/agency/agency.service';
 import { AgencyActor } from '@gitroom/nestjs-libraries/agency/policy';
@@ -14,7 +17,7 @@ import { PrismaService } from '@gitroom/nestjs-libraries/database/prisma/prisma.
 export type AgencyRequest = Request & { agencyActor: AgencyActor };
 @Injectable()
 export class AgencyBoundaryGuard implements CanActivate {
-  constructor(private agency: AgencyService, private db: PrismaService) {}
+  constructor(private agency: AgencyService, private db: PrismaService, private review: ReviewService) {}
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<AgencyRequest>();
     const controller = context.getClass().name;
@@ -31,6 +34,19 @@ export class AgencyBoundaryGuard implements CanActivate {
           'Legacy social login and invitation-cookie joining are disabled'
         );
       }
+      return true;
+    }
+    if (controller === 'ReviewController') {
+      const response = context.switchToHttp().getResponse();
+      response.set({ 'Cache-Control':'private, no-store', 'Referrer-Policy':'no-referrer', 'X-Content-Type-Options':'nosniff', 'X-Frame-Options':'DENY', 'Content-Security-Policy':"frame-ancestors 'none'" });
+      if (request.headers.authorization || request.headers.auth || request.headers.impersonate || request.headers['x-postiz-org']) throw new ForbiddenException('Use the verified review session');
+      if (request.headers.origin && request.headers.origin !== process.env.FRONTEND_URL) throw new ForbiddenException('Invalid review origin');
+      if (!['GET','HEAD','OPTIONS'].includes(request.method) && request.headers.origin !== process.env.FRONTEND_URL) throw new ForbiddenException('Invalid review origin');
+      if (['challenge','verify'].includes(handler)) return true;
+      const ctx = await this.review.authenticate(request.cookies?.[REVIEW_COOKIE]);
+      if (!['GET','HEAD','OPTIONS'].includes(request.method) && !safeEqual(String(request.headers['x-review-csrf'] || ''), csrfToken(ctx.session))) throw new ForbiddenException('Invalid review CSRF token');
+      (request as unknown as ReviewRequest).reviewContext = ctx;
+      request.agencyActor = ctx.actor;
       return true;
     }
     if (controller === 'RootController') return true;
