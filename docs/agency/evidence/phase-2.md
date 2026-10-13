@@ -3,8 +3,8 @@
 Status: complete
 Started/updated (UTC): 2026-10-13; final acceptance began 09:55:26.121Z.
 Base: `phase/1-client-access` at `57b5a4f601c3ba4de4c7d3855cd59d10b7ea411f`; PR #2 remains unmerged.
-Tested precommit implementation/test/migration/tooling identity: SHA-256 `98d55192bcf1ffecadc7cc43276ca9d7d275f1d25b8c94ae8c3627e25b4dd304`. Private `.agency/phase2-tested-source.json` lists the source paths used for this digest. Application code is delivered with the Phase 2 commit; GitHub handoff is recorded below after creation.
-Branch: `phase/2-approvals`. Phases 3–6 remain planned.
+Tested precommit implementation/test/migration/tooling identity: SHA-256 `98d55192bcf1ffecadc7cc43276ca9d7d275f1d25b8c94ae8c3627e25b4dd304`. Private `.agency/phase2-tested-source.json` lists the source paths used for this digest. Tested/delivered implementation commit: `73c4d3187d45cf5cd5c417443ebc1b3d0831035f`.
+Branch: `phase/2-approvals`, pushed to origin. Draft PR: [#3](https://github.com/samidoomsday-star/postiz/pull/3), attached to the task. The implementation is unmerged; this follow-up commit records delivery without changing application code. Phases 3–6 remain planned.
 
 ## Scope and completed work
 
