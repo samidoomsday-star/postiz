@@ -3,8 +3,8 @@
 This repository is based on Postiz **v2.25.1**, pinned to `91c91f633a0175fb3914dba64c932928c514b72a`.
 It is an independently maintained derivative, with the upstream license and history retained.
 
-**Current state: planning foundation complete; Phase 0 has not started.**
-The imported app has not been installed, built, or runtime-tested in this checkout.
+**Development status is tracked in [project-state.json](docs/agency/project-state.json).**
+See the [development runbook](docs/agency/DEVELOPMENT.md) for the verified synthetic workflow and each phase report for actual test evidence.
 
 V1 adds client-scoped permissions, enforced revision approvals, and an agency action dashboard.
 Other proposed enhancements are reserved for V2. Upstream merges and dependency updates are manual.
@@ -17,7 +17,7 @@ Other proposed enhancements are reserved for V2. Upstream merges and dependency 
 - [Upstream and licensing policy](docs/agency/UPSTREAM.md)
 
 Run `python3 scripts/agency/plan.py check` and `python3 scripts/agency/plan.py next` from the repository root.
-To begin implementation, tell the agent: **Start phase 0.**
+Run the phase checker to identify the next eligible phase.
 
 The upstream README below describes inherited capabilities; it is not proof that this derivative is ready for use.
 
