@@ -50,14 +50,16 @@ def ready(url):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['start', 'stop', 'status'])
-    parser.add_argument('--api-only', action='store_true')
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument('--api-only', action='store_true')
+    selection.add_argument('--worker-only', action='store_true')
     args = parser.parse_args()
     if not Path('/proc').exists():
         parser.error('This supervisor has been verified on Linux only')
     if args.action == 'start' and (os.environ.get('AGENCY_TEST_MODE') != 'true' or os.environ.get('AGENCY_TEST_ACK') != 'LOCAL_SYNTHETIC_ONLY'):
         parser.error('Run through scripts/agency/with-env.sh in explicit synthetic mode')
     state = json.loads(registry.read_text()) if registry.exists() else {}
-    selected = ['backend', 'orchestrator'] if args.api_only else list(apps)
+    selected = ['orchestrator'] if args.worker_only else ['backend', 'orchestrator'] if args.api_only else list(apps)
     if args.action == 'start':
         for name in selected:
             command, cwd, port, url = apps[name]

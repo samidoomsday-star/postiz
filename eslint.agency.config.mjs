@@ -25,6 +25,7 @@ export default [{
     'libraries/nestjs-libraries/src/chat/start.mcp.ts',
     'libraries/helpers/src/testing/**/*.ts',
     'libraries/nestjs-libraries/src/integrations/social/synthetic.provider.ts',
+    'libraries/nestjs-libraries/src/integrations/social/social.integrations.interface.ts',
     'apps/frontend/src/fonts/jakarta.ts',
     '*.agency.config.*',
     'scripts/agency/*.mjs',

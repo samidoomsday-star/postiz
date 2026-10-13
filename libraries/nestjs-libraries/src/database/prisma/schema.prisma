@@ -1976,6 +1976,7 @@ model AgencyDispatch {
   part           Int
   stage          String    @default("publish")
   state          String    @default("READY")
+  attempt        Int       @default(0)
   actorType      String
   actorId        String
   claimedAt      DateTime?
@@ -1990,6 +1991,42 @@ model AgencyDispatch {
   @@unique([revisionId, channelId, part, stage])
   @@index([postId, stage])
   @@index([organizationId, clientId, state])
+}
+
+model AgencyActionRecord {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String   @unique
+  ownerId        String?
+  disposition    String   @default("OPEN")
+  note           String   @default("")
+  version        Int      @default(1)
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, clientId, ownerId])
+}
+
+model AgencyRecoveryEvidence {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String
+  dispatchId     String
+  attempt        Int
+  kind           String
+  outcome        String
+  actorId        String
+  previousState  String
+  previousReason String?
+  claimedAt      DateTime?
+  providerId     String?
+  providerUrl    String?
+  createdAt      DateTime  @default(now())
+
+  @@index([dispatchId, createdAt])
 }
 
 model AgencyMediaSnapshot {

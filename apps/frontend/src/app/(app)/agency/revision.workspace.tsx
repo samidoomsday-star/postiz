@@ -56,7 +56,7 @@ export function RevisionWorkspace({ client, channels, request, refresh, onError,
     setProposed(work.revision.payload.targets[0].publishAt.slice(0, 16));
     document.getElementById('agency-draft-editor')?.scrollIntoView({ block: 'center' });
   };
-  const card = (work: Work, reviewOnly = false) => <article key={work.id} data-work-id={work.id} className="agency-revision-card">
+  const card = (work: Work, reviewOnly = false) => <article key={work.id} id={`work-${work.id}`} data-work-id={work.id} className="agency-revision-card">
     <h3>Revision {work.currentVersion} · {work.status}</h3>
     <p>Proposed time: {new Date(work.revision.payload.targets[0].publishAt).toLocaleString('en', { timeZone: work.revision.payload.timezone })} ({work.revision.payload.timezone})</p>
     {work.revision.payload.targets.map(t => <div key={t.channelId}><strong>{t.name}</strong>{t.parts.map((p, i) => <div key={p.id}><p>Part {i + 1}{p.delay ? ` · ${p.delay} minute delay` : ''}</p><pre>{p.message}</pre>{p.media.map(m => <p key={m.snapshotId}>{m.mime.startsWith('image/') && <img className="agency-preview" src={`${backendUrl}/agency/revisions/${work.revision.id}/media/${m.snapshotId}`} alt={m.alt || 'Proposed private asset'} />}Media: {m.alt || 'Approved asset'} · <code>{m.hash.slice(0, 12)}…</code></p>)}</div>)}</div>)}

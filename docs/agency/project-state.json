@@ -220,7 +220,7 @@
     {
       "id": 4,
       "title": "Agency action dashboard and safe recovery",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [
         3
       ],
@@ -237,8 +237,39 @@
         "T04-04",
         "T04-05"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-4.md",
+      "checks": [
+        {
+          "id": "T04-01",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-4.md"
+        },
+        {
+          "id": "T04-02",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-4.md"
+        },
+        {
+          "id": "T04-03",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-4.md"
+        },
+        {
+          "id": "T04-04",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-4.md"
+        },
+        {
+          "id": "T04-05",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-4.md"
+        }
+      ],
       "blockers": []
     },
     {

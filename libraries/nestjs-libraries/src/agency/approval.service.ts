@@ -38,6 +38,7 @@ import { stripHtmlValidation } from '@gitroom/helpers/utils/strip.html.validatio
 import { stripLinks } from '@gitroom/helpers/utils/strip.links';
 import { sanitizePostContent } from '@gitroom/helpers/utils/sanitize.post.content';
 import { syntheticModeEnabled } from '@gitroom/helpers/testing/synthetic-mode';
+import { activityInfo } from '@temporalio/activity';
 import {
   digest,
   bytesHash,
@@ -1163,6 +1164,13 @@ export class ApprovalService {
           throw new ForbiddenException(
             'This mutation is already claimed; reconcile its receipt before another action'
           );
+        // A retry has its own execution identity. Delayed/redelivered activities
+        // from an earlier attempt cannot consume the newly armed claim.
+        for (const row of rows) if (row.attempt > 0) {
+          let execution: string | undefined;
+          try { execution = activityInfo().workflowExecution.workflowId; } catch { /* no worker context */ }
+          if (execution !== `agency-retry_${row.id}_${row.attempt}`) throw new ForbiddenException('Recovery execution identity required');
+        }
         if (
           work.currentVersion !== revision.version ||
           work.status !== 'SCHEDULED'
@@ -1278,7 +1286,7 @@ export class ApprovalService {
         const current = await tx.post.findUniqueOrThrow({
           where: { id: postId },
         });
-        if (current.state === 'QUEUE')
+        if (current.state === 'QUEUE' && !(dispatch?.attempt > 0 && ['READY','CLAIMED'].includes(dispatch.state)))
           await tx.post.update({
             where: { id: postId },
             data: {
@@ -1378,8 +1386,8 @@ export class ApprovalService {
         const result = responses.find((r) => r.id === row.postId);
         if (!result)
           throw new Error('Provider did not return a target receipt');
-        await tx.agencyDispatch.update({
-          where: { id: row.id },
+        const updated = await tx.agencyDispatch.updateMany({
+          where: { id: row.id, attempt: row.attempt, state: { in: ['CLAIMED','PENDING'] } },
           data: {
             state: result.status === 'pending' ? 'PENDING' : 'CONFIRMED',
             providerId: result.postId || null,
@@ -1388,6 +1396,7 @@ export class ApprovalService {
             pendingData: result.pendingData || Prisma.JsonNull,
           },
         });
+        if (updated.count !== 1) throw new ConflictException('Dispatch attempt is no longer current');
       }
       await this.agency.audit(
         tx,
@@ -1431,7 +1440,7 @@ export class ApprovalService {
     await this.locked(claim.integration.organizationId, async (tx) => {
       await tx.agencyDispatch.updateMany({
         where: {
-          id: { in: claim.rows.map((r) => r.id) },
+          OR: claim.rows.map(r => ({ id: r.id, attempt: r.attempt })),
           state: { in: ['CLAIMED', 'PENDING'] },
         },
         data: {
@@ -1527,6 +1536,18 @@ export class ApprovalService {
           });
       }
     );
+  }
+  async recoveryEligibility(actor: AgencyActor, work: any, revision: any, tx: Prisma.TransactionClient) {
+    if (work.currentVersion !== revision.version || work.status !== 'SCHEDULED') throw new ConflictException('Only the current scheduled revision can recover');
+    const payload = this.payload(revision);
+    await this.authorize(actor, work, payload, 'publish:schedule');
+    await this.approved(work, revision, tx);
+    await this.assertTargets(work, payload);
+    await this.verifyMedia(revision.id);
+  }
+  async projectRecoveryReceipt(revisionId: string, postId: string) {
+    await this.projectState(postId, State.PUBLISHED);
+    await this.projectPublished(revisionId);
   }
   async readPending(integration: Integration, ticket: any) {
     const pending = await this.pending(integration, ticket);

@@ -398,7 +398,7 @@ test('T01-02: expired key and revoked staff grant are denied immediately without
   }
   const editor = await login(request, 'editor-a@example.test');
   const grant = await db.agencyGrant.findFirstOrThrow({
-    where: { userId: 'fixture-user-a-editor', role: 'EDITOR' },
+    where: { userId: 'fixture-user-a-editor', role: 'EDITOR', organizationId: 'fixture-agency-a', clientId: 'fixture-client-a-1' },
   });
   await db.agencyGrant.update({
     where: { id: grant.id },

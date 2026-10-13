@@ -87,7 +87,9 @@ export default function AgencyAccessPage() {
     const self = await request('self');
     setClients(self.clients);
     setAdmin(self.admin);
+    const requestedClient = new URLSearchParams(window.location.search).get('client');
     setClient((current) =>
+      requestedClient && self.clients.some((c: Client) => c.id === requestedClient) ? requestedClient :
       self.clients.some((c: Client) => c.id === current)
         ? current
         : self.clients[0]?.id || ''
@@ -156,7 +158,7 @@ export default function AgencyAccessPage() {
           <h1>Client workspace</h1>
           <p>Prepare content with explicit client access.</p>
         </div>
-        <a href="/auth/logout">Sign out</a>
+        <nav><a href="/agency/actions">Action dashboard</a><a href="/auth/logout">Sign out</a></nav>
       </header>
       <p role="status" aria-label="Workspace status" aria-live="polite">
         {message}

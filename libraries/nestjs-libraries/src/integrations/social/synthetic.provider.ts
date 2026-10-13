@@ -9,11 +9,14 @@ import {
   PostDetails,
   PostResponse,
   SocialProvider,
+  AgencyRecoveryReceipt,
+  AgencyReconciliation,
 } from './social.integrations.interface';
 import { requireSyntheticMode } from '@gitroom/helpers/testing/synthetic-mode';
 
 type Receipt = {
   operation: 'accepted' | 'completed' | 'rejected' | 'finalized';
+  processing?: boolean;
   mediaHashes?: string[];
   settingsHash?: string;
   postId: string;
@@ -101,13 +104,14 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
     if (delay) await new Promise(resolve => setTimeout(resolve, delay));
     return posts.map((post) => {
       const outcome = post.settings?.outcome || 'success';
-      if (!['success', 'known-failure', 'pending', 'uncertain', 'finalize'].includes(outcome)) {
+      if (!['success', 'known-failure', 'rate-limit-once', 'pending', 'uncertain', 'finalize'].includes(outcome)) {
         throw new Error('Invalid synthetic outcome');
       }
+      const rejected = outcome === 'known-failure' || (outcome === 'rate-limit-once' && !this.receipts().some(r => r.localId === post.id && r.operation === 'rejected'));
       const pending = ['pending','finalize'].includes(outcome);
       const postId = `synthetic-${randomUUID()}`;
       const receipt: Receipt = {
-        operation: outcome === 'known-failure' ? 'rejected' : 'accepted',
+        operation: rejected ? 'rejected' : 'accepted',
         postId,
         localId: post.id,
         channelId: integration.id,
@@ -115,9 +119,10 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
         time: new Date().toISOString(),
         mediaHashes,
         settingsHash: createHash('sha256').update(JSON.stringify(post.settings || {})).digest('hex'),
+        processing: pending,
       };
       this.record(receipt);
-      if (outcome === 'known-failure') {
+      if (rejected) {
         throw new BadBody(this.identifier, '{}', '{}', 'Synthetic known rejection');
       }
       if (outcome === 'uncertain') {
@@ -126,7 +131,7 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
         error.name = 'TimeoutError';
         throw error;
       }
-      if (outcome === 'success') {
+      if (outcome === 'success' || outcome === 'rate-limit-once') {
         this.record({ ...receipt, operation: 'completed' });
       }
       return {
@@ -134,7 +139,7 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
         postId: pending ? '' : postId,
         releaseURL: pending ? '' : `https://example.test/published/${postId}`,
         status: pending ? 'pending' : 'published',
-        ...(pending ? { pendingData: { postId, requiresFinalize: outcome === 'finalize' } } : {}),
+        ...(pending ? { pendingData: { postId, requiresFinalize: outcome === 'finalize', processingMs: Math.min(Math.max(Number(post.settings?.processingMs) || 0,0),60000) } } : {}),
       };
     });
   }
@@ -150,7 +155,7 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
 
   override async checkPostStatus(
     accessToken: string,
-    pendingData: { postId: string; requiresFinalize?: boolean },
+    pendingData: { postId: string; requiresFinalize?: boolean; processingMs?: number },
     integration: Integration
   ): Promise<PendingCheckResponse> {
     requireSyntheticMode();
@@ -163,6 +168,7 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
     if (!receipt) {
       throw new Error('Unknown synthetic receipt');
     }
+    if (Date.now() < +new Date(receipt.time) + (pendingData.processingMs || 0)) return { status: 'pending', pendingData };
     if (pendingData.requiresFinalize) { await new Promise(resolve => setTimeout(resolve, 1500)); return { status: 'ready', pendingData }; }
     // Read-only probe: an accepted synthetic publish is available immediately.
     return {
@@ -170,6 +176,25 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
       postId: receipt.postId,
       releaseURL: `https://example.test/published/${receipt.postId}`,
     };
+  }
+
+  async verifyFailedPublication(token: string, receipt: AgencyRecoveryReceipt, integration: Integration) {
+    requireSyntheticMode();
+    if (token !== 'synthetic-token' || integration.providerIdentifier !== 'synthetic') throw new Error('Synthetic recovery refuses live credentials');
+    const rows = this.receipts().filter(r => r.localId === receipt.localId && r.channelId === integration.id);
+    return rows.some(r => r.operation === 'rejected') && !rows.some(r => ['accepted','finalized'].includes(r.operation));
+  }
+
+  async reconcilePublication(token: string, receipt: AgencyRecoveryReceipt, integration: Integration): Promise<AgencyReconciliation> {
+    requireSyntheticMode();
+    if (token !== 'synthetic-token' || integration.providerIdentifier !== 'synthetic') throw new Error('Synthetic recovery refuses live credentials');
+    const rows = this.receipts().filter(r => r.localId === receipt.localId && r.channelId === integration.id);
+    const accepted = rows.find(r => r.operation === 'accepted');
+    // Unknown publish calls in this double are immediate accepted publications.
+    // Finalization is only confirmed with a factual finalized journal entry.
+    const evidence = receipt.stage === 'finalize' ? rows.find(r => r.operation === 'finalized') : accepted?.processing === false ? accepted : rows.find(r => ['completed','finalized'].includes(r.operation));
+    if (!evidence) return { status: 'unknown' };
+    return { status: 'confirmed', postId: evidence.postId, releaseURL: `https://example.test/published/${evidence.postId}` };
   }
   override async finalizePost(accessToken: string, pendingData: { postId: string }, integration: Integration): Promise<PendingCheckResponse> {
     requireSyntheticMode();

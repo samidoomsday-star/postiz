@@ -16,3 +16,10 @@ P3-003,1,V1-REV-002,Unknown provider settings could enter client preview,resolve
 P3-004,2,V1-REV-001,Renewal could show an old invitation-bound approval as available,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
 P3-005,2,V1-REV-002,Unrelated refresh could discard unsaved composer content,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
 P3-006,2,V1-REV-001,Immediate restart probe confused closed connections with active listener,resolved,phase-3,docs/agency/evidence/bugs/phase-3-fixes.md,docs/agency/evidence/phase-3.md
+P4-001,1,V1-DASH-002,Upload acceptance could be mistaken for publication,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
+P4-002,1,V1-DASH-003,Old executions could consume or overwrite a recovery attempt,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
+P4-003,2,V1-DASH-001,Select labels prevented exact browser filtering,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
+P4-004,2,V1-DASH-003,Later read-only checks reused cached processing results,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
+P4-005,2,V1-DASH-001,Empty later page could misstate the filtered count,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
+P4-006,1,V1-DASH-001,Moved channels could carry old client revision metadata into list scope,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
+P4-007,2,V1-DASH-001,Temporary grants and ambiguous fixture selection contaminated baseline tests,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md

@@ -22,6 +22,7 @@ export class AgencyBoundaryGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<AgencyRequest>();
     const controller = context.getClass().name;
     const handler = context.getHandler().name;
+    if (controller === 'AgencyController') context.switchToHttp().getResponse().set({ 'Cache-Control':'private, no-store', 'X-Content-Type-Options':'nosniff' });
     if (
       controller === 'AuthController' &&
       ['login', 'canRegister'].includes(handler)

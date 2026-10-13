@@ -1,5 +1,5 @@
 .agency-access { max-width: 1050px; margin: auto; padding: 32px 20px; color: #eeeef5; line-height: 1.6; }
-.agency-access header { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
+.agency-access header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; align-items: start; }
 .agency-access h1 { font-size: 32px; font-weight: 700; }
 .agency-access h2 { font-size: 23px; font-weight: 650; margin-bottom: 16px; }
 .agency-access h3 { font-size: 18px; font-weight: 600; }
@@ -24,3 +24,8 @@
 .agency-revision-card { border: 1px solid #75758b; border-radius: 8px; margin: 16px 0; padding: 16px; overflow-wrap: anywhere; }
 .agency-revision-card pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0; padding: 12px; background: #12121d; }
 .agency-preview { max-width: 240px; max-height: 200px; object-fit: contain; }
+.agency-actions .action-filters { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 12px; }
+.agency-actions article { margin: 16px 0; border-bottom: 1px solid #3b3b51; }
+.agency-actions pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; background: #12121d; }
+.agency-actions code { overflow-wrap: anywhere; }
+.agency-actions nav { display: flex; flex-wrap: wrap; gap: 8px; }

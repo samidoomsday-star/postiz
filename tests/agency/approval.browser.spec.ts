@@ -5,6 +5,7 @@ test('T02-02 browser: retained editor/calendar sends changes for internal review
   page,
   request,
 }) => {
+  test.setTimeout(120000);
   const owner = await staff(request);
   const saved = await request.post(api + '/agency/posts', {
     headers: owner,

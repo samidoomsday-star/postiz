@@ -1,4 +1,5 @@
 import { ReviewService } from '@gitroom/nestjs-libraries/agency/review.service';
+import { ActionService } from '@gitroom/nestjs-libraries/agency/action.service';
 import { ApprovalService } from '@gitroom/nestjs-libraries/agency/approval.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
@@ -25,7 +26,8 @@ export class AgencyController {
   constructor(
     private agency: AgencyService,
     private approval: ApprovalService,
-    private review: ReviewService
+    private review: ReviewService,
+    private actions: ActionService
   ) {}
   @Get('self')
   async self(@Req() req: AgencyRequest) {
@@ -36,6 +38,24 @@ export class AgencyController {
       admin = ['ADMIN', 'SUPERADMIN'].includes(member.role);
     }
     return { actor, admin, clients: await this.agency.clients(actor) };
+  }
+  @Get('actions') actionQueue(@Req() r: AgencyRequest, @Query() filter: Parameters<ActionService['list']>[1]) {
+    return this.actions.list(r.agencyActor, filter);
+  }
+  @Get('actions/:id') actionDetail(@Req() r: AgencyRequest, @Param('id') id: string) {
+    return this.actions.detail(r.agencyActor,id);
+  }
+  @Post('actions/:id/update') updateAction(@Req() r: AgencyRequest, @Param('id') id: string, @Body() body: Parameters<ActionService['update']>[2]) {
+    return this.actions.update(r.agencyActor,id,body);
+  }
+  @Post('actions/:id/retry') retryAction(@Req() r: AgencyRequest, @Param('id') id: string, @Body() body: Parameters<ActionService['retry']>[2]) {
+    return this.actions.retry(r.agencyActor,id,body);
+  }
+  @Post('actions/:id/reconcile') reconcileAction(@Req() r: AgencyRequest, @Param('id') id: string, @Body() body: Parameters<ActionService['reconcile']>[2]) {
+    return this.actions.reconcile(r.agencyActor,id,body);
+  }
+  @Post('actions/:id/resume') resumeAction(@Req() r: AgencyRequest, @Param('id') id: string, @Body() body: Parameters<ActionService['resume']>[2]) {
+    return this.actions.resume(r.agencyActor,id,body);
   }
   @Get('clients') clients(@Req() r: AgencyRequest) {
     return this.agency.clients(r.agencyActor);

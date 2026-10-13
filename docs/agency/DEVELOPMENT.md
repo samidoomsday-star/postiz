@@ -93,3 +93,11 @@ bash scripts/agency/with-env.sh pnpm exec playwright test tests/agency/review.ap
 ```
 
 All test messages/identities/media are synthetic. No real social or email account is needed for this workflow, and missing real email delivery never enables unverified access. The existing setup/start commands generate/deploy the additional migration and build the new root layout; no new dependency or external service is required.
+
+## Phase 4 operator checks
+
+Open the action dashboard from the client workspace. See [ACTION-DASHBOARD.md](ACTION-DASHBOARD.md) for truthful statuses and the manual recovery path. The synthetic suite uses a two-second due/stall grace; the production projection uses two minutes. This shorter test threshold changes observation timing only, never dispatch eligibility or receipt truth.
+
+Use `bash scripts/agency/with-env.sh python3 scripts/agency/runtime.py status --worker-only` for the checkout-owned worker. `stop/start --worker-only` preserves the HTTP API for diagnosis and uses the existing ownership checks. Do not equate HTTP liveness with polling; the actual tests stop the worker, observe overdue READY work, restart it and require one confirmed synthetic mutation.
+
+Run the Phase 4 API/browser cases with `bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts tests/agency/action.api.spec.ts tests/agency/action.browser.spec.ts`; builds must finish before starting apps/tests. The unsupported provider case injects only an inert external contract into the compiled service while using real PostgreSQL policy/evidence. Browser journeys capture synthetic screenshots under docs/agency/evidence/screenshots; private traces/logs remain ignored.

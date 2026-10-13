@@ -26,6 +26,7 @@ function policy(kind, file, method) {
   const name = file.toLowerCase();
   const mutates = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) || kind === 'worker';
   const publishing = /posts|autopost|plugs|integration\.trigger|integration\.schedule/.test(name);
+  if (/agency\.controller/.test(name)) return ['current agency/client/channel and exact permitted revision', 'Staff commands may enqueue a proved safe attempt; read-only reconciliation never publishes', 'Policy before scope/filter/pagination; immutable revision/dispatch claims; proof-bound attempts; no unknown resend', 'T01-01;T01-02;T02-01;T03-01;T04-01;T04-02;T04-03;T04-04;T04-05'];
   if (/review\.controller/.test(name)) return ['current invitation/client/channel and assigned immutable revision', 'Verification sends bounded email; decisions/comments only, no publication', 'One-time proof exchange; narrow hashed session; CSRF and current access at shared decision boundary', 'T03-01;T03-02;T03-03;T03-04'];
   if (/root\.controller|monitor\.controller/.test(name)) {
     return ['operational metadata; inspect response redaction', 'No publication', 'Operational access; do not expose client data', 'T01-03'];
@@ -43,7 +44,7 @@ function policy(kind, file, method) {
 function add(source, line, kind, path, method, actor, current) {
   const [scope, effects, planned, cases] = policy(kind, source, method);
   rows.push({ source, line, kind, path, method, actor, data_scope: scope, external_side_effects: effects,
-    current_enforcement: current, planned_enforcement: planned, acceptance_cases: cases, evidence: 'static source; enforcement and runtime coverage recorded in phase-3.md' });
+    current_enforcement: current, planned_enforcement: planned, acceptance_cases: cases, evidence: 'static source; enforcement and runtime coverage recorded in phase-4.md' });
 }
 
 for (const file of walk(resolve(root, 'apps/backend/src')).filter((p) => p.endsWith('.controller.ts'))) {
@@ -63,7 +64,7 @@ for (const file of walk(resolve(root, 'apps/backend/src')).filter((p) => p.endsW
           .map((x) => x.expression.getText(ast)).join('; ');
         add(relative(root, file), ast.getLineAndCharacterOfPosition(member.getStart(ast)).line + 1, 'HTTP',
           '/' + [prefix, firstString(d)].join('/').split('/').filter(Boolean).join('/'), callName(d).toUpperCase(), controller === 'AgencyController' && member.name.getText(ast) === 'asset' ? 'provider/visitor with bounded immutable dispatch capability' : actor,
-          [controller === 'ReviewController' ? 'AgencyBoundaryGuard verified review session; current invitation/client/assignment and revision checks; Origin/CSRF; bounded persistent rate limits; private media; no publish/admin access' : controller === 'AgencyController' ? 'AgencyBoundaryGuard + current AgencyService ownership/actions + immutable ApprovalService commands; asset GET verifies bounded dispatch capability' : controller === 'AuthController' && ['login', 'canRegister'].includes(member.name.getText(ast)) ? 'Allowed local identity entry; no resource projection' : controller === 'RootController' ? 'Public liveness only' : controller === 'UsersController' && member.name.getText(ast) === 'getSelf' ? 'AuthMiddleware + current agency membership; legacy key removed' : 'AgencyBoundaryGuard server deny; middleware may reject first', controller === 'PublicIntegrationsController' ? 'PublicAuthMiddleware' : authenticated.has(controller) ? 'AuthMiddleware' : /WidgetController/.test(controller) ? 'widget auth middleware' : 'route-specific service; inspect method', guards].filter(Boolean).join('; '));
+          [controller === 'ReviewController' ? 'AgencyBoundaryGuard verified review session; current invitation/client/assignment and revision checks; Origin/CSRF; bounded persistent rate limits; private media; no publish/admin access' : controller === 'AgencyController' ? 'AgencyBoundaryGuard + current AgencyService ownership/actions + immutable ApprovalService commands; staff action queue scope/filters and proof-bound retry/receipt reconciliation; asset GET verifies bounded dispatch capability' : controller === 'AuthController' && ['login', 'canRegister'].includes(member.name.getText(ast)) ? 'Allowed local identity entry; no resource projection' : controller === 'RootController' ? 'Public liveness only' : controller === 'UsersController' && member.name.getText(ast) === 'getSelf' ? 'AuthMiddleware + current agency membership; legacy key removed' : 'AgencyBoundaryGuard server deny; middleware may reject first', controller === 'PublicIntegrationsController' ? 'PublicAuthMiddleware' : authenticated.has(controller) ? 'AuthMiddleware' : /WidgetController/.test(controller) ? 'widget auth middleware' : 'route-specific service; inspect method', guards].filter(Boolean).join('; '));
       }
     }
   }
