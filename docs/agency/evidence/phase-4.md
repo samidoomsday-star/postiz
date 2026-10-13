@@ -4,7 +4,8 @@ Status: complete
 Started/updated (UTC): 2026-10-13; final acceptance started 15:22:57.512Z.
 Base: `phase/3-client-review` at `b052549fb22a9184e3d5be375cfbbcbcd522aaf8`; draft PR [#4](https://github.com/samidoomsday-star/postiz/pull/4) remains unmerged (GitHub checked this turn).
 Tested implementation/test/migration/tooling identity: SHA-256 `326104f1a033bb9640f03af147117c78f4b5148a9ae5ca334e8de07242f544ea`. Private `.agency/phase4-tested-source.json` lists its 27 sorted source paths and algorithm; documentation/screenshots are excluded.
-Delivery: local acceptance complete; branch `phase/4-action-dashboard`. Implementation commit and draft PR will be recorded in a documentation-only follow-up after delivery.
+Tested/delivered implementation commit: `24f14f5792092df554f8d635d958268fe7ddae1b`.
+Delivery: branch `phase/4-action-dashboard`, pushed to origin. Draft PR [#5](https://github.com/samidoomsday-star/postiz/pull/5) against main, attached to the task. Earlier phase PRs remain unmerged; the incremental Phase 4 base is recorded above. No PR was merged. This documentation-only follow-up records delivery without changing tested source.
 
 ## Scope and completed implementation
 
@@ -37,6 +38,7 @@ Commands ran from `/workspace/postiz`, 2026-10-13, with Node 22.23.3, pnpm 10.6.
 | Migration/restore | `node scripts/agency/migrate.mjs`; `python3 scripts/agency/rehearse-migration.py` | 0; seven migrations applied; 22 gates passed, including interrupted Phase 4 rollback, proof/scope/version/immutability guards and real action/recovery dump/restore | `.agency/phase4-migrate.log`, `phase4-migration-rehearsal.log` |
 | Persisted replay | `node scripts/agency/replay.mjs` with corrected executed-history selection | 0; six actual UNKNOWN/PENDING/FAILED/CONFIRMED histories; no activities, unchanged workflow source | `.agency/phase4-replay-final.log`; latest replay result recorded below |
 | Lint/types | `pnpm run lint:agency`; `pnpm run typecheck:agency`; backend/orchestrator build-tsconfig and frontend tsconfig no-emit | 0; no errors; provider interface included in lint coverage | `.agency/phase4-lint-delivery-final.log`, `phase4-test-types-delivery-final.log`, `phase4-*-types-scope.log`, `phase4-frontend-types-final.log` |
+| Staged private-value/source scan | Compare staged source with tested digest and private JWT/fixture credential values | 0; 43 task files staged; no private artifacts or credential values; exact source digest matches | `.agency/phase4-staged-scan.log` |
 | Privacy/source inventory | Runtime log scan; `node scripts/agency/inventory.mjs`; `git diff --check` | 0; three application logs contain no raw scoped credential/invitation secrets; 397 static surfaces (292 HTTP, 11 MCP transports, 20 tools, 33 provider bindings, 18 worker/service boundaries, 22 workflows, one media handler) | `.agency/phase4-log-redaction.log`, `phase4-inventory-release.log`; static inventory is not runtime certification |
 | Final complete regression | `pnpm exec playwright test --config playwright.agency.config.ts` | 0; **88 passed** (75 API, 13 browser), zero failed/skipped/flaky; started 15:22:57.512Z, duration 459.695s | `.agency/phase4-complete-suite.log`, `phase4-complete-suite-stats.json` |
 | Final replay | `node scripts/agency/replay.mjs` | 0; six actual histories across all four outcomes; two unexecuted fixture candidates excluded; actual retry IDs included | `.agency/phase4-replay-release.log` |
