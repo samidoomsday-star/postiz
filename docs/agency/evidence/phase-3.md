@@ -6,7 +6,8 @@ Base: phase/2-approvals at bc29e5c581ff18749950fd4c56f790757738d7df; unmerged dr
 Scope: V1-REV-001 and V1-REV-002; verified invitations, narrow review sessions, weekly portal and staff integration.
 
 Tested implementation/test/migration/tooling identity: SHA-256 `21630e8eb858ce732065054dc0e8eacf2b63b6de05c9e61c502733d9e7d36843`. Private `.agency/phase3-tested-source.json` lists the 33 paths and deterministic digest algorithm. Documentation is excluded from that digest.
-Delivery: final acceptance complete; branch `phase/3-client-review`. Commit/PR will be recorded in a documentation-only follow-up after delivery.
+Tested/delivered implementation commit: `80060b76c9fc20738ac5b51d0c37bb0c558d3810`.
+Delivery: branch `phase/3-client-review`, pushed to origin. Draft PR [#4](https://github.com/samidoomsday-star/postiz/pull/4), attached to the task, against main. It includes the unmerged Phase 0–2 foundations; Phase 3 incremental review starts from the base above. No PR was merged. This documentation-only follow-up records delivery without application changes.
 
 ## Completed implementation
 
@@ -44,7 +45,7 @@ Earlier full run: 66 passed, one failed mobile keyboard harness; it is not accep
 
 ## Defects and source review
 
-Six resolved implementation/setup findings are in [phase-3-fixes.md](bugs/phase-3-fixes.md) and `defects.csv`: inherited-target string formatting, passwordless login, unknown/private settings projection, renewed invitation availability, unsaved composer/channel-switch state, and a TIME_WAIT-sensitive restart probe. The probe now matches server reuse behavior while retaining active-listener and process-ownership refusal; actual restart is tested below. Application source is unchanged after the green aggregate suite; only this runtime helper was corrected and checked afterward. Harness corrections use the actual synthetic channel label and wait for enabled/focused controls before keyboard actions; workflow assertions remain intact.
+Six resolved implementation/setup findings are in [phase-3-fixes.md](bugs/phase-3-fixes.md) and `defects.csv`: inherited-target string formatting, passwordless login, unknown/private settings projection, renewed invitation availability, unsaved composer/channel-switch state, and a TIME_WAIT-sensitive restart probe. The probe now matches server reuse behavior while retaining active-listener and process-ownership refusal; actual restart is evidenced in the table above. Application source is unchanged after the green aggregate suite; only this runtime helper was corrected and checked afterward. Harness corrections use the actual synthetic channel label and wait for enabled/focused controls before keyboard actions; workflow assertions remain intact.
 
 Reviewed server-only actor construction, current policy and original decision binding, invitation/session transaction ordering, one-time exchange races, actor-scoped command idempotency, SQL scope/immutability/lifetime guards, scoped weekly/history/private-media projections, mail and telemetry paths, delivery failure, runtime logs, dependency/license/upstream diff and V2 exclusions. Existing dispatch claims and UNKNOWN/no-blind-retry behavior remain enforced. No lockfile, dependency version, upstream pin, workflow version or AGPL notice changes. `package.json` only extends lint coverage.
 
