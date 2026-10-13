@@ -13,6 +13,14 @@ acceptLanguage.languages(languages);
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
   const nextUrl = request.nextUrl;
+  // During the staged agency rollout the authenticated legacy app is closed.
+  // Its Nest APIs are also denied; this redirect only supplies a usable entry.
+  if (['/p/', '/provider/', '/oauth/', '/integrations/social/'].some(p => nextUrl.pathname.startsWith(p))) {
+    return new NextResponse('This surface is not enabled for client-scoped access', { status: 403 });
+  }
+  if (!nextUrl.pathname.startsWith('/auth') && !nextUrl.pathname.startsWith('/agency') && !nextUrl.pathname.startsWith('/uploads/')) {
+    return NextResponse.redirect(new URL('/agency', nextUrl.href));
+  }
   const authCookie =
     request.cookies.get('auth') ||
     request.headers.get('auth') ||
@@ -163,7 +171,7 @@ export async function proxy(request: NextRequest) {
     if (nextUrl.pathname === '/') {
       return NextResponse.redirect(
         new URL(
-          !!process.env.IS_GENERAL ? '/launches' : `/analytics`,
+          '/agency',
           nextUrl.href
         )
       );

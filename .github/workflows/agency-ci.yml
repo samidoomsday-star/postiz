@@ -1,0 +1,47 @@
+name: Agency baseline and phase tests
+on:
+  push:
+    branches: ['main', 'phase/**', 'release/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare pinned tools, synthetic services and application build
+        run: bash scripts/agency/setup.sh
+      - name: Planning, lint and types
+        run: |
+          python3 scripts/agency/plan.py check
+          bash scripts/agency/with-env.sh pnpm run lint:agency
+          bash scripts/agency/with-env.sh pnpm run typecheck:agency
+      - name: Rehearse versioned migration and snapshot restore
+        run: bash scripts/agency/with-env.sh python3 scripts/agency/rehearse-migration.py
+      - name: Unit tests
+        run: bash scripts/agency/with-env.sh pnpm test
+      - name: Start and exercise real-service API/browser paths
+        run: |
+          bash scripts/agency/with-env.sh python3 scripts/agency/runtime.py start
+          bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts
+      - name: Stop owned apps and services
+        if: always()
+        run: |
+          bash scripts/agency/with-env.sh python3 scripts/agency/runtime.py stop
+          bash scripts/agency/with-env.sh docker compose -f compose.agency.yaml stop
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agency-test-results
+          path: .agency/results/
+          retention-days: 7
+
+# No release, upstream merge, container publication or live-account publishing.

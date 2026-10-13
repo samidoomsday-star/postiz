@@ -4,7 +4,7 @@ Read this file, `docs/agency/README.md`, `docs/agency/project-state.json`, and t
 
 ## Authorized scope
 
-- The planning foundation is complete. No implementation phase has started yet.
+- The planning foundation is complete. Read project-state.json for current implementation status; historical setup notes do not establish the next phase.
 - V1: client permissions and scoped credentials; enforced revision-specific approvals and a client review portal; an agency action dashboard and safe resolution of publishing exceptions.
 - V2: everything listed in `docs/agency/V2-BACKLOG.md`. Do not build V2 screens, schemas, services, or speculative infrastructure during V1. A minimal dependency required for a V1 acceptance criterion is permitted and must be explained in the phase report.
 - Keep the upstream baseline pinned. Never pull or merge upstream automatically; use `docs/agency/UPSTREAM.md` for manual fixes. Do not rewrite the publishing engine or alter Temporal replay behavior casually.
@@ -23,6 +23,10 @@ Read this file, `docs/agency/README.md`, `docs/agency/project-state.json`, and t
 9. Stop at the end of the requested phase. Report changes, checks, remaining limitations, commit/PR, and the next valid prompt. A “start next phase” prompt selects the first incomplete phase; it does not authorize all remaining phases.
 
 When a completed phase branch is not merged, continue from that tested commit on the next phase branch and record the base. Do not pretend origin/main contains unmerged changes. Do not claim a final GitHub handoff until a cloneable branch contains all phases. User authorization to merge is a separate action; do not ask for it before the concrete PR is ready.
+
+## Current staged boundary
+
+Phase 1 uses `/agency` and the minimal client/access workspace. Read ADR-011 and its evidence report before adapting retained editor/calendar/media routes. Legacy HTTP/MCP/widget/preview/automation paths are denied; reopening a controller or removing the guard does not implement scoped access. Call shared services with a server-resolved current actor, never a request-body actor or inherited organization key. Phase 2 must integrate retained Postiz editing/media with immutable approvals, bounded provider asset access and the dispatch claim before the full workflow is available. Review portal/dashboard and all V2 work remain in their assigned phases.
 
 ## Engineering constraints
 

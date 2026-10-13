@@ -31,4 +31,4 @@ jobs:
           python-version: '3.12'
       - run: python3 scripts/agency/plan.py check
 
-# Application build/test CI is a Phase 0 deliverable. This check cannot certify it.
+# Application checks run separately in agency-ci.yml. This planning check cannot certify them.

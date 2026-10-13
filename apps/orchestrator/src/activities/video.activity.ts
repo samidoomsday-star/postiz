@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { HttpException, Injectable } from '@nestjs/common';
 import { Activity, ActivityMethod } from 'nestjs-temporal-core';
 import { MediaService } from '@gitroom/nestjs-libraries/database/prisma/media/media.service';
@@ -13,23 +14,7 @@ export class VideoActivity {
   ) {}
 
   @ActivityMethod()
-  async generateVideo(organizationId: string, body: VideoDto) {
-    // credits are checked against the subscription, so it has to be loaded with the org
-    const org = await this._organizationService.getOrgByIdWithSubscription(
-      organizationId
-    );
-    if (!org) {
-      throw new Error('Organization not found');
-    }
-
-    try {
-      return await this._mediaService.generateVideo(org, body);
-    } catch (err) {
-      // only the message survives the workflow failure, and a SubscriptionException's is not readable
-      if (err instanceof HttpException && err.getStatus() === 402) {
-        throw new Error('No AI video credits are available on this account.');
-      }
-      throw err;
-    }
+  async generateVideo(organizationId: string, body: VideoDto): ReturnType<MediaService['generateVideo']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 }
