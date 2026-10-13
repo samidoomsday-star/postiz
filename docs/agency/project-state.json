@@ -2,7 +2,7 @@
   "schema_version": 1,
   "product": "Postiz agency edition",
   "target": "V1 local release candidate",
-  "updated_at": "2026-10-12",
+  "updated_at": "2026-10-13",
   "setup": {
     "status": "complete",
     "report": "docs/agency/evidence/SETUP.md"
@@ -11,7 +11,7 @@
     {
       "id": 0,
       "title": "Baseline and test foundation",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [],
       "spec": "docs/agency/phases/phase-0.md",
       "requirements": [
@@ -23,8 +23,33 @@
         "T00-03",
         "T00-04"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-0.md",
+      "checks": [
+        {
+          "id": "T00-01",
+          "command": "bash scripts/agency/setup.sh",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        },
+        {
+          "id": "T00-02",
+          "command": "bash scripts/agency/with-env.sh pnpm test; bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        },
+        {
+          "id": "T00-03",
+          "command": "synthetic refusal/provider-registration tests in executed unit and API suites",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        },
+        {
+          "id": "T00-04",
+          "command": "stop/restart owned apps and Compose services; repeat full Playwright suite",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        }
+      ],
       "blockers": []
     },
     {

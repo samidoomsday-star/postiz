@@ -12,6 +12,7 @@ import { TwitchDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settin
 import { InstagramDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/instagram.dto';
 import { LinkedinDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/linkedin.dto';
 import { IsIn } from 'class-validator';
+import { syntheticModeEnabled } from '@gitroom/helpers/testing/synthetic-mode';
 import { MediumSettingsDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/medium.settings.dto';
 import { DevToSettingsDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/dev.to.settings.dto';
 import { HashnodeSettingsDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/hashnode.settings.dto';
@@ -68,6 +69,7 @@ type None = NonNullable<unknown>;
 
 export const allProviders = (setEmpty?: any) => {
   return [
+    ...(syntheticModeEnabled() ? [{ value: setEmpty, name: 'synthetic' }] : []),
     { value: RedditSettingsDto, name: 'reddit' },
     { value: LemmySettingsDto, name: 'lemmy' },
     { value: YoutubeSettingsDto, name: 'youtube' },
