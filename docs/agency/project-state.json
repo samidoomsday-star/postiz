@@ -2,7 +2,7 @@
   "schema_version": 1,
   "product": "Postiz agency edition",
   "target": "V1 local release candidate",
-  "updated_at": "2026-10-12",
+  "updated_at": "2026-10-13",
   "setup": {
     "status": "complete",
     "report": "docs/agency/evidence/SETUP.md"
@@ -11,7 +11,7 @@
     {
       "id": 0,
       "title": "Baseline and test foundation",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [],
       "spec": "docs/agency/phases/phase-0.md",
       "requirements": [
@@ -23,14 +23,39 @@
         "T00-03",
         "T00-04"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-0.md",
+      "checks": [
+        {
+          "id": "T00-01",
+          "command": "bash scripts/agency/setup.sh",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        },
+        {
+          "id": "T00-02",
+          "command": "bash scripts/agency/with-env.sh pnpm test; bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        },
+        {
+          "id": "T00-03",
+          "command": "synthetic refusal/provider-registration tests in executed unit and API suites",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        },
+        {
+          "id": "T00-04",
+          "command": "stop/restart owned apps and Compose services; repeat full Playwright suite",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-0.md"
+        }
+      ],
       "blockers": []
     },
     {
       "id": 1,
       "title": "Client boundaries and scoped access",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [
         0
       ],
@@ -48,14 +73,45 @@
         "T01-04",
         "T01-05"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-1.md",
+      "checks": [
+        {
+          "id": "T01-01",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-02",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-03",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-04",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts; bash scripts/agency/with-env.sh python3 scripts/agency/rehearse-migration.py",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        },
+        {
+          "id": "T01-05",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-1.md"
+        }
+      ],
       "blockers": []
     },
     {
       "id": 2,
       "title": "Revision approvals and dispatch enforcement",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [
         1
       ],
@@ -73,8 +129,45 @@
         "T02-05",
         "T02-06"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-2.md",
+      "checks": [
+        {
+          "id": "T02-01",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-02",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-03",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-04",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-05",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts; bash scripts/agency/with-env.sh node scripts/agency/replay.mjs; bash scripts/agency/with-env.sh node scripts/agency/restart-approval.mjs",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        },
+        {
+          "id": "T02-06",
+          "command": "bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-2.md"
+        }
+      ],
       "blockers": []
     },
     {

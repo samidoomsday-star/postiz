@@ -6,6 +6,8 @@ Status lives in [project-state.json](../project-state.json). Read root AGENTS.md
 
 **Requirements:** V1-APR-001, V1-APR-002, V1-APR-003.
 
+Read ADR-011 and the Phase 1 report: the current safe entry is the minimal `/agency` workspace. Integrate retained Postiz editing/calendar/media capabilities through scoped services as a necessary V1 dependency; do not reenable organization-wide APIs by removing the guard. Private provider-fetch media capabilities and pending finalization need revision/client binding before reopening. This is not V2 general REST/MCP editing parity.
+
 ## Ordered work
 
 1. Implement immutable publishable revisions, request/decision records and additive migrations. Capture final per-channel text, media versions, settings, account and proposed time; material changes create a new revision.

@@ -4,7 +4,7 @@ Read this file, `docs/agency/README.md`, `docs/agency/project-state.json`, and t
 
 ## Authorized scope
 
-- The planning foundation is complete. No implementation phase has started yet.
+- The planning foundation is complete. Read project-state.json for current implementation status; historical setup notes do not establish the next phase.
 - V1: client permissions and scoped credentials; enforced revision-specific approvals and a client review portal; an agency action dashboard and safe resolution of publishing exceptions.
 - V2: everything listed in `docs/agency/V2-BACKLOG.md`. Do not build V2 screens, schemas, services, or speculative infrastructure during V1. A minimal dependency required for a V1 acceptance criterion is permitted and must be explained in the phase report.
 - Keep the upstream baseline pinned. Never pull or merge upstream automatically; use `docs/agency/UPSTREAM.md` for manual fixes. Do not rewrite the publishing engine or alter Temporal replay behavior casually.
@@ -23,6 +23,10 @@ Read this file, `docs/agency/README.md`, `docs/agency/project-state.json`, and t
 9. Stop at the end of the requested phase. Report changes, checks, remaining limitations, commit/PR, and the next valid prompt. A “start next phase” prompt selects the first incomplete phase; it does not authorize all remaining phases.
 
 When a completed phase branch is not merged, continue from that tested commit on the next phase branch and record the base. Do not pretend origin/main contains unmerged changes. Do not claim a final GitHub handoff until a cloneable branch contains all phases. User authorization to merge is a separate action; do not ask for it before the concrete PR is ready.
+
+## Current staged boundary
+
+Phase 2 uses `/agency` with the retained Postiz rich editor/calendar, scoped private media, immutable revisions and internal authenticated approvals. Read ADR-012, `docs/agency/APPROVALS.md` and the phase report before changing that flow. Legacy HTTP/MCP/widget/preview/automation paths remain denied. Never reopen a controller by removing the guard, dispatch from mutable Post fields, terminate an existing workflow to reschedule, or bypass the immutable claim. Use server-resolved current actors. External reviewer invitations/portal, action dashboard and V2 remain in their assigned phases. Phase 3 starts from the Phase 2 tested branch when earlier PRs are unmerged.
 
 ## Engineering constraints
 
