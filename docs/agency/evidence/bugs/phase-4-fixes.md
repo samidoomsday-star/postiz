@@ -1,0 +1,23 @@
+# Phase 4 findings and fixes
+
+All cases use local synthetic accounts/services. Executed acceptance and delivery are in [phase-4.md](../phase-4.md).
+
+| ID / severity | Finding and root cause | Fix and regression |
+| --- | --- | --- |
+| P4-001 / 1 | A provider-double acceptance journal alone could be mistaken for completed upload/publication during unknown reconciliation. | Persist processing explicitly; unknown probes require a published/finalized fact. API and unit cases retain UNKNOWN for a lost upload receipt and never resend. |
+| P4-002 / 1 | Resetting an existing failed claim without execution/attempt binding would let an earlier workflow consume the recovery attempt or overwrite its result. | Unique retry execution IDs, monotonic attempts, immutable no-side-effect evidence, current-policy checks, stale-write guards and SQL confirmed-identity protection. Actual stale-workflow/worker-stop and partial-target retry tests require one accepted mutation. |
+| P4-003 / 2 | Native select label text included option contents; exact browser label lookup stalled at client filtering. | Explicit accessible labels on filters/owner/disposition, plus wrapping header layout. Desktop and 360px keyboard workflows and screenshots pass without weakening assertions. |
+| P4-004 / 2 | A successful read-only check retained its operation ID for later deliberate clicks, returning the cached processing result. | Clear only completed reconciliation IDs; keep in-flight duplicates serialized and mutating retry/enqueue IDs stable. A browser checks processing, waits for actual provider evidence, checks again with a distinct operation and observes publication with one mutation. |
+| P4-006 / 1 | A flattened readable-channel list could admit an old client revision after its channel moved to another client. | Require both readable client identity and every target’s current agency/client binding before SQL filtering/counts/pagination. The negative API case reproduced the disclosure before the fix and now requires zero rows/count and 404 detail. |
+| P4-007 / 2 | Temporary test editor grants outlived their tests, and a baseline test selected an arbitrary editor grant instead of its named client fixture. | Revoke only new synthetic grants and restore only moved fixture-channel bindings after each test, select the baseline grant by agency/client/user/role and preserve all original denial/browser assertions. No application permission was weakened. |
+| P4-005 / 2 | A SQL window count had no row on an empty later page and could display zero matching work. | Recover the same scoped/filtered count from the first page only in that case. API requires 21 matches on an empty third page, while inaccessible targets remain excluded. Repeated query parameters are rejected explicitly. |
+
+The first API run passed nine and failed the stopped-worker timing test because the running build predated the documented synthetic stall threshold. Completed rebuilding before retesting resolved that harness/runtime mismatch; the production threshold remains two minutes, synthetic observation two seconds. Initial lint caught an unused test import; it was removed.
+
+The replay helper initially selected a negative-test FAILED receipt with no executed job. It now fetches real histories before replay, excludes only NOT_FOUND candidates, requires all four outcome states and six actual histories, and selects attempt-specific execution IDs. Other transport/replay errors still fail the gate. No workflow source was altered and no actual replay case was disabled.
+
+Synthetic fixture clients sort after the baseline clients so existing browser entry assertions retain their original scenario. Only this phase's test clients were renamed; no grants, customer data or immutable history was discarded. All generated mail, credentials, traces and provider journals remain private ignored artifacts.
+
+The first full 87-test run passed 85 and failed the baseline editor revocation/browser cases due to fixture isolation. An initial cleanup exposed the ambiguous grant lookup; the final fixture selection explicitly names Client a1. These failed runs are not final acceptance evidence.
+
+The next full run passed 86 of 88: a moved test channel had remained on the baseline client, and the older multi-step approval journey exhausted its 45-second total allowance at the already-persisted cancellation. Test cleanup now restores original fixture bindings; that long journey uses the same 120-second allowance as other end-to-end flows, retaining its 20-second state assertions. The targeted mapping/provider fixture/approval journey passed three tests, including a 44.2-second approval journey.

@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-14",
+  "timezone": "Asia/Dhaka",
+  "coreFullSuite": {
+    "startTime": "2026-10-14T04:07:22.429Z",
+    "duration": 451203.669,
+    "expected": 92,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "coreProjectCounts": {
+    "api": 79,
+    "browser": 13
+  },
+  "reviewDisplayRetest": {
+    "desktopPassed": 1,
+    "mobilePassed": 1,
+    "earlierDstFixtureExpectedYearFailure": 1,
+    "correctedDstGate": {
+      "startTime": "2026-10-14T04:18:32.917Z",
+      "duration": 2882.7129999999997,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "uniqueApiBrowserScenariosPassed": 93,
+  "units": {
+    "files": 6,
+    "passed": 66,
+    "failed": 0,
+    "skipped": 0
+  },
+  "repeatedRaceCases": 42,
+  "raceSeeds": [
+    50501,
+    50502,
+    50503
+  ],
+  "raceRuns": 6,
+  "migrationGates": 22,
+  "compiledMediaRestore": "passed",
+  "persistedReplayHistories": 6,
+  "restartAcceptedMutations": 1,
+  "logFilesInspected": 6,
+  "knownSecretsChecked": 22,
+  "verificationCodesChecked": 16,
+  "logViolations": 0,
+  "liveProviderTests": "not run; not authorized",
+  "phase6": "planned"
+}

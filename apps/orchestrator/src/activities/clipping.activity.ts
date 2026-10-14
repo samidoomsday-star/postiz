@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Activity, ActivityMethod } from 'nestjs-temporal-core';
 import { ClippingService } from '@gitroom/nestjs-libraries/database/prisma/clipping/clipping.service';
@@ -11,8 +12,8 @@ export class ClippingActivity {
   constructor(private _clippingService: ClippingService) {}
 
   @ActivityMethod()
-  async submitClippingAnalyse({ clippingId }: { clippingId: string }) {
-    return this._clippingService.submitAnalyse(clippingId);
+  async submitClippingAnalyse({ clippingId }: { clippingId: string }): ReturnType<ClippingService['submitAnalyse']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
@@ -22,43 +23,43 @@ export class ClippingActivity {
   }: {
     clippingId: string;
     jobId: string;
-  }) {
-    return this._clippingService.checkAnalyse(clippingId, jobId);
+  }): ReturnType<ClippingService['checkAnalyse']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async transcribeClipping({ clippingId }: { clippingId: string }) {
-    return this._clippingService.transcribe(clippingId);
+  async transcribeClipping({ clippingId }: { clippingId: string }): ReturnType<ClippingService['transcribe']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async pickClippingClips({ clippingId }: { clippingId: string }) {
-    return this._clippingService.pickClips(clippingId);
+  async pickClippingClips({ clippingId }: { clippingId: string }): ReturnType<ClippingService['pickClips']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async submitClipFetch({ clipId }: { clipId: string }) {
-    return this._clippingService.submitClipFetch(clipId);
+  async submitClipFetch({ clipId }: { clipId: string }): ReturnType<ClippingService['submitClipFetch']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async checkClipFetch({ clipId, jobId }: { clipId: string; jobId: string }) {
-    return this._clippingService.checkClipFetch(clipId, jobId);
+  async checkClipFetch({ clipId, jobId }: { clipId: string; jobId: string }): ReturnType<ClippingService['checkClipFetch']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async captionClip({ clipId }: { clipId: string }) {
-    return this._clippingService.captionClip(clipId);
+  async captionClip({ clipId }: { clipId: string }): ReturnType<ClippingService['captionClip']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async submitClipRender({ clipId }: { clipId: string }) {
-    return this._clippingService.submitClipRender(clipId);
+  async submitClipRender({ clipId }: { clipId: string }): ReturnType<ClippingService['submitClipRender']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async checkClipRender({ clipId, jobId }: { clipId: string; jobId: string }) {
-    return this._clippingService.checkClipRender(clipId, jobId);
+  async checkClipRender({ clipId, jobId }: { clipId: string; jobId: string }): ReturnType<ClippingService['checkClipRender']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   // "customer" says the error was written for the customer to read
@@ -71,18 +72,18 @@ export class ClippingActivity {
     clipId: string;
     error: string;
     customer?: boolean;
-  }) {
-    return this._clippingService.failClip(clipId, error, customer);
+  }): ReturnType<ClippingService['failClip']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async createClippingDrafts({ clippingId }: { clippingId: string }) {
-    return this._clippingService.createDrafts(clippingId);
+  async createClippingDrafts({ clippingId }: { clippingId: string }): ReturnType<ClippingService['createDrafts']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
-  async finishClipping({ clippingId }: { clippingId: string }) {
-    return this._clippingService.finishClipping(clippingId);
+  async finishClipping({ clippingId }: { clippingId: string }): ReturnType<ClippingService['finishClipping']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 
   @ActivityMethod()
@@ -94,7 +95,7 @@ export class ClippingActivity {
     clippingId: string;
     error: string;
     customer?: boolean;
-  }) {
-    return this._clippingService.failClipping(clippingId, error, customer);
+  }): ReturnType<ClippingService['failClipping']> {
+    throw new BadRequestException('Legacy media automation awaits client-scoped access');
   }
 }

@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { timer } from '@gitroom/helpers/utils/timer';
 import { Integration } from '@prisma/client';
 import {
@@ -128,6 +129,21 @@ function safeStringify(obj: any) {
     }
     return value;
   });
+}
+
+// Shared by singleton providers without leaking state between concurrent activities.
+const agencyMutation = new AsyncLocalStorage<boolean>();
+export async function redactedProviderOperation<T>(fn: () => Promise<T>): Promise<T> {
+  try { return await fn(); } catch (error) {
+    // Never persist SDK request objects, platform echoes or media capabilities.
+    if (error instanceof RefreshToken) throw new RefreshToken('agency-provider', '{}', '{}', 'Channel authentication is unavailable');
+    if (error instanceof Disconnect) throw new Disconnect('agency-provider', '{}', '{}', 'Channel connection is unavailable');
+    if (error instanceof BadBody) throw new BadBody('agency-provider', '{}', '{}', 'Provider rejected this attempt; verify before any retry');
+    throw new Error('Provider operation outcome could not be confirmed');
+  }
+}
+export async function withAgencyMutation<T>(fn: () => Promise<T>): Promise<T> {
+  return agencyMutation.run(true, () => redactedProviderOperation(fn));
 }
 
 export abstract class SocialAbstract {
@@ -451,6 +467,7 @@ export abstract class SocialAbstract {
       const json =
         (typeof data === 'string' ? data : safeStringify(data || {})) || '{}';
       const handleError = this.handleErrors(json, status);
+      if (agencyMutation.getStore() && (status === 429 || status >= 500 || handleError?.type === 'retry')) throw new Error('Uncertain streamed mutation');
 
       if (
         totalRetries <= 2 &&
@@ -577,6 +594,7 @@ export abstract class SocialAbstract {
     }
 
     const handleError = this.handleErrors(json || '{}', request.status);
+    if (agencyMutation.getStore() && (request.status === 429 || request.status >= 500 || handleError?.type === 'retry')) throw new Error('Uncertain provider mutation');
 
     if (
       request.status === 429 ||

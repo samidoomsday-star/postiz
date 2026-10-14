@@ -1,0 +1,68 @@
+name: postiz-agency-dev
+services:
+  postgres:
+    image: postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+    environment:
+      POSTGRES_USER: postiz_agency
+      POSTGRES_PASSWORD: ${AGENCY_DB_PASSWORD:?Run scripts/agency/configure.py first}
+      POSTGRES_DB: postiz_agency_test
+    ports:
+      - '127.0.0.1:15432:5432'
+    volumes:
+      - agency-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postiz_agency -d postiz_agency_test']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:7.4.5-alpine@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08
+    ports:
+      - '127.0.0.1:16379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  temporal-volume-init:
+    image: temporalio/temporal:1.4.1@sha256:9844298258519ebece82b3253f1ee1fc4eb8d87b7abcc264cfb676be342c74a5
+    user: '0:0'
+    entrypoint: ['sh', '-c']
+    command: ['chown 1000:1000 /var/temporal']
+    volumes:
+      - agency-temporal:/var/temporal
+  temporal:
+    image: temporalio/temporal:1.4.1@sha256:9844298258519ebece82b3253f1ee1fc4eb8d87b7abcc264cfb676be342c74a5
+    command: ['server', 'start-dev', '--ip', '0.0.0.0', '--db-filename', '/var/temporal/dev.db', '--ui-port', '8080']
+    environment:
+      # The dev server's own gRPC client must reach its local listener directly.
+      # Preserve proxy settings for external traffic; bypass only local addresses.
+      NO_PROXY: '${NO_PROXY:-},localhost,127.0.0.1,0.0.0.0,temporal'
+      no_proxy: '${NO_PROXY:-},localhost,127.0.0.1,0.0.0.0,temporal'
+    ports:
+      - '127.0.0.1:17233:7233'
+      - '127.0.0.1:18080:8080'
+    volumes:
+      - agency-temporal:/var/temporal
+    depends_on:
+      temporal-volume-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ['CMD', 'temporal', 'operator', 'cluster', 'health', '--address', '127.0.0.1:7233']
+      interval: 3s
+      timeout: 5s
+      retries: 30
+  mailpit:
+    image: axllent/mailpit:v1.27.8@sha256:6abc8e633df15eaf785cfcf38bae48e66f64beecdc03121e249d0f9ec15f0707
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 'true'
+      MP_SMTP_AUTH_ALLOW_INSECURE: 'true'
+    ports:
+      - '127.0.0.1:11025:1025'
+      - '127.0.0.1:18025:8025'
+volumes:
+  agency-postgres:
+  agency-temporal:
+
+# Disposable local development only. No upstream app image, optional admin UIs,
+# Elasticsearch, live social credentials or automatic image updater is used.

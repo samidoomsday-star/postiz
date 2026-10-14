@@ -1,0 +1,68 @@
+[
+  {
+    "seed": 50501,
+    "file": "tests/agency/action.api.spec.ts",
+    "pattern": "preserve the successful target|reconciles confirmed evidence|operator updates are nonmaterial|concurrent retry and cancel|older workflow|simultaneous reconcile and cancel",
+    "startTime": "2026-10-14T04:18:37.028Z",
+    "duration": 44282.772,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  {
+    "seed": 50501,
+    "file": "tests/agency/approval.api.spec.ts",
+    "pattern": "concurrent edit versus approve|duplicate schedule commands|preserves UNKNOWN|delayed thread parts|pending finalization",
+    "startTime": "2026-10-14T04:19:22.531Z",
+    "duration": 23556.282,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  {
+    "seed": 50502,
+    "file": "tests/agency/approval.api.spec.ts",
+    "pattern": "concurrent edit versus approve|duplicate schedule commands|preserves UNKNOWN|delayed thread parts|pending finalization",
+    "startTime": "2026-10-14T04:19:47.247Z",
+    "duration": 23590.095,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  {
+    "seed": 50502,
+    "file": "tests/agency/action.api.spec.ts",
+    "pattern": "preserve the successful target|reconciles confirmed evidence|operator updates are nonmaterial|concurrent retry and cancel|older workflow|simultaneous reconcile and cancel",
+    "startTime": "2026-10-14T04:20:12.100Z",
+    "duration": 44062.167,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  {
+    "seed": 50503,
+    "file": "tests/agency/action.api.spec.ts",
+    "pattern": "preserve the successful target|reconciles confirmed evidence|operator updates are nonmaterial|concurrent retry and cancel|older workflow|simultaneous reconcile and cancel",
+    "startTime": "2026-10-14T04:20:57.300Z",
+    "duration": 43267.073000000004,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  {
+    "seed": 50503,
+    "file": "tests/agency/approval.api.spec.ts",
+    "pattern": "concurrent edit versus approve|duplicate schedule commands|preserves UNKNOWN|delayed thread parts|pending finalization",
+    "startTime": "2026-10-14T04:21:41.774Z",
+    "duration": 24040.368,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "postiz-phase5-profile": {
+    "memory": 6244000000,
+    "swap": 6244000000,
+    "nanoCpus": 4000000000,
+    "oomKilled": false
+  },
+  "postiz-agency-dev-postgres-1": {
+    "memory": 1000000000,
+    "swap": 1000000000,
+    "nanoCpus": 0,
+    "oomKilled": false
+  },
+  "postiz-agency-dev-redis-1": {
+    "memory": 128000000,
+    "swap": 128000000,
+    "nanoCpus": 0,
+    "oomKilled": false
+  },
+  "postiz-agency-dev-temporal-1": {
+    "memory": 500000000,
+    "swap": 500000000,
+    "nanoCpus": 0,
+    "oomKilled": false
+  },
+  "postiz-agency-dev-mailpit-1": {
+    "memory": 128000000,
+    "swap": 128000000,
+    "nanoCpus": 0,
+    "oomKilled": false
+  },
+  "parentCpuMax": "400000 100000"
+}
