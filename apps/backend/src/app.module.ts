@@ -1,3 +1,4 @@
+import { AgencyBoundaryGuard } from './agency/agency.guard';
 import { Global, Module } from '@nestjs/common';
 import { DatabaseModule } from '@gitroom/nestjs-libraries/database/prisma/database.module';
 import { ApiModule } from '@gitroom/backend/api/api.module';
@@ -45,6 +46,7 @@ import { ioRedis } from '@gitroom/nestjs-libraries/redis/redis.service';
   controllers: [],
   providers: [
     FILTER,
+    { provide: APP_GUARD, useClass: AgencyBoundaryGuard },
     {
       provide: APP_GUARD,
       useClass: ThrottlerBehindProxyGuard,

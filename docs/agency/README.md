@@ -2,7 +2,11 @@
 
 The owner confirmed on 12 October 2026: build a focused V1 for small agencies; reserve other enhancements for V2; pin Postiz and review updates manually. This folder is the development source of truth, replacing chat memory as the execution plan.
 
-**Setup is complete. Phase 0 is next and has not started.** No application build, database migration, feature implementation, or real social-account test has run during planning setup.
+The planning foundation is complete. **Read project-state.json and phase reports for current progress.** Planning-stage notes are historical; they do not override recorded implementation evidence. Real social-account tests require separate authorization.
+
+Start local acceptance with [LOCAL-TESTING.md](LOCAL-TESTING.md); review [release notes](RELEASE-NOTES.md), [known issues](KNOWN-ISSUES.md) and [source notice](SOURCE-NOTICE.md).
+
+For local installation requests, follow root [SETUP.md](../../SETUP.md) and run `bash start-local.sh`. Setup does not restart completed development phases.
 
 ## Documents
 
@@ -18,6 +22,9 @@ The owner confirmed on 12 October 2026: build a focused V1 for small agencies; r
 | [Decisions](DECISIONS.md) | Agreed defaults, rationale, outstanding technical decisions |
 | [Upstream policy](UPSTREAM.md) | Baseline provenance, manual update policy and licenses |
 | [Development runbook](DEVELOPMENT.md) | Current facts and Phase 0's required executable setup deliverables |
+| [Client review workflow](REVIEW-PORTAL.md) | Verified invitation, weekly review, feedback and staff handoff contract |
+| [Operator dashboard](ACTION-DASHBOARD.md) | Scoped action queue, truthful outcomes and safe recovery runbook |
+| [Hardening and maintenance](HARDENING.md) | Security, dependency, restore and benchmark limits |
 | [Release checklist](RELEASE-CHECKLIST.md) | What “ready to clone and test locally” requires |
 | [V2 backlog](V2-BACKLOG.md) | Explicitly deferred work, promotion rules |
 | [Research](research/postiz-agency-product-research.md) | Evidence and limitations; older recommendations do not override agreed V1 |
@@ -32,6 +39,8 @@ python3 scripts/agency/plan.py check
 python3 scripts/agency/plan.py next
 python3 scripts/agency/plan.py phase 0
 ```
+
+The phase prompts below describe the execution protocol; after all phases are complete, `plan.py next` directs owner local acceptance and does not authorize V2.
 
 Tell the agent **“Start phase 0”**, **“Start next phase”**, or **“Resume phase 2.”** It must read the plan, implement only the selected eligible phase, validate it, fix defects, record evidence, and stop at its boundary. You do not need to repeat the product requirements. Explicit later user instructions can change the plan; record them in the decision log.
 

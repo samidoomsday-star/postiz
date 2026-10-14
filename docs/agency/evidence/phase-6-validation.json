@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "tested_commit": "0c74bd382296946883747dc1fe3734d225268134",
+  "date_utc": "2026-10-14",
+  "provider_mode": "synthetic; no live publication",
+  "fresh_clone": {
+    "remote": "https://github.com/samidoomsday-star/postiz.git",
+    "branch": "release/agency-v1-rc1",
+    "prior_node_modules": false,
+    "prior_private_configuration": false,
+    "copied_checkout_tools_or_package_store": false,
+    "tracked_changes_after_checks": false,
+    "independent_compose_volumes": true
+  },
+  "environment": {
+    "os": "Debian GNU/Linux 13",
+    "architecture": "x86_64",
+    "python": "3.12.14",
+    "node": "22.23.3",
+    "pnpm": "10.6.1",
+    "prisma": "6.5.0",
+    "docker": "28.4.0",
+    "compose": "2.40.3",
+    "playwright": "1.58.2",
+    "chromium": "154.0.8037.57",
+    "effective_cpu_quota": 4,
+    "memory_limit_bytes": 34359738368
+  },
+  "setup": {
+    "command": "bash scripts/agency/setup.sh",
+    "start_utc": "2026-10-14T08:56:03Z",
+    "end_utc": "2026-10-14T08:59:38Z",
+    "exit_code": 0,
+    "package_artifacts_downloaded": 3681,
+    "prior_store_artifacts_reused": 0,
+    "migrations": 7,
+    "production_builds": [
+      "frontend",
+      "backend",
+      "orchestrator"
+    ]
+  },
+  "verification": {
+    "command": "bash scripts/agency/verify.sh",
+    "start_utc": "2026-10-14T08:59:44Z",
+    "end_utc": "2026-10-14T09:08:52Z",
+    "exit_code": 0,
+    "lint": "passed",
+    "test_and_three_service_typechecks": "passed",
+    "unit": {
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0,
+      "files": 6
+    },
+    "playwright": {
+      "startTime": "2026-10-14T09:01:49.169Z",
+      "duration": 361157.536,
+      "expected": 93,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "api_cases": 79,
+    "browser_cases": 14,
+    "migration_restore_gates": 22,
+    "database_private_media_restore": "passed; compiled missing/tampered byte eligibility checked",
+    "persisted_workflow_replays": 6,
+    "replay_outcomes": [
+      "UNKNOWN",
+      "PENDING",
+      "FAILED",
+      "CONFIRMED"
+    ],
+    "approved_queue_restart_checks": 2,
+    "full_compose_shutdown_restart": "passed; no pending migrations after restart",
+    "log_review": {
+      "files": 7,
+      "known_private_secrets": 6,
+      "matches": 0
+    }
+  },
+  "pnpm_lock_sha256": "6e9cbbee8b5d4735679ac6cd905b7fddd54ce4e31fb15a35746da0e6fbe2a1e8",
+  "not_run": [
+    "live social publication",
+    "live SMTP delivery",
+    "production deployment",
+    "other operating systems",
+    "hosted CI certification"
+  ]
+}

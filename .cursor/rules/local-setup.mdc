@@ -1,0 +1,6 @@
+---
+description: Local installation, startup and repository safety instructions
+globs:
+alwaysApply: true
+---
+Read and follow root AGENTS.md. For setup/run/test-locally requests read SETUP.md, detect the OS, preserve the checkout and private data, and run `bash start-local.sh` in the supported Linux environment. Complete actual API/browser smoke tests and leave the app running. Report concrete blockers only after independent work. No V2, upstream/main merges, data resets or real social credentials are authorized by a setup request. Full manual acceptance is in docs/agency/LOCAL-TESTING.md.

@@ -213,25 +213,27 @@ model Star {
 }
 
 model Media {
-  id                 String              @id @default(uuid())
-  name               String
-  originalName       String?
-  path               String
-  organizationId     String
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  deletedAt          DateTime?
-  fileSize           Int                 @default(0)
-  type               String              @default("image")
-  thumbnail          String?
-  alt                String?
-  thumbnailTimestamp Int?
-  status             String              @default("ready")
-  processingError    String?
-  organization       Organization        @relation(fields: [organizationId], references: [id])
-  agencies           SocialMediaAgency[]
-  userPicture        User[]
-  oauthApps          OAuthApp[]
+  clientId             String?
+  ownershipQuarantined Boolean             @default(true)
+  id                   String              @id @default(uuid())
+  name                 String
+  originalName         String?
+  path                 String
+  organizationId       String
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  deletedAt            DateTime?
+  fileSize             Int                 @default(0)
+  type                 String              @default("image")
+  thumbnail            String?
+  alt                  String?
+  thumbnailTimestamp   Int?
+  status               String              @default("ready")
+  processingError      String?
+  organization         Organization        @relation(fields: [organizationId], references: [id])
+  agencies             SocialMediaAgency[]
+  userPicture          User[]
+  oauthApps            OAuthApp[]
 
   @@index([name])
   @@index([organizationId])
@@ -365,6 +367,7 @@ model Customer {
 }
 
 model Integration {
+  ownershipQuarantined  Boolean                @default(true)
   id                    String                 @id @default(cuid())
   internalId            String
   organizationId        String
@@ -455,6 +458,12 @@ model Comments {
 }
 
 model Post {
+  agencyWorkId               String?
+  agencyRevisionId           String?
+  clientId                   String?
+  agencyActorType            String?
+  agencyActorId              String?
+  ownershipQuarantined       Boolean                   @default(true)
   id                         String                    @id @default(cuid())
   state                      State                     @default(QUEUE)
   publishDate                DateTime
@@ -495,6 +504,8 @@ model Post {
 
   @@index([group])
   @@index([batchId])
+  @@index([agencyWorkId])
+  @@index([agencyRevisionId])
   @@index([deletedAt])
   @@index([publishDate])
   @@index([state])
@@ -1837,4 +1848,266 @@ model Announcement {
   description String
   color       AnnouncementColor @default(INFO)
   createdAt   DateTime          @default(now())
+}
+
+// Agency controls deliberately reuse Customer as the client boundary.
+model AgencyGrant {
+  id             String    @id @default(uuid())
+  organizationId String
+  userId         String
+  clientId       String
+  role           String
+  channelIds     String[]  @default([])
+  expiresAt      DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@unique([organizationId, userId, clientId, role])
+  @@index([organizationId, userId])
+}
+
+model AgencyCredential {
+  id             String    @id @default(uuid())
+  organizationId String
+  creatorId      String
+  name           String
+  secretHash     String    @unique
+  prefix         String
+  clientIds      String[]
+  channelIds     String[]  @default([])
+  actions        String[]  @default(["content:read", "draft:write"])
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  lastUsedAt     DateTime?
+
+  @@index([organizationId])
+}
+
+model AgencyAudit {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String?
+  actorType      String
+  actorId        String
+  action         String
+  resourceId     String
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId, createdAt])
+}
+
+model AgencyWork {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String
+  currentVersion Int      @default(0)
+  status         String   @default("DRAFT")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, clientId, createdAt])
+}
+
+model AgencyRevision {
+  id             String   @id @default(uuid())
+  workId         String
+  organizationId String
+  clientId       String
+  version        Int
+  payload        Json
+  payloadHash    String
+  actorType      String
+  actorId        String
+  createdAt      DateTime @default(now())
+
+  @@unique([workId, version])
+  @@index([organizationId, clientId])
+}
+
+model AgencyReviewRequest {
+  id         String   @id @default(uuid())
+  workId     String
+  revisionId String   @unique
+  reviewerId String
+  status     String   @default("IN_REVIEW")
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([reviewerId, status])
+}
+
+model AgencyReviewDecision {
+  reviewInvitationId String?
+  id                 String   @id @default(uuid())
+  requestId          String   @unique
+  revisionId         String
+  payloadHash        String
+  actorId            String
+  decision           String
+  comment            String   @default("")
+  createdAt          DateTime @default(now())
+}
+
+model AgencyCommand {
+  id             String   @id @default(uuid())
+  organizationId String
+  actorType      String
+  actorId        String
+  operationId    String
+  action         String
+  workId         String
+  payloadHash    String
+  result         Json
+  createdAt      DateTime @default(now())
+
+  @@unique([organizationId, actorType, actorId, operationId])
+}
+
+model AgencyDispatch {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String
+  postId         String
+  channelId      String
+  part           Int
+  stage          String    @default("publish")
+  state          String    @default("READY")
+  attempt        Int       @default(0)
+  actorType      String
+  actorId        String
+  claimedAt      DateTime?
+  result         Json?
+  pendingData    Json?
+  providerId     String?
+  providerUrl    String?
+  reason         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([revisionId, channelId, part, stage])
+  @@index([postId, stage])
+  @@index([organizationId, clientId, state])
+}
+
+model AgencyActionRecord {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String   @unique
+  ownerId        String?
+  disposition    String   @default("OPEN")
+  note           String   @default("")
+  version        Int      @default(1)
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, clientId, ownerId])
+}
+
+model AgencyRecoveryEvidence {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String
+  dispatchId     String
+  attempt        Int
+  kind           String
+  outcome        String
+  actorId        String
+  previousState  String
+  previousReason String?
+  claimedAt      DateTime?
+  providerId     String?
+  providerUrl    String?
+  createdAt      DateTime  @default(now())
+
+  @@index([dispatchId, createdAt])
+}
+
+model AgencyMediaSnapshot {
+  id                String   @id @default(uuid())
+  organizationId    String
+  clientId          String
+  revisionId        String
+  sourceMediaId     String
+  sourceHash        String
+  sourceFingerprint String
+  contentHash       String
+  fileName          String
+  mime              String
+  size              Int
+  createdAt         DateTime @default(now())
+
+  @@index([revisionId])
+  @@index([sourceMediaId])
+}
+
+model AgencyReviewInvitation {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  reviewerId     String
+  reviewerName   String
+  email          String
+  creatorId      String
+  channelIds     String[]  @default([])
+  tokenHash      String    @unique
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  exchangedAt    DateTime?
+  verifiedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([organizationId, clientId, reviewerId])
+}
+
+model AgencyReviewChallenge {
+  id           String    @id @default(uuid())
+  invitationId String
+  codeHash     String
+  browserHash  String
+  expiresAt    DateTime
+  attempts     Int       @default(0)
+  consumedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([invitationId])
+}
+
+model AgencyReviewerSession {
+  id             String    @id @default(uuid())
+  organizationId String
+  clientId       String
+  reviewerId     String
+  invitationId   String    @unique
+  secretHash     String    @unique
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([organizationId, clientId])
+}
+
+model AgencyReviewThrottle {
+  id        String   @id
+  count     Int      @default(0)
+  expiresAt DateTime
+}
+
+model AgencyReviewComment {
+  id             String   @id @default(uuid())
+  organizationId String
+  clientId       String
+  workId         String
+  revisionId     String
+  actorId        String
+  body           String
+  createdAt      DateTime @default(now())
+
+  @@index([workId, createdAt])
 }

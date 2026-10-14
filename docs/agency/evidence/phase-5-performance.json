@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-14T04:02:28.492Z",
+  "dataset": {
+    "agencies": 1,
+    "clients": 50,
+    "channels": 100,
+    "workItems": 10000,
+    "backingPosts": 20000,
+    "distribution": "two-target saved drafts; no dispatch or social mutations"
+  },
+  "concurrentUsers": 10,
+  "warmup": 10,
+  "requests": 200,
+  "p50Ms": 470.48649900000055,
+  "p95Ms": 791.5599590000002,
+  "maxMs": 1332.9024649999992,
+  "thresholdMs": 1000,
+  "passed": true
+}

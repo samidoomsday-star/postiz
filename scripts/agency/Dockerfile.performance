@@ -1,0 +1,6 @@
+# Recorded application profile; local synthetic services only.
+FROM node:22.23.3-bookworm-slim@sha256:c3de60bf2f9dd0ac6370e6117950ff62d6e339527e7472301c9c78a017978392
+RUN --mount=type=secret,id=system_ca,required=true \
+    apt-get -o Acquire::https::CaInfo=/run/secrets/system_ca update && \
+    apt-get -o Acquire::https::CaInfo=/run/secrets/system_ca install -y --no-install-recommends openssl && \
+    rm -rf /var/lib/apt/lists/*

@@ -1,0 +1,21 @@
+{
+  "tested_commit": "0c74bd382296946883747dc1fe3734d225268134",
+  "paths": [
+    "apps",
+    "libraries",
+    "scripts",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    ".nvmrc",
+    ".npmrc",
+    "compose.agency.yaml",
+    "playwright.agency.config.ts",
+    "vitest.agency.config.mts",
+    "tsconfig.agency.tests.json",
+    "eslint.agency.config.mjs"
+  ],
+  "git_tree_listing_sha256": "27f256b7944a8894593fddc47cac899ede0b28b711d65d5fbb406b4830d16614",
+  "tracked_entries": 1006,
+  "description": "SHA-256 of git ls-tree -r <tested_commit> -- <paths>; excludes documentation-only handoff updates."
+}

@@ -1,14 +1,28 @@
-# Postiz agency edition — development plan
+# Postiz agency edition — V1 local candidate
+
+**Want your IDE to install and run this app?** On Windows, start with [WINDOWS-SETUP.md](WINDOWS-SETUP.md). General instructions: [SETUP.md](SETUP.md). Paste into your IDE:
+
+> I use Windows. Clone branch release/agency-v1-rc1 from https://github.com/samidoomsday-star/postiz inside WSL2, read WINDOWS-SETUP.md, AGENTS.md and SETUP.md, set it up in my local environment, run the API/browser smoke tests, and leave it running for me to test. Preserve my data and tell me the demo login and stop/restart commands.
+
+Use the complete [`release/agency-v1-rc1` candidate](https://github.com/samidoomsday-star/postiz/tree/release/agency-v1-rc1). The repository currently defaults to planning-only `main`; select the candidate branch explicitly until the owner changes the default branch. In the supported Linux x86_64 environment, the first-run and restart command is:
+
+```sh
+bash start-local.sh
+```
+
+It installs/builds when needed, starts services and apps, and verifies actual login, queue publishing, local email and browser access. Windows requires a Linux WSL2 environment; native macOS/ARM execution is not verified. [SETUP.md](SETUP.md) explains prerequisites and platform routes. No real social credentials are needed. Live connections remain disabled/unverified.
 
 This repository is based on Postiz **v2.25.1**, pinned to `91c91f633a0175fb3914dba64c932928c514b72a`.
 It is an independently maintained derivative, with the upstream license and history retained.
 
-**Current state: planning foundation complete; Phase 0 has not started.**
-The imported app has not been installed, built, or runtime-tested in this checkout.
+**Development status is tracked in [project-state.json](docs/agency/project-state.json).**
+See the [development runbook](docs/agency/DEVELOPMENT.md) for the verified synthetic workflow and each phase report for actual test evidence.
 
 V1 adds client-scoped permissions, enforced revision approvals, and an agency action dashboard.
 Other proposed enhancements are reserved for V2. Upstream merges and dependency updates are manual.
 
+- [Local install and tester guide](docs/agency/LOCAL-TESTING.md)
+- [Candidate release notes](docs/agency/RELEASE-NOTES.md)
 - [Start here: project index and phase prompts](docs/agency/README.md)
 - [BRD and SRS](docs/agency/PRODUCT-SPEC.md)
 - [Phase roadmap](docs/agency/ROADMAP.md)
@@ -17,7 +31,7 @@ Other proposed enhancements are reserved for V2. Upstream merges and dependency 
 - [Upstream and licensing policy](docs/agency/UPSTREAM.md)
 
 Run `python3 scripts/agency/plan.py check` and `python3 scripts/agency/plan.py next` from the repository root.
-To begin implementation, tell the agent: **Start phase 0.**
+Run the phase checker to identify the next eligible phase.
 
 The upstream README below describes inherited capabilities; it is not proof that this derivative is ready for use.
 

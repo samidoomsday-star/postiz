@@ -767,7 +767,19 @@ export const Calendar = () => {
     </>
   );
 };
-export const CalendarColumn: FC<{
+export const CalendarColumn: FC<{ getDate: dayjs.Dayjs; randomHour?: boolean }> = (props) => {
+  const calendar = useCalendar();
+  if (calendar.agencyItems) {
+    const items = calendar.agencyItems.filter(item => dayjs(item.publishAt).format('YYYY-MM-DD') === props.getDate.format('YYYY-MM-DD'));
+    return <div className="min-w-0 w-full h-full border border-tableBorder rounded-lg p-1" aria-label={props.getDate.format('YYYY-MM-DD')}>
+      <time className="text-xs">{props.getDate.date()}</time>
+      {items.map(item => <button type="button" className="block w-full min-w-0 overflow-hidden text-ellipsis text-left text-xs p-1" key={item.id} aria-label={`${item.status} · ${item.content}`} title={item.content} onClick={() => calendar.onAgencyWork?.(item.id)}>{item.status} · {item.content.slice(0, 24)}</button>)}
+    </div>;
+  }
+  return <LegacyCalendarColumn {...props} />;
+};
+
+const LegacyCalendarColumn: FC<{
   getDate: dayjs.Dayjs;
   randomHour?: boolean;
 }> = memo((props) => {

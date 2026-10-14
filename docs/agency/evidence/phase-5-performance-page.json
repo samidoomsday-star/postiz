@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-14T04:02:32.391Z",
+  "navigation": "authenticated full navigation through usable client filter and loaded scoped results",
+  "samplesMs": [
+    697.3253790000001,
+    430.48191700000007,
+    434.3250589999998,
+    1005.4510599999999,
+    435.5186349999999
+  ],
+  "maxMs": 1005.4510599999999,
+  "thresholdMs": 3000,
+  "errors": [],
+  "passed": true
+}

@@ -1,7 +1,5 @@
-# Agency edition instructions
+# Agency V1 instructions
 
-Follow the root AGENTS.md and docs/agency/README.md. Read project-state.json and the selected phase specification before implementing anything. Run `python3 scripts/agency/plan.py check` and `python3 scripts/agency/plan.py next`.
+Follow root AGENTS.md as the source of truth. The owner uses Windows: follow WINDOWS-SETUP.md and run inside WSL2 Linux with Docker Desktop integration. For local setup/run requests, follow SETUP.md and execute `bash start-local.sh` from the repo root in the supported Linux environment. It installs/builds when needed and runs actual API/browser smoke tests. Preserve existing config/data, diagnose fixable failures, and leave the app running for testing. Report the login, port/path, stop/restart commands and actual test results.
 
-V1 is limited to client permissions, enforced revision approvals, a client review portal and the agency action dashboard, plus their tested local delivery prerequisites. V2 is deferred. Do not automatically merge upstream or use stale upstream toolchain instructions. Phase 0 must verify Node/package tools and all runtime/test commands. Nested AGENTS.md rules also apply.
-
-Complete only the requested eligible phase, including validation, tests, bug fixes and evidence. Preserve user changes and stop before starting the next phase. Never report mocked provider tests as live publication evidence.
+All V1 phases 0–6 are complete. A setup request does not authorize another development phase, V2, merging PRs/upstream, real social publication or deployment. Use the complete release/agency-v1-rc1 branch; never discard local changes to switch. Never replace private .agency settings or use upstream production images/db-reset. Read SETUP.md for OS prerequisites and precise blockers; no provider secrets are needed for synthetic testing. Read nested AGENTS.md before application edits.

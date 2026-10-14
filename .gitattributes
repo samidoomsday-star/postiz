@@ -1,0 +1,4 @@
+# Keep Linux entry points usable when an IDE on Windows edits the checkout.
+/start-local.sh text eol=lf
+/scripts/agency/*.sh text eol=lf
+/scripts/agency/*.py text eol=lf
