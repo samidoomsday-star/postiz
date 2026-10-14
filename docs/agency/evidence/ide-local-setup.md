@@ -6,7 +6,7 @@ Status: in_progress. Authorized by owner after Phase 6: make the repository link
 
 - Root SETUP.md is the installation/operations entry point, including a pasteable IDE prompt, OS routes, prerequisites, safe branch selection, diagnosis and handoff.
 - Root start-local.sh installs/builds if necessary, starts actual services/apps, runs the existing 12 API/browser smoke scenarios and leaves them running. Repeated starts reuse successful builds for the same commit; explicit setup invalidates the marker before rebuilding. Stop/status/check/full verification are named actions, with no data reset.
-- AGENTS.md prioritizes setup requests separately from completed phase implementation. Claude/Copilot/Cursor/Windsurf instructions delegate to that entry point. Stale root Claude instructions archived exactly under docs/agency/archive; current Next.js nested instructions preserved.
+- AGENTS.md prioritizes setup requests separately from completed phase implementation. Claude/Copilot/Cursor/Windsurf instructions delegate to that entry point. Stale root Claude instructions archived (trailing whitespace normalized; original retained in base commit) under docs/agency/archive; current Next.js nested instructions preserved.
 - README and tester index expose the one-command path. The complete candidate will become the repository default branch, allowing ordinary repository-link clones to get the actual app while main and phase PR histories remain unmerged.
 
 ## Validation
