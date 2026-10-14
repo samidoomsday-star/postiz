@@ -2,6 +2,8 @@
 
 Candidate label: `agency-v1.0.0-rc.1` (documentation label, no release tag). This independent Postiz derivative contains phases 0–6. Use the candidate branch: main still lacks the unmerged phase PRs. Exact tested commit and results are in [Phase 6 evidence](evidence/phase-6.md).
 
+For an IDE-assisted installation, begin with root [SETUP.md](../../SETUP.md) and `bash start-local.sh`; the commands below document its underlying steps.
+
 ## Prerequisites and first run
 
 Supported evidence: Debian 13 Linux x86_64, Python 3.12.14, Docker Engine 28.4 / Compose v2, Chromium 154. Other Linux distributions, ARM, native macOS/Windows and WSL2 have not been verified. The Linux supervisor requires `/proc`. Use a Linux machine/VM for this candidate.

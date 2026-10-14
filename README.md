@@ -1,5 +1,17 @@
 # Postiz agency edition — V1 local candidate
 
+**Want your IDE to install and run this app?** Read [SETUP.md](SETUP.md), or paste:
+
+> Clone https://github.com/samidoomsday-star/postiz, read AGENTS.md and SETUP.md, set it up in my local environment, run the API/browser smoke tests, and leave it running for me to test. Preserve my data and tell me the demo login and stop/restart commands.
+
+The default branch is the complete `release/agency-v1-rc1` candidate. In the supported Linux x86_64 environment, the first-run and restart command is:
+
+```sh
+bash start-local.sh
+```
+
+It installs/builds when needed, starts services and apps, and verifies actual login, queue publishing, local email and browser access. Windows requires a Linux WSL2 environment; native macOS/ARM execution is not verified. [SETUP.md](SETUP.md) explains prerequisites and platform routes. No real social credentials are needed. Live connections remain disabled/unverified.
+
 This repository is based on Postiz **v2.25.1**, pinned to `91c91f633a0175fb3914dba64c932928c514b72a`.
 It is an independently maintained derivative, with the upstream license and history retained.
 

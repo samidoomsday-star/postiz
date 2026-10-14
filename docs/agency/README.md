@@ -6,6 +6,8 @@ The planning foundation is complete. **Read project-state.json and phase reports
 
 Start local acceptance with [LOCAL-TESTING.md](LOCAL-TESTING.md); review [release notes](RELEASE-NOTES.md), [known issues](KNOWN-ISSUES.md) and [source notice](SOURCE-NOTICE.md).
 
+For local installation requests, follow root [SETUP.md](../../SETUP.md) and run `bash start-local.sh`. Setup does not restart completed development phases.
+
 ## Documents
 
 | Document | Purpose |
