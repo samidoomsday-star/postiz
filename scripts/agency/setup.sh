@@ -2,6 +2,7 @@
 set -euo pipefail
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$repo_dir"
+python3 scripts/agency/preflight.py
 bash scripts/agency/bootstrap.sh
 python3 scripts/agency/configure.py
 bash scripts/agency/with-env.sh pnpm install --frozen-lockfile --store-dir .agency/pnpm-store

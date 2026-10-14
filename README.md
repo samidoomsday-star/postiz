@@ -1,4 +1,4 @@
-# Postiz agency edition — development plan
+# Postiz agency edition — V1 local candidate
 
 This repository is based on Postiz **v2.25.1**, pinned to `91c91f633a0175fb3914dba64c932928c514b72a`.
 It is an independently maintained derivative, with the upstream license and history retained.
@@ -9,6 +9,8 @@ See the [development runbook](docs/agency/DEVELOPMENT.md) for the verified synth
 V1 adds client-scoped permissions, enforced revision approvals, and an agency action dashboard.
 Other proposed enhancements are reserved for V2. Upstream merges and dependency updates are manual.
 
+- [Local install and tester guide](docs/agency/LOCAL-TESTING.md)
+- [Candidate release notes](docs/agency/RELEASE-NOTES.md)
 - [Start here: project index and phase prompts](docs/agency/README.md)
 - [BRD and SRS](docs/agency/PRODUCT-SPEC.md)
 - [Phase roadmap](docs/agency/ROADMAP.md)

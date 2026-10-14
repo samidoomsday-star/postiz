@@ -4,6 +4,8 @@ The owner confirmed on 12 October 2026: build a focused V1 for small agencies; r
 
 The planning foundation is complete. **Read project-state.json and phase reports for current progress.** Planning-stage notes are historical; they do not override recorded implementation evidence. Real social-account tests require separate authorization.
 
+Start local acceptance with [LOCAL-TESTING.md](LOCAL-TESTING.md); review [release notes](RELEASE-NOTES.md), [known issues](KNOWN-ISSUES.md) and [source notice](SOURCE-NOTICE.md).
+
 ## Documents
 
 | Document | Purpose |

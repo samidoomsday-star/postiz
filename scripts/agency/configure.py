@@ -15,6 +15,9 @@ if target.exists():
 else:
     password = secrets.token_hex(24)
     settings = {
+        # A fresh checkout must not adopt another checkout's database volume.
+        # Existing environment files retain their original Compose project.
+        'COMPOSE_PROJECT_NAME': 'postiz-agency-' + secrets.token_hex(6),
         'AGENCY_DB_PASSWORD': password,
         'DATABASE_URL': f'postgresql://postiz_agency:{password}@127.0.0.1:15432/postiz_agency_test',
         'REDIS_URL': 'redis://127.0.0.1:16379',

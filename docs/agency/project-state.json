@@ -339,7 +339,7 @@
     {
       "id": 6,
       "title": "Local release candidate and handoff",
-      "status": "planned",
+      "status": "in_progress",
       "depends_on": [
         5
       ],
@@ -352,7 +352,7 @@
         "T06-02",
         "T06-03"
       ],
-      "report": null,
+      "report": "docs/agency/evidence/phase-6.md",
       "checks": [],
       "blockers": []
     }

@@ -1,0 +1,9 @@
+# License, attribution and corresponding source
+
+This independently maintained derivative is based on gitroomhq/Postiz v2.25.1, commit `91c91f633a0175fb3914dba64c932928c514b72a`. Preserve [the upstream AGPL-3.0 license](../../LICENSE) and copyright/third-party notices. No official Postiz affiliation, trademark permission or commercial-integration license is claimed.
+
+Candidate corresponding source is the complete `release/agency-v1-rc1` branch in https://github.com/samidoomsday-star/postiz ; the immutable tested commit is recorded in evidence/phase-6.md. Use `git checkout <recorded-commit>` after cloning for that precise revision. All phases, migrations, pnpm lock, tool/image pins, local fonts with OFL notice, test fixtures, and build/install/run instructions are included. See LOCAL-TESTING.md and scripts/agency/setup.sh. Generated dependencies, private credentials and customer data are not corresponding application source.
+
+No hosted service or binary/container distribution is published by this candidate. Before providing a modified network service, offer its users the corresponding source of the exact running revision under the AGPL, with access that works for those users; a private repository inaccessible to users is not an adequate offer. Preserve build/install instructions and license notices, and disclose the running revision. A branch that later moves is insufficient to identify an old deployed revision: retain the exact commit/source for every distributed or hosted version. Public release/tagging, repository visibility changes and production legal/branding review remain separate owner decisions.
+
+Dependencies and optional assets/services retain their own terms. The local candidate does not enable optional commercial editors, third-party AI/billing or live provider apps. Review those terms before future enablement; this source notice grants no additional rights.
