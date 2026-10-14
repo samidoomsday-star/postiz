@@ -38,6 +38,8 @@ python3 scripts/agency/plan.py next
 python3 scripts/agency/plan.py phase 0
 ```
 
+The phase prompts below describe the execution protocol; after all phases are complete, `plan.py next` directs owner local acceptance and does not authorize V2.
+
 Tell the agent **“Start phase 0”**, **“Start next phase”**, or **“Resume phase 2.”** It must read the plan, implement only the selected eligible phase, validate it, fix defects, record evidence, and stop at its boundary. You do not need to repeat the product requirements. Explicit later user instructions can change the plan; record them in the decision log.
 
 Each phase file has an ordered work list and completion gate. If interrupted, the report records the exact next unfinished task. Never advance based only on the phase number in a prompt or on elapsed time. An upstream/provider outage or missing app approval remains visible as a blocker or a release limitation, depending on the gate it affects.

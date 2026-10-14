@@ -33,3 +33,4 @@ P5-007,1,V1-NFR-001,Enabled HTTP/media/editor dependencies included applicable c
 P5-008,2,V1-NFR-001,Explicit staff-header/login hostile origins and URL-carried session acceptance needed consistent closure,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
 P5-009,2,V1-DASH-002,A terminal SDK rejection after an earlier accepted side effect could be mislabeled known failure,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
 P5-010,2,V1-NFR-003,Repeated DST local review times lacked a visible UTC offset to distinguish the approved instant,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P6-001,2,V1-REL-001,Fresh checkout could adopt fixed Compose database and workflow volumes,resolved,phase-6,docs/agency/evidence/bugs/phase-6-fixes.md,docs/agency/evidence/phase-6.md

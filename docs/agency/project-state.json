@@ -339,7 +339,7 @@
     {
       "id": 6,
       "title": "Local release candidate and handoff",
-      "status": "in_progress",
+      "status": "complete",
       "depends_on": [
         5
       ],
@@ -353,7 +353,26 @@
         "T06-03"
       ],
       "report": "docs/agency/evidence/phase-6.md",
-      "checks": [],
+      "checks": [
+        {
+          "id": "T06-01",
+          "command": "independent GitHub clone at 0c74bd38; bash scripts/agency/setup.sh; bash scripts/agency/verify.sh (66 unit + 93 API/browser)",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-6.md"
+        },
+        {
+          "id": "T06-02",
+          "command": "verify.sh: 22 migration gates, actual DB/private-media restore, 6 persisted replays, two approved-queue restarts and full Compose shutdown/restart",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-6.md"
+        },
+        {
+          "id": "T06-03",
+          "command": "license/source/platform/support/environment/checklist review; plan.py check; final candidate source identity and GitHub remote verification",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-6.md"
+        }
+      ],
       "blockers": []
     }
   ]

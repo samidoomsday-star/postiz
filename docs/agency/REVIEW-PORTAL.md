@@ -1,6 +1,6 @@
 # Client review workflow
 
-Phase 3 adds `/review` for invited clients. Agency staff continue to use `/agency` and the retained editor/calendar. The dashboard and publishing recovery controls remain Phase 4 work. Live email delivery and social-platform compatibility are separate from the verified local synthetic workflow.
+Phase 3 adds `/review` for invited clients. Agency staff continue to use `/agency` and the retained editor/calendar. The dashboard and publishing recovery controls are documented in [ACTION-DASHBOARD.md](ACTION-DASHBOARD.md). Live email delivery and social-platform compatibility are separate from the verified local synthetic workflow.
 
 ## Agency and reviewer journey
 

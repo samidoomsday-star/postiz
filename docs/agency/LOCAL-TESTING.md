@@ -4,7 +4,7 @@ Candidate label: `agency-v1.0.0-rc.1` (documentation label, no release tag). Thi
 
 ## Prerequisites and first run
 
-Supported evidence: Debian 13 Linux x86_64, Python 3.11+, Docker Engine 28.4 / Compose v2, Chromium 154. Other Linux distributions, ARM, native macOS/Windows and WSL2 have not been verified. The Linux supervisor requires `/proc`. Use a Linux machine/VM for this candidate.
+Supported evidence: Debian 13 Linux x86_64, Python 3.12.14, Docker Engine 28.4 / Compose v2, Chromium 154. Other Linux distributions, ARM, native macOS/Windows and WSL2 have not been verified. The Linux supervisor requires `/proc`. Use a Linux machine/VM for this candidate.
 
 Provide Git, Bash, Python 3.10+, curl, CA certificates, tar, xz, sha256sum, make, g++, OpenSSL/libssl3 and a working local Docker daemon accessible to your user. Example Debian prerequisite installation, performed by a machine administrator:
 
@@ -27,7 +27,7 @@ Wait for setup to exit successfully before startup. It downloads checksum-verifi
 
 Open the local frontend on port 4200 and sign in at `/auth/login`; the workspace is `/agency`. Backend is on 3000, orchestrator health on 3002. Mailpit's local inbox is on 18025; Temporal development UI on 18080. PostgreSQL 15432, Redis 16379, Temporal 17233 and SMTP 11025 must also be free. Only run one checkout's services at a time: project/volume names are isolated, host ports are fixed. Never stop an unrelated service to free a port without identifying it.
 
-`.agency/environment.env` and `.agency/fixture-access.json` are private generated configuration, not prerequisites to copy from another machine. Newly configured checkouts generate a unique `COMPOSE_PROJECT_NAME`. Existing configuration retains its previous project name/default to preserve volumes. Keep the environment file with that installation: replacing its password while retaining the old database volume cannot change PostgreSQL's stored password. Do not copy a configured checkout to another path; clone and run setup instead. No tracked-file edit is needed.
+[The environment reference](environment.env.example) lists every generated setting with placeholders; do not source it or use the inherited upstream `.env.example`. `.agency/environment.env` and `.agency/fixture-access.json` are private generated configuration, not prerequisites to copy from another machine. Newly configured checkouts generate a unique `COMPOSE_PROJECT_NAME`. Existing configuration retains its previous project name/default to preserve volumes. Keep the environment file with that installation: replacing its password while retaining the old database volume cannot change PostgreSQL's stored password. Do not copy a configured checkout to another path; clone and run setup instead. No tracked-file edit is needed.
 
 ## Accounts and boundaries
 
