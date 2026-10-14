@@ -2,9 +2,9 @@
 
 **Want your IDE to install and run this app?** Read [SETUP.md](SETUP.md), or paste:
 
-> Clone https://github.com/samidoomsday-star/postiz, read AGENTS.md and SETUP.md, set it up in my local environment, run the API/browser smoke tests, and leave it running for me to test. Preserve my data and tell me the demo login and stop/restart commands.
+> Clone branch release/agency-v1-rc1 from https://github.com/samidoomsday-star/postiz, read AGENTS.md and SETUP.md, set it up in my local environment, run the API/browser smoke tests, and leave it running for me to test. Preserve my data and tell me the demo login and stop/restart commands.
 
-The default branch is the complete `release/agency-v1-rc1` candidate. In the supported Linux x86_64 environment, the first-run and restart command is:
+Use the complete [`release/agency-v1-rc1` candidate](https://github.com/samidoomsday-star/postiz/tree/release/agency-v1-rc1). The repository currently defaults to planning-only `main`; select the candidate branch explicitly until the owner changes the default branch. In the supported Linux x86_64 environment, the first-run and restart command is:
 
 ```sh
 bash start-local.sh
