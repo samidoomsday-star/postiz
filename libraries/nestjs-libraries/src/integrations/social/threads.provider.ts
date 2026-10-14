@@ -44,7 +44,6 @@ export class ThreadsProvider extends SocialAbstract implements SocialProvider {
         value: string;
       }
     | undefined {
-    console.log(body);
     if (body.includes('Error validating access token')) {
       return { type: 'refresh-token', value: 'Threads access token expired' };
     }
@@ -118,7 +117,7 @@ export class ThreadsProvider extends SocialAbstract implements SocialProvider {
         `?client_id=${process.env.THREADS_APP_ID}` +
         `&redirect_uri=${encodeURIComponent(
           `${
-            process?.env.FRONTEND_URL?.indexOf('https') == -1
+            process?.env.FRONTEND_URL?.indexOf('https') === -1
               ? `https://redirectmeto.com/${process?.env.FRONTEND_URL}`
               : `${process?.env.FRONTEND_URL}`
           }/integrations/social/threads`
@@ -141,7 +140,7 @@ export class ThreadsProvider extends SocialAbstract implements SocialProvider {
           `?client_id=${process.env.THREADS_APP_ID}` +
           `&redirect_uri=${encodeURIComponent(
             `${
-              process?.env.FRONTEND_URL?.indexOf('https') == -1
+              process?.env.FRONTEND_URL?.indexOf('https') === -1
                 ? `https://redirectmeto.com/${process?.env.FRONTEND_URL}`
                 : `${process?.env.FRONTEND_URL}`
             }/integrations/social/threads`

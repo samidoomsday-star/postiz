@@ -22,6 +22,15 @@ export class AgencyBoundaryGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<AgencyRequest>();
     const controller = context.getClass().name;
     const handler = context.getHandler().name;
+    const unsafe = !['GET', 'HEAD', 'OPTIONS'].includes(request.method);
+    if (unsafe && ['AgencyController', 'AuthController'].includes(controller)) {
+      const origin = request.headers.origin;
+      // Existing cookie-origin enforcement remains below. Explicit headers
+      // and login also reject a hostile browser origin before body interceptors.
+      if (origin && origin !== process.env.FRONTEND_URL)
+        throw new ForbiddenException('Invalid agency request origin');
+    }
+
     if (controller === 'AgencyController') context.switchToHttp().getResponse().set({ 'Cache-Control':'private, no-store', 'X-Content-Type-Options':'nosniff' });
     if (
       controller === 'AuthController' &&

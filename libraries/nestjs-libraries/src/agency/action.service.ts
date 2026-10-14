@@ -121,24 +121,9 @@ export class ActionService {
   }
   private async channels(actor: AgencyActor) {
     await this.staff(actor);
-    const clients = await this.agency.clients(actor);
-    const rows = await this.db.integration.findMany({
-      where: {
-        organizationId: actor.organizationId,
-        customerId: { in: clients.map((c) => c.id) },
-        ownershipQuarantined: false,
-      },
-      select: { id: true, customerId: true },
-    });
-    const ids: string[] = [];
-    for (const c of rows)
-      if (
-        c.customerId &&
-        (await this.agency.can(actor, c.customerId, 'content:read', c.id))
-      )
-        ids.push(c.id);
-    return { clients, ids };
+    return this.agency.staffReadScope(actor);
   }
+
   private async query(actor: AgencyActor, filter: Filter, only?: string) {
     for (const key of ['client', 'owner', 'state', 'urgency', 'page'] as const)
       if (filter[key] !== undefined && typeof filter[key] !== 'string')
@@ -156,15 +141,58 @@ export class ActionService {
     if (!/^\d{1,4}$/.test(page)) throw new BadRequestException('Invalid page');
     // Every target must be in the readable current client/channel scope. Apply
     // scope, state, owner and urgency in SQL before limit/offset/window count.
-    return this.db.$queryRaw<any[]>(Prisma.sql`
-      WITH facts AS (
+    // This bounded interactive query loses ~500ms to PostgreSQL JIT compiling
+    // repeated classifications. Keep its scope local to this transaction/pool use.
+    return this.db.$transaction(
+      async (tx) => {
+        await tx.$executeRaw`SET LOCAL jit = off`;
+        return tx.$queryRaw<any[]>(Prisma.sql`
+      WITH target_facts AS MATERIALIZED (
+        SELECT r.id AS "revisionId",bool_and(i.id IS NOT NULL) AS readable,
+          bool_or(i.disabled OR i."refreshNeeded" OR i."deletedAt" IS NOT NULL OR i."internalId"<>t->>'accountId' OR i."providerIdentifier"<>t->>'provider') AS blocked,
+          min((t->>'publishAt')::timestamptz) AS "scheduledAt"
+        FROM "AgencyRevision" r CROSS JOIN LATERAL jsonb_array_elements(r.payload->'targets') t
+        LEFT JOIN "Integration" i ON i.id=t->>'channelId' AND i."organizationId"=r."organizationId" AND i."customerId"=r."clientId" AND NOT i."ownershipQuarantined" AND i.id=ANY(${
+          scope.ids
+        }::text[])
+        WHERE r."organizationId"=${
+          actor.organizationId
+        } AND r."clientId"=ANY(${scope.clients.map(
+          (client) => client.id
+        )}::text[])
+          ${
+            filter.client
+              ? Prisma.sql`AND r."clientId"=${filter.client}`
+              : Prisma.empty
+          }
+          ${only ? Prisma.sql`AND r.id=${only}` : Prisma.empty}
+        GROUP BY r.id
+      ), receipt_facts AS MATERIALIZED (
+        SELECT p."revisionId",count(*) FILTER(WHERE p.stage='publish') AS total,
+          count(*) FILTER(WHERE p.stage='publish' AND p.state='CONFIRMED') AS confirmed,
+          bool_or(p.state='UNKNOWN' OR (p.state='CLAIMED' AND p."claimedAt"<now()-interval '5 minutes')) AS unknown,
+          bool_or(p.state='FAILED') AS failed,bool_or(p.state IN ('CLAIMED','PENDING')) AS processing,
+          bool_or(p.state='READY' AND p.stage='publish' AND (SELECT (t->'parts'->p.part->>'dueAt')::timestamptz FROM jsonb_array_elements(r.payload->'targets') t WHERE t->>'channelId'=p."channelId")<now()-(${
+            syntheticModeEnabled() ? 2000 : 120000
+          }*interval '1 millisecond')) AS stalled,
+          max(p."updatedAt") AS "receiptUpdatedAt"
+        FROM "AgencyDispatch" p JOIN "AgencyRevision" r ON r.id=p."revisionId" AND r."organizationId"=p."organizationId"
+        WHERE p."organizationId"=${actor.organizationId}
+          ${only ? Prisma.sql`AND p."revisionId"=${only}` : Prisma.empty}
+          ${
+            filter.client
+              ? Prisma.sql`AND p."clientId"=${filter.client}`
+              : Prisma.empty
+          }
+        GROUP BY p."revisionId"
+      ), facts AS MATERIALIZED (
         SELECT r.id,r."workId",r.version,r."payloadHash",r."createdAt",r.payload->>'timezone' AS timezone,w.status,w."currentVersion",w."clientId",c.name AS "clientName",
           a."ownerId",a.disposition,COALESCE(a.version,0) AS "actionVersion",COALESCE(a.note,'') AS note,a."updatedAt" AS "actionUpdatedAt",
           q.status AS "reviewStatus",q."expiresAt",d."decision",d."reviewInvitationId",
-          (SELECT min((t->>'publishAt')::timestamptz) FROM jsonb_array_elements(r.payload->'targets') t) AS "scheduledAt",
+          tf."scheduledAt",
           COALESCE(s.confirmed,0)::int AS confirmed,COALESCE(s.total,0)::int AS total,COALESCE(s.unknown,false) AS unknown,COALESCE(s.failed,false) AS failed,COALESCE(s.processing,false) AS processing,COALESCE(s.stalled,false) AS stalled,
           COALESCE(s."receiptUpdatedAt",r."createdAt") AS "receiptUpdatedAt",
-          EXISTS(SELECT 1 FROM jsonb_array_elements(r.payload->'targets') t JOIN "Integration" i ON i.id=t->>'channelId' WHERE i.disabled OR i."refreshNeeded" OR i."deletedAt" IS NOT NULL OR i."internalId"<>t->>'accountId' OR i."providerIdentifier"<>t->>'provider') AS blocked,
+          tf.blocked,
           (q.status='APPROVED' AND q."expiresAt">now() AND d.decision='APPROVED' AND d."payloadHash"=r."payloadHash"
            AND EXISTS(SELECT 1 FROM "UserOrganization" m JOIN "User" u ON u.id=m."userId" WHERE m."organizationId"=r."organizationId" AND m."userId"=q."reviewerId" AND NOT m.disabled AND u.activated AND u."deletedAt" IS NULL)
            AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(r.payload->'targets') t WHERE NOT (
@@ -173,18 +201,14 @@ export class ActionService {
            ))) AS "approvalValid"
         FROM "AgencyRevision" r JOIN "AgencyWork" w ON w.id=r."workId" JOIN "Customer" c ON c.id=r."clientId" AND c."orgId"=r."organizationId" AND c."deletedAt" IS NULL
         LEFT JOIN "AgencyActionRecord" a ON a."revisionId"=r.id LEFT JOIN "AgencyReviewRequest" q ON q."revisionId"=r.id LEFT JOIN "AgencyReviewDecision" d ON d."requestId"=q.id
-        LEFT JOIN LATERAL (SELECT count(*) FILTER(WHERE p.stage='publish') AS total,count(*) FILTER(WHERE p.stage='publish' AND p.state='CONFIRMED') AS confirmed,bool_or(p.state='UNKNOWN' OR (p.state='CLAIMED' AND p."claimedAt"<now()-interval '5 minutes')) AS unknown,bool_or(p.state='FAILED') AS failed,bool_or(p.state IN ('CLAIMED','PENDING')) AS processing,bool_or(p.state='READY' AND p.stage='publish' AND (SELECT (t->'parts'->p.part->>'dueAt')::timestamptz FROM jsonb_array_elements(r.payload->'targets') t WHERE t->>'channelId'=p."channelId")<now()-(${
-          syntheticModeEnabled() ? 2000 : 120000
-        }*interval '1 millisecond')) AS stalled,max(p."updatedAt") AS "receiptUpdatedAt" FROM "AgencyDispatch" p WHERE p."revisionId"=r.id) s ON true
+        JOIN target_facts tf ON tf."revisionId"=r.id AND tf.readable
+        LEFT JOIN receipt_facts s ON s."revisionId"=r.id
         WHERE r."organizationId"=${
           actor.organizationId
         } AND c."deletedAt" IS NULL AND jsonb_array_length(r.payload->'targets')>0
           AND r."clientId"=ANY(${scope.clients.map(
             (client) => client.id
           )}::text[])
-          AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(r.payload->'targets') t WHERE NOT (t->>'channelId'=ANY(${
-            scope.ids
-          }::text[])) OR NOT EXISTS(SELECT 1 FROM "Integration" current_channel WHERE current_channel.id=t->>'channelId' AND current_channel."organizationId"=r."organizationId" AND current_channel."customerId"=r."clientId" AND NOT current_channel."ownershipQuarantined"))
           AND (r.version=w."currentVersion" OR COALESCE(s.total,0)>0)
           ${
             filter.client
@@ -192,7 +216,7 @@ export class ActionService {
               : Prisma.empty
           }
           ${only ? Prisma.sql`AND r.id=${only}` : Prisma.empty}
-      ), classified AS (
+      ), classified AS MATERIALIZED (
         SELECT *,CASE WHEN total>0 AND confirmed=total THEN 'PUBLISHED'
           WHEN confirmed>0 AND confirmed<total THEN 'PARTIAL' WHEN unknown THEN 'UNKNOWN' WHEN failed THEN 'FAILED'
           WHEN status='CANCELED' AND NOT processing THEN 'CANCELED' WHEN version<>"currentVersion" AND NOT processing THEN 'SUPERSEDED'
@@ -221,6 +245,9 @@ export class ActionService {
       ORDER BY CASE urgency WHEN 'HIGH' THEN 0 WHEN 'NORMAL' THEN 1 ELSE 2 END,"receiptUpdatedAt" DESC,id LIMIT 21 OFFSET ${
         Number(page) * 20
       }`);
+      },
+      { maxWait: 15000, timeout: 15000 }
+    );
   }
   private summary(row: any) {
     const {
@@ -665,23 +692,29 @@ export class ActionService {
         } catch (error) {
           if ((error as Error).name !== 'WorkflowNotFoundError') throw error;
         }
-        if (
-          (await bounded(
-            provider.verifyFailedPublication(
-              channel.token,
-              {
-                localId: row.postId,
-                stage: row.stage,
-                attempt: row.attempt,
-                claimedAt: row.claimedAt.toISOString(),
-              },
-              channel
-            )
-          )) !== true
-        )
+        let noSideEffect = false;
+        try {
+          noSideEffect =
+            (await bounded(
+              provider.verifyFailedPublication(
+                channel.token,
+                {
+                  localId: row.postId,
+                  stage: row.stage,
+                  attempt: row.attempt,
+                  claimedAt: row.claimedAt.toISOString(),
+                },
+                channel
+              )
+            )) === true;
+        } catch {
+          /* Provider/SDK failures never expose credential-bearing details. */
+        }
+        if (!noSideEffect)
           throw new ConflictException(
             'Provider could not prove no side effect; investigate manually'
           );
+
         await this.approval.recoveryEligibility(
           actor,
           meta.work,

@@ -1,3 +1,5 @@
+import { assertPublicationForm, assertPublicationReceipt } from './publication-contract';
+import { withAgencyMutation, redactedProviderOperation } from '../integrations/social.abstract';
 import {
   BadRequestException,
   ConflictException,
@@ -247,6 +249,7 @@ export class ApprovalService {
   }
   private async assertTargets(work: any, payload: FrozenPayload) {
     for (const target of payload.targets) {
+      assertPublicationForm(target.provider, target.settings);
       const channel = await this.db.integration.findFirst({
         where: {
           id: target.channelId,
@@ -361,6 +364,10 @@ export class ApprovalService {
       actor.organizationId,
       clean
     );
+    for (const target of clean.posts) {
+      const channel = await this.agency.channel(actor, target.integration.id, 'draft:write');
+      assertPublicationForm(channel.providerIdentifier, target.settings);
+    }
     const checks = await this.posts.validatePosts(
       actor.organizationId,
       clean.posts
@@ -1386,6 +1393,7 @@ export class ApprovalService {
         const result = responses.find((r) => r.id === row.postId);
         if (!result)
           throw new Error('Provider did not return a target receipt');
+        if (result.status !== 'pending') assertPublicationReceipt(claim.target.provider, result);
         const updated = await tx.agencyDispatch.updateMany({
           where: { id: row.id, attempt: row.attempt, state: { in: ['CLAIMED','PENDING'] } },
           data: {
@@ -1396,7 +1404,12 @@ export class ApprovalService {
             pendingData: result.pendingData || Prisma.JsonNull,
           },
         });
-        if (updated.count !== 1) throw new ConflictException('Dispatch attempt is no longer current');
+        if (updated.count !== 1) {
+          const current = await tx.agencyDispatch.findUniqueOrThrow({ where: { id: row.id } });
+          if (current.attempt !== row.attempt || current.state !== 'CONFIRMED' ||
+              (result.status !== 'pending' && (current.providerId !== result.postId || current.providerUrl !== result.releaseURL)))
+            throw new ConflictException('Dispatch attempt is no longer current');
+        }
       }
       await this.agency.audit(
         tx,
@@ -1409,9 +1422,7 @@ export class ApprovalService {
         claim.rows[0].id,
         claim.rows[0].clientId,
         {
-          states: responses.map((r) =>
-            r.status === 'pending' ? 'PENDING' : 'CONFIRMED'
-          ),
+          states: (await tx.agencyDispatch.findMany({ where: { id: { in: claim.rows.map(row => row.id) } }, select: { state: true } })).map(row => row.state),
         }
       );
       const remaining = await tx.agencyDispatch.count({
@@ -1437,8 +1448,32 @@ export class ApprovalService {
     });
   }
   async failed(claim: Claim, known: boolean) {
+    // A terminal SDK rejection can occur after an earlier mutation in the same
+    // provider operation. Its exception class alone is never no-side-effect proof.
+    if (known) {
+      known = false;
+      const provider = this.providers.getSocialIntegration(claim.integration.providerIdentifier);
+      let timeout: ReturnType<typeof setTimeout> | undefined;
+      try {
+        if (claim.rows.length === 1 && provider.verifyFailedPublication) {
+          const identity = claim.rows[0];
+          const row = await this.db.agencyDispatch.findFirst({ where: {
+            id: identity.id, attempt: identity.attempt, state: { in: ['CLAIMED', 'PENDING'] },
+          } });
+          if (!row?.claimedAt) return;
+          known = (await Promise.race([
+            redactedProviderOperation(() => provider.verifyFailedPublication!(claim.integration.token, {
+              localId: row.postId, stage: row.stage, attempt: row.attempt,
+              claimedAt: row.claimedAt.toISOString(),
+            }, claim.integration)),
+            new Promise<boolean>(resolve => { timeout = setTimeout(() => resolve(false), 5000); }),
+          ])) === true;
+        }
+      } catch { known = false; }
+      finally { if (timeout) clearTimeout(timeout); }
+    }
     await this.locked(claim.integration.organizationId, async (tx) => {
-      await tx.agencyDispatch.updateMany({
+      const changed = await tx.agencyDispatch.updateMany({
         where: {
           OR: claim.rows.map(r => ({ id: r.id, attempt: r.attempt })),
           state: { in: ['CLAIMED', 'PENDING'] },
@@ -1448,6 +1483,7 @@ export class ApprovalService {
           reason: known ? 'PROVIDER_REJECTION' : 'MUTATION_OUTCOME_UNCERTAIN',
         },
       });
+      if (!changed.count) return;
       await this.agency.audit(
         tx,
         {
@@ -1560,12 +1596,13 @@ export class ApprovalService {
     const provider = this.providers.getSocialIntegration(
       pending.integration.providerIdentifier
     );
-    const result = await provider.checkPostStatus(
+    const result = await redactedProviderOperation(() => provider.checkPostStatus(
       pending.integration.token,
       pending.row.pendingData,
       pending.integration
-    );
+    ));
     if (result.status === 'completed') {
+      assertPublicationReceipt(pending.integration.providerIdentifier, result);
       await this.db.agencyDispatch.update({
         where: { id: pending.row.id },
         data: {
@@ -1611,13 +1648,13 @@ export class ApprovalService {
         releaseURL: claim.rows[0].providerUrl,
       };
     try {
-      const result = await this.providers
+      const result = await withAgencyMutation(() => this.providers
         .getSocialIntegration(claim.integration.providerIdentifier)
         .finalizePost(
           claim.integration.token,
           pending.row.pendingData,
           claim.integration
-        );
+        ));
       if (result.status !== 'completed') {
         await this.failed(claim, false);
         throw new ForbiddenException(

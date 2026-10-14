@@ -104,7 +104,7 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
     if (delay) await new Promise(resolve => setTimeout(resolve, delay));
     return posts.map((post) => {
       const outcome = post.settings?.outcome || 'success';
-      if (!['success', 'known-failure', 'rate-limit-once', 'pending', 'uncertain', 'finalize'].includes(outcome)) {
+      if (!['success', 'known-failure', 'rate-limit-once', 'pending', 'uncertain', 'rejection-after-accept', 'finalize'].includes(outcome)) {
         throw new Error('Invalid synthetic outcome');
       }
       const rejected = outcome === 'known-failure' || (outcome === 'rate-limit-once' && !this.receipts().some(r => r.localId === post.id && r.operation === 'rejected'));
@@ -125,6 +125,7 @@ export class SyntheticProvider extends SocialAbstract implements SocialProvider 
       if (rejected) {
         throw new BadBody(this.identifier, '{}', '{}', 'Synthetic known rejection');
       }
+      if (outcome === 'rejection-after-accept') throw new BadBody(this.identifier, '{}', '{}', 'Synthetic later operation rejected after acceptance');
       if (outcome === 'uncertain') {
         // Persist acceptance first to model a lost response after a remote side effect.
         const error = new Error('Synthetic response lost after acceptance');

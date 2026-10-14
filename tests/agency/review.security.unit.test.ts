@@ -68,3 +68,22 @@ describe('review identity and transport primitives', () => {
     expect(reviewOptions({ unknown: 'Hidden' })).toEqual({});
   });
 });
+
+// Invitation recipients must denote exactly the mailbox bound to the session.
+describe('single verified mailbox', () => {
+  it('rejects address lists, comments, display names, Unicode and oversized parser inputs', async () => {
+    const { singleReviewEmail } = await import(
+      '../../libraries/nestjs-libraries/src/agency/review.security'
+    );
+    for (const value of [
+      'a@example.test,b@example.test',
+      'a@example.test(comment)',
+      'Name <a@example.test>',
+      'a@example.test;other@example.test',
+      'a@éxample.test',
+      'x'.repeat(255) + '@example.test',
+    ])
+      expect(singleReviewEmail(value)).toBe(false);
+    expect(singleReviewEmail('reviewer+client@example.test')).toBe(true);
+  });
+});

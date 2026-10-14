@@ -23,3 +23,13 @@ P4-004,2,V1-DASH-003,Later read-only checks reused cached processing results,res
 P4-005,2,V1-DASH-001,Empty later page could misstate the filtered count,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
 P4-006,1,V1-DASH-001,Moved channels could carry old client revision metadata into list scope,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
 P4-007,2,V1-DASH-001,Temporary grants and ambiguous fixture selection contaminated baseline tests,resolved,phase-4,docs/agency/evidence/bugs/phase-4-fixes.md,docs/agency/evidence/phase-4.md
+P5-001,2,V1-NFR-004,Dashboard channel N+1 and correlated/JIT query overhead missed the unchanged p95 gate,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-002,1,V1-NFR-002,Inherited HTTP and streamed helper retries could repeat an ambiguous provider mutation inside one claim,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-003,2,V1-DASH-002,TikTok inbox completion could be projected as published although human publication remained,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-004,1,V1-NFR-001,Raw provider SDK/body failures and Threads diagnostics could retain sensitive request details,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-005,2,V1-REV-001,Invitation recipient syntax allowed ambiguous address parser inputs,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-006,2,V1-DASH-002,Late same-attempt completion/failure could conflict with confirmed reconciliation or audit false uncertainty,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-007,1,V1-NFR-001,Enabled HTTP/media/editor dependencies included applicable critical/high security advisories,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-008,2,V1-NFR-001,Explicit staff-header/login hostile origins and URL-carried session acceptance needed consistent closure,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-009,2,V1-DASH-002,A terminal SDK rejection after an earlier accepted side effect could be mislabeled known failure,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md
+P5-010,2,V1-NFR-003,Repeated DST local review times lacked a visible UTC offset to distinguish the approved instant,resolved,phase-5,docs/agency/evidence/bugs/phase-5-fixes.md,docs/agency/evidence/phase-5.md

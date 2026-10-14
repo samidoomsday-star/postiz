@@ -44,7 +44,7 @@ function policy(kind, file, method) {
 function add(source, line, kind, path, method, actor, current) {
   const [scope, effects, planned, cases] = policy(kind, source, method);
   rows.push({ source, line, kind, path, method, actor, data_scope: scope, external_side_effects: effects,
-    current_enforcement: current, planned_enforcement: planned, acceptance_cases: cases, evidence: 'static source; enforcement and runtime coverage recorded in phase-4.md' });
+    current_enforcement: current, planned_enforcement: planned, acceptance_cases: cases, evidence: 'static source; runtime coverage and limits recorded in phase-5.md' });
 }
 
 for (const file of walk(resolve(root, 'apps/backend/src')).filter((p) => p.endsWith('.controller.ts'))) {

@@ -22,6 +22,7 @@ import { ApprovalService } from './approval.service';
 import { AgencyActor, allowsChannel } from './policy';
 import { digest, FrozenPayload } from './revision';
 import {
+  singleReviewEmail,
   csrfToken,
   escapeMail,
   reviewHash,
@@ -165,9 +166,7 @@ export class ReviewService {
     const client = await this.agency.client(actor, input?.clientId);
     this.ensureMail();
     if (
-      typeof input.email !== 'string' ||
-      input.email.length > 254 ||
-      !/^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/.test(input.email.trim()) ||
+      !singleReviewEmail(input.email) ||
       typeof input.name !== 'string' ||
       !input.name.trim() ||
       input.name.length > 100

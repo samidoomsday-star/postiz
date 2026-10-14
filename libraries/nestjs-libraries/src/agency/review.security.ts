@@ -1,4 +1,4 @@
-import { getMetadataStorage } from 'class-validator';
+import { isEmail, getMetadataStorage } from 'class-validator';
 import {
   createHash,
   createHmac,
@@ -74,5 +74,19 @@ export function reviewOptions(
     Object.entries(settings)
       .filter(([key]) => fields.has(key) && !privateKey(key))
       .map(([key, value]) => [key, scrub(value)])
+  );
+}
+
+/** One canonical ASCII mailbox, never an RFC address list/display name. */
+export function singleReviewEmail(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    value.length <= 254 &&
+    /^[\x21-\x7E]+$/.test(value.trim()) &&
+    isEmail(value.trim(), {
+      allow_display_name: false,
+      allow_utf8_local_part: false,
+    }) &&
+    !/[(),;<>\\\s]/.test(value.trim())
   );
 }

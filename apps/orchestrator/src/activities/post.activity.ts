@@ -31,6 +31,7 @@ import {
   withHeartbeat,
 } from '@gitroom/nestjs-libraries/temporal/temporal.heartbeat';
 import {
+  withAgencyMutation,
   BadBody,
   Disconnect,
 } from '@gitroom/nestjs-libraries/integrations/social.abstract';
@@ -219,7 +220,7 @@ export class PostActivity {
     try {
       await this._approvalService.commentParent(claim, postId, lastPostId);
       const parts = await this._approvalService.providerParts(claim);
-      const result = await withHeartbeat(() => this.handleDisconnect(claim.integration, () => this._integrationManager.getSocialIntegration(claim.integration.providerIdentifier).comment(claim.integration.internalId, postId, lastPostId, claim.integration.token, parts as any, claim.integration)));
+      const result = await withAgencyMutation(() => withHeartbeat(() => this.handleDisconnect(claim.integration, () => this._integrationManager.getSocialIntegration(claim.integration.providerIdentifier).comment(claim.integration.internalId, postId, lastPostId, claim.integration.token, parts as any, claim.integration))));
       await this._approvalService.finish(claim, result);
       return this._approvalService.wrapPending(claim, result);
     } catch (error) { await this._approvalService.failed(claim, (error instanceof BadBody && claim.rows.length === 1)); throw error; }
@@ -300,9 +301,9 @@ export class PostActivity {
     try {
       const provider = this._integrationManager.getSocialIntegration(claim.integration.providerIdentifier);
       const parts = await this._approvalService.providerParts(claim);
-      const result = allowPending && provider.postPending
+      const result = await withAgencyMutation(async () => allowPending && provider.postPending
         ? await provider.postPending(claim.integration.internalId, claim.integration.token, parts as any, claim.integration)
-        : await provider.post(claim.integration.internalId, claim.integration.token, parts as any, claim.integration);
+        : await provider.post(claim.integration.internalId, claim.integration.token, parts as any, claim.integration));
       await this._approvalService.finish(claim, result);
       return this._approvalService.wrapPending(claim, result);
     } catch (error) { await this._approvalService.failed(claim, (error instanceof BadBody && claim.rows.length === 1)); throw error; }

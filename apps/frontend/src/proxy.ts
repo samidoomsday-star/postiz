@@ -32,8 +32,7 @@ export async function proxy(request: NextRequest) {
   }
   const authCookie =
     request.cookies.get('auth') ||
-    request.headers.get('auth') ||
-    nextUrl.searchParams.get('loggedAuth');
+    request.headers.get('auth');
   const lng = request.cookies.has(cookieName)
     ? acceptLanguage.get(request.cookies.get(cookieName).value)
     : acceptLanguage.get(

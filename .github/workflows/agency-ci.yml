@@ -32,6 +32,8 @@ jobs:
         run: |
           bash scripts/agency/with-env.sh python3 scripts/agency/runtime.py start
           bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts
+      - name: Rehearse DB and private media byte restore
+        run: bash scripts/agency/with-env.sh node --experimental-require-module scripts/agency/restore-media.mjs
       - name: Replay persisted histories and verify approved queue restart
         run: |
           bash scripts/agency/with-env.sh node scripts/agency/replay.mjs

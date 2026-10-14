@@ -259,6 +259,61 @@ export class AgencyService {
     });
   }
 
+  /** Request-local bulk read scope. Never cache across requests or dispatch. */
+  async staffReadScope(actor: AgencyActor) {
+    if (
+      actor.type !== 'user' ||
+      actor.reviewSessionId ||
+      actor.reviewInvitationId ||
+      actor.reviewAssignment
+    )
+      throw new ForbiddenException('Staff access required');
+    const member = await this.membership(actor);
+    const admin = ['ADMIN', 'SUPERADMIN'].includes(member.role);
+    const asOf = Date.now();
+    const grants = admin
+      ? []
+      : (
+          await this.db.agencyGrant.findMany({
+            where: {
+              organizationId: actor.organizationId,
+              userId: actor.id,
+              role: { in: ['EDITOR', 'PUBLISHER'] },
+            },
+          })
+        ).filter((g) => live(g, asOf));
+    const clients = await this.db.customer.findMany({
+      where: {
+        orgId: actor.organizationId,
+        deletedAt: null,
+        ...(admin ? {} : { id: { in: grants.map((g) => g.clientId) } }),
+      },
+      select: { id: true, name: true },
+      orderBy: { name: 'asc' },
+    });
+    const rows = await this.db.integration.findMany({
+      where: {
+        organizationId: actor.organizationId,
+        customerId: { in: clients.map((c) => c.id) },
+        ownershipQuarantined: false,
+      },
+      select: { id: true, customerId: true },
+    });
+    return {
+      clients,
+      ids: rows
+        .filter(
+          (c) =>
+            admin ||
+            grants.some(
+              (g) =>
+                g.clientId === c.customerId && allowsChannel(g.channelIds, c.id)
+            )
+        )
+        .map((c) => c.id),
+    };
+  }
+
   async channels(actor: AgencyActor, clientId: string) {
     await this.assert(actor, clientId, 'content:read');
     const channels = await this.db.integration.findMany({

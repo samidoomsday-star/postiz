@@ -24,7 +24,10 @@ export default [{
     'apps/backend/src/services/auth/public.auth.middleware.ts',
     'libraries/nestjs-libraries/src/chat/start.mcp.ts',
     'libraries/helpers/src/testing/**/*.ts',
+    'libraries/helpers/src/utils/custom.fetch.func.ts',
     'libraries/nestjs-libraries/src/integrations/social/synthetic.provider.ts',
+    'libraries/nestjs-libraries/src/integrations/social.abstract.ts',
+    'libraries/nestjs-libraries/src/integrations/social/threads.provider.ts',
     'libraries/nestjs-libraries/src/integrations/social/social.integrations.interface.ts',
     'apps/frontend/src/fonts/jakarta.ts',
     '*.agency.config.*',
@@ -42,4 +45,4 @@ export default [{
     eqeqeq: ['error', 'always'],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
   },
-}, { files: ['apps/backend/src/services/auth/auth.service.ts', 'apps/backend/src/main.ts', 'libraries/nestjs-libraries/src/sentry/initialize.sentry.ts', 'apps/backend/src/app.module.ts', 'apps/backend/src/api/api.module.ts', 'apps/backend/src/api/routes/users.controller.ts', 'apps/backend/src/services/auth/auth.middleware.ts', 'apps/frontend/src/proxy.ts', 'apps/orchestrator/src/activities/*.ts', 'libraries/nestjs-libraries/src/database/prisma/database.module.ts', 'libraries/nestjs-libraries/src/database/prisma/posts/posts.service.ts', 'libraries/nestjs-libraries/src/database/prisma/integrations/integration.service.ts'], rules: { '@typescript-eslint/no-unused-vars': 'off' } }];
+}, { files: ['libraries/nestjs-libraries/src/integrations/social.abstract.ts', 'libraries/nestjs-libraries/src/integrations/social/threads.provider.ts', 'apps/backend/src/services/auth/auth.service.ts', 'apps/backend/src/main.ts', 'libraries/nestjs-libraries/src/sentry/initialize.sentry.ts', 'apps/backend/src/app.module.ts', 'apps/backend/src/api/api.module.ts', 'apps/backend/src/api/routes/users.controller.ts', 'apps/backend/src/services/auth/auth.middleware.ts', 'apps/frontend/src/proxy.ts', 'apps/orchestrator/src/activities/*.ts', 'libraries/nestjs-libraries/src/database/prisma/database.module.ts', 'libraries/nestjs-libraries/src/database/prisma/posts/posts.service.ts', 'libraries/nestjs-libraries/src/database/prisma/integrations/integration.service.ts'], rules: { '@typescript-eslint/no-unused-vars': 'off' } }];

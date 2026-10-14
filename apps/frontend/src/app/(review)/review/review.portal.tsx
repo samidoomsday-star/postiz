@@ -433,6 +433,7 @@ export function ReviewPortal({ backendUrl }: { backendUrl: string }) {
                         <time dateTime={t.publishAt}>
                           {new Date(t.publishAt).toLocaleString('en-GB', {
                             timeZone: work.revision!.timezone,
+                            timeZoneName: 'shortOffset',
                           })}{' '}
                           ({work.revision!.timezone})
                         </time>

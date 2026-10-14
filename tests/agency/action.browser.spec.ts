@@ -76,7 +76,7 @@ for (const mobile of [false, true])
         await page.evaluate(() => document.documentElement.scrollWidth)
       ).toBeLessThanOrEqual(361);
     await detail.screenshot({
-      path: `docs/agency/evidence/screenshots/phase-4-${
+      path: `.agency/results/phase-5-${
         mobile ? 'mobile' : 'desktop'
       }-partial.png`,
     });
@@ -102,7 +102,7 @@ for (const mobile of [false, true])
     expect(mutations(w.records[1].postId)).toHaveLength(1);
     expect(errors).toEqual([]);
     await page.getByRole('region', { name: 'Action detail' }).screenshot({
-      path: `docs/agency/evidence/screenshots/phase-4-${
+      path: `.agency/results/phase-5-${
         mobile ? 'mobile' : 'desktop'
       }-published.png`,
     });

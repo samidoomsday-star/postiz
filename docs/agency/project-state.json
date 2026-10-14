@@ -2,7 +2,7 @@
   "schema_version": 1,
   "product": "Postiz agency edition",
   "target": "V1 local release candidate",
-  "updated_at": "2026-10-13",
+  "updated_at": "2026-10-14",
   "setup": {
     "status": "complete",
     "report": "docs/agency/evidence/SETUP.md"
@@ -275,7 +275,7 @@
     {
       "id": 5,
       "title": "Integrated hardening and release readiness",
-      "status": "planned",
+      "status": "complete",
       "depends_on": [
         4
       ],
@@ -295,8 +295,45 @@
         "T05-05",
         "T05-06"
       ],
-      "report": null,
-      "checks": [],
+      "report": "docs/agency/evidence/phase-5.md",
+      "checks": [
+        {
+          "id": "T05-01",
+          "command": "pnpm exec playwright test --config playwright.agency.config.ts; focused final review browser checks; node scripts/agency/inventory.mjs",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-5.md"
+        },
+        {
+          "id": "T05-02",
+          "command": "node scripts/agency/races.mjs; node scripts/agency/replay.mjs; node scripts/agency/restart-approval.mjs",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-5.md"
+        },
+        {
+          "id": "T05-03",
+          "command": "empty-workspace pnpm install --frozen-lockfile; python3 scripts/agency/rehearse-migration.py; node --experimental-require-module scripts/agency/restore-media.mjs",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-5.md"
+        },
+        {
+          "id": "T05-04",
+          "command": "pnpm test (38 priority-provider contracts plus real worker receipt/failure cases)",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-5.md"
+        },
+        {
+          "id": "T05-05",
+          "command": "node scripts/agency/performance.mjs; node scripts/agency/performance-page.mjs in recorded aggregate 4-CPU/8-GB server profile",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-5.md"
+        },
+        {
+          "id": "T05-06",
+          "command": "pnpm run lint:agency; pnpm run typecheck:agency; frontend/backend/worker tsc and production builds; advisory/log review; final desktop/mobile/DST browser checks",
+          "result": "passed",
+          "evidence": "docs/agency/evidence/phase-5.md"
+        }
+      ],
       "blockers": []
     },
     {

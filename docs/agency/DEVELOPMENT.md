@@ -101,3 +101,15 @@ Open the action dashboard from the client workspace. See [ACTION-DASHBOARD.md](A
 Use `bash scripts/agency/with-env.sh python3 scripts/agency/runtime.py status --worker-only` for the checkout-owned worker. `stop/start --worker-only` preserves the HTTP API for diagnosis and uses the existing ownership checks. Do not equate HTTP liveness with polling; the actual tests stop the worker, observe overdue READY work, restart it and require one confirmed synthetic mutation.
 
 Run the Phase 4 API/browser cases with `bash scripts/agency/with-env.sh pnpm exec playwright test --config playwright.agency.config.ts tests/agency/action.api.spec.ts tests/agency/action.browser.spec.ts`; builds must finish before starting apps/tests. The unsupported provider case injects only an inert external contract into the compiled service while using real PostgreSQL policy/evidence. Browser journeys capture synthetic screenshots under docs/agency/evidence/screenshots; private traces/logs remain ignored.
+
+## Phase 5 hardening tools
+
+After the production build and actual services are ready:
+
+```sh
+bash scripts/agency/with-env.sh node --experimental-require-module scripts/agency/restore-media.mjs
+bash scripts/agency/with-env.sh node scripts/agency/races.mjs
+bash scripts/agency/with-env.sh node scripts/agency/advisories.mjs
+```
+
+The first two use only the local synthetic environment and private fixture logs. Race seeds select suite order; OS/network interleaving is observed, not deterministic. Each iteration must execute nonzero tests and have no unexpected, skipped or flaky outcomes. The advisory command audits the entire lock and records exact version matches; review reachability using [HARDENING.md](HARDENING.md) and the dependency evidence before deciding release impact. It does not equate audit totals with exploitable app paths or produce a zero-advisory claim. The performance profile and its topology/limits are documented in HARDENING.md; do not run it while another process owns the same ports.
