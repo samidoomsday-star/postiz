@@ -6,6 +6,8 @@ Use this document for requests such as “clone this repository and run it local
 
 > Clone branch release/agency-v1-rc1 from https://github.com/samidoomsday-star/postiz into my local workspace, or use my existing checkout without discarding changes. Read AGENTS.md and SETUP.md first. Detect my OS, prepare the documented prerequisites, then run the supported local setup/start command. Diagnose and fix setup problems until the API and browser smoke tests pass, or explain the exact external prerequisite you cannot satisfy. Leave the app running for my testing and tell me the browser address, demo login, test results and stop/restart commands. Use synthetic providers; do not ask for social credentials, implement features, merge PRs, reset data or deploy anything.
 
+**Owner platform: Windows.** Start with [WINDOWS-SETUP.md](WINDOWS-SETUP.md) for WSL2/Docker Desktop/IDE checks, Linux-filesystem cloning and Windows-browser verification. The general steps below run inside that Linux environment.
+
 ## 1. Inspect before changing anything
 
 - Resolve the real checkout root and run `git status --short`, `git branch --show-current`, `git log -1 --oneline`. Use the existing checkout; do not create a worktree or duplicate a configured installation.

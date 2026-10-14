@@ -1,8 +1,8 @@
 # Postiz agency edition — V1 local candidate
 
-**Want your IDE to install and run this app?** Read [SETUP.md](SETUP.md), or paste:
+**Want your IDE to install and run this app?** On Windows, start with [WINDOWS-SETUP.md](WINDOWS-SETUP.md). General instructions: [SETUP.md](SETUP.md). Paste into your IDE:
 
-> Clone branch release/agency-v1-rc1 from https://github.com/samidoomsday-star/postiz, read AGENTS.md and SETUP.md, set it up in my local environment, run the API/browser smoke tests, and leave it running for me to test. Preserve my data and tell me the demo login and stop/restart commands.
+> I use Windows. Clone branch release/agency-v1-rc1 from https://github.com/samidoomsday-star/postiz inside WSL2, read WINDOWS-SETUP.md, AGENTS.md and SETUP.md, set it up in my local environment, run the API/browser smoke tests, and leave it running for me to test. Preserve my data and tell me the demo login and stop/restart commands.
 
 Use the complete [`release/agency-v1-rc1` candidate](https://github.com/samidoomsday-star/postiz/tree/release/agency-v1-rc1). The repository currently defaults to planning-only `main`; select the candidate branch explicitly until the owner changes the default branch. In the supported Linux x86_64 environment, the first-run and restart command is:
 
