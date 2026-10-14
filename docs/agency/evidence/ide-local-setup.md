@@ -10,7 +10,7 @@ Authorized by owner after Phase 6: make a repository link sufficient for an IDE 
 - Root [WINDOWS-SETUP.md](../../../WINDOWS-SETUP.md) prioritizes Windows x86_64 with Ubuntu 24.04/WSL2, Docker Desktop WSL integration, Linux-filesystem checkout, IDE execution context and host-browser verification. It distinguishes administrator/reboot/account actions from tasks the IDE can complete and documents the supported Playwright fallback for Ubuntu without Debian's system Chromium. These Windows/Ubuntu/browser-fallback steps are guidance, not executed platform evidence.
 - `bash start-local.sh` installs/builds if needed, starts actual services/apps, runs the existing 12 API/browser smoke scenarios and leaves them running. Repeat starts reuse a successful same-commit build; explicit setup invalidates the marker before rebuilding. Stop/status/check/full verification have named actions. No data reset or real social credentials.
 - AGENTS.md treats setup as operations, separately from phase implementation. Claude/Copilot/Cursor/Windsurf instructions delegate to that guide. Stale root Claude instructions archived under docs/agency/archive (trailing whitespace normalized; original retained in base commit); nested Next.js instructions preserved.
-- README and tester index expose the candidate link and one-command flow. No application, schema, Temporal workflow, provider, dependency, lockfile or existing setup-script change.
+- README and tester index expose the candidate link and one-command flow. LF attributes protect the Linux launcher and agency shell/Python files from Windows line-ending conversion (`git check-attr eol` confirms lf). No application, schema, Temporal workflow, provider, dependency, lockfile or existing setup-script change.
 
 ## Actual verification
 
@@ -31,7 +31,9 @@ Environment: Debian 13 Linux x86_64, Node 22.23.3/pnpm 10.6.1 downloaded into th
 | Active guide link/source review and plan checker | Relative links resolve; completed phase state remains consistent; full application/setup/dependency tree unchanged from the preceding candidate. |
 | Private current log review | Six setup/application logs checked against six known generated private secret values and raw review-token patterns: zero matches. Public demo password is intentional; raw artifacts remain private/ignored. |
 
-These are **three runs of the same 12 scenarios**, not 36 unique scenarios. The full 66-unit/93-API-browser/migration/restore/replay evidence remains in phase-6.md; it was not relabeled as a new broad suite. The launcher delegates full acceptance to existing verify.sh. No test assertion was changed or disabled.
+An additional retained-primary-checkout recovery run passed **12 scenarios (25.0s)**. Before using the launcher, direct runtime startup on older cached node_modules failed with `TTLCache is not a constructor`. Normal `bash start-local.sh` performed its frozen install, reconciled the hoisted layout (+133/-336 cached packages without changing the lock), rebuilt and passed all 12 scenarios; the required constructor was checked explicitly. No application/package fix or destructive cache/data reset was used. Primary apps remain running after this successful command.
+
+The three independent-clone runs and retained-checkout run exercise **the same 12 scenarios**, not 48 unique scenarios. The full 66-unit/93-API-browser/migration/restore/replay evidence remains in phase-6.md; it was not relabeled as a new broad suite. The launcher delegates full acceptance to existing verify.sh. No test assertion was changed or disabled.
 
 The fresh clone is retained stopped with its own data; primary checkout startup is restored separately to avoid fixed-port conflicts. The CLI leaves apps running after a successful normal invocation; stopping it here is deliberate teardown of the owned test installation.
 

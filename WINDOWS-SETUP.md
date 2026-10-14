@@ -64,6 +64,8 @@ sudo apt-get install -y git curl ca-certificates python3 make g++ xz-utils opens
 
 Package availability can differ by Ubuntu release: check the actual package error and official distribution options rather than disabling verification. The verified Linux browser path is Debian's system Chromium. The Ubuntu command intentionally omits Chromium: Ubuntu's packaging can require snap services. With system Chromium absent, setup invokes Playwright's `install --with-deps chromium` fallback. Follow its supported dependency installation and diagnose missing permissions/downloads; an interactive sudo prompt may require the owner in the Linux terminal, never a password in chat. That Ubuntu/browser branch remains unverified here. Never claim success until browser smoke tests actually finish on this PC.
 
+The repository .gitattributes keeps the Linux launcher and agency shell/Python helpers in LF line endings even when a Windows IDE edits them. Keep those rules and avoid resaving scripts with CRLF.
+
 Do not require Windows Node/pnpm: the project downloads pinned **Linux** tools into WSL's checkout. Provide 4 CPU cores, 16 GiB build RAM and 20 GiB free space to the WSL/Docker environment, not only the Windows host. WSL/Docker resource changes can affect other workloads; inspect current allocation before changing it.
 
 ## 4. Test from the Windows browser

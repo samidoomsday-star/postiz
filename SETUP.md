@@ -51,6 +51,8 @@ A repeat start on the same commit with intact artifacts reuses the build. A chan
 
 The command leaves apps running. Failed smoke tests remain failures; inspect/redact the relevant private log, fix the diagnosed setup issue and rerun. Do not weaken tests, skip the worker/browser or switch to an upstream image to make a green result. First setup can take several minutes; wait for successful build completion before startup and keep the owner informed.
 
+If an older restored checkout fails while loading a dependency (for example a missing SDK constructor), use `bash start-local.sh setup` and then start again. The frozen install reconciles the hoisted dependency layout; do not edit package versions or application code to hide a cache inconsistency. Preserve private configuration and data. This retained-install repair path was exercised in the cloud follow-up evidence.
+
 ## 4. Handoff to the tester
 
 Report the actual clone branch/commit, execution OS, successful/failed/skipped checks and process status. Give the local browser address (frontend port 4200, `/auth/login`) and the public demo login `owner-a@example.test` / `LocalFixture123!`. Mailpit inbox is on port 18025. User/role details and the prepare → review → approve → publish → recover walkthrough are in [LOCAL-TESTING.md](docs/agency/LOCAL-TESTING.md).
